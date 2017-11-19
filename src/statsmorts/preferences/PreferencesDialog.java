@@ -44,7 +44,7 @@ public class PreferencesDialog extends JDialog {
         this.preferences = prefs;
         stateChanged = false;
         
-        setPreferredSize(new Dimension(520,550));
+        setPreferredSize(new Dimension(520,250));
         setSize(getPreferredSize());
         setLocationRelativeTo(null);
         setResizable(false);
@@ -143,10 +143,14 @@ public class PreferencesDialog extends JDialog {
             preferences.setUtilisateur(panelBDD.getUtilisateur());
             if (stateChanged) {
                 if (bddChanged) {
-                    controler.ouvrirBDD(pathBDD);
+                    if (controler != null) {
+                        controler.ouvrirBDD(pathBDD);
+                    }
                 }
                 if (!bddChanged) {
-                    controler.actualiserTout();
+                    if (controler != null) {
+                        controler.actualiserTout();
+                    }
                 }
             }
         }

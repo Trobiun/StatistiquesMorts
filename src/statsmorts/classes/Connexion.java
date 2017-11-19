@@ -112,9 +112,9 @@ public class Connexion {
         if (requete.toUpperCase().startsWith("SELECT")) {
             try {
                 PreparedStatement prepared = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-
+                
                 preparedSetParameters(prepared, args);
-
+                
                 return prepared.executeQuery();
             } catch (SQLException ex) {
                 Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);

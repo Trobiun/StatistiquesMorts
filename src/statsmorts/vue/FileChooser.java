@@ -36,7 +36,7 @@ public class FileChooser extends JPanel{
         super(new BorderLayout(5,5));
         this.typeDialog = typeDialog;
         
-        init(text, mode);
+        init(text,mode);
         
         setBorder(new TitledBorder(BorderFactory.createEmptyBorder(), title));
         

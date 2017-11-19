@@ -33,9 +33,6 @@ public class BDDOptions extends JPanel {
     private JPanel panelFichier;
     private JPanel panelServeur;
     private JPanel panelType;
-    private JPanel panelNommage;
-    private JPanel panelResolutions;
-    private JPanel panelDossiers;
     
     private ButtonGroup groupTypeDatabase;
     private JRadioButton radioFichier;
@@ -50,7 +47,7 @@ public class BDDOptions extends JPanel {
     
     //CONSTRUCTEUR
     public BDDOptions(Preferences prefs) {
-        super(new GridLayout(2,1));
+        super(new BorderLayout());
         
         preferences = prefs;
         serveurOptions = new ServeurOptions(preferences,false);
@@ -116,18 +113,14 @@ public class BDDOptions extends JPanel {
         
         panelType = new JPanel(new GridLayout(3,1));
         panelType.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),"Type"));
-        
-        panelNommage = new JPanel(new BorderLayout());
-        panelNommage.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),"Nommage des épisodes"));
-        
-        panelResolutions = new JPanel(new BorderLayout());
-        panelResolutions.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),"Résolution par défaut"));
-        
-        panelDossiers = new JPanel(new GridLayout(3,1,10,20));
-        panelDossiers.setBorder(new TitledBorder("Dossiers"));
     }
     private void initFileChooser() {
-        fileChooser = new FileChooser("", preferences.getBDDFichier(), JFileChooser.FILES_ONLY, JFileChooser.OPEN_DIALOG);
+        if(preferences.getBDDFichier() != null) {
+            fileChooser = new FileChooser("", preferences.getBDDFichier(), JFileChooser.FILES_ONLY, JFileChooser.OPEN_DIALOG);
+        }
+        else {
+            fileChooser = new FileChooser("", "", JFileChooser.FILES_ONLY, JFileChooser.OPEN_DIALOG);
+        }
         
         fileChooser.setFilter(new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3"));
     }
@@ -173,23 +166,10 @@ public class BDDOptions extends JPanel {
         
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         panelBaseDonnees.add(panelServeur,gbc);
         
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.gridheight = 1;
-        panelBaseDonnees.add(panelNommage,gbc);
-        
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.gridheight = GridBagConstraints.REMAINDER;
-        panelBaseDonnees.add(panelResolutions,gbc);
-        
         add(panelBaseDonnees);
-        add(panelDossiers);
     }
     
     

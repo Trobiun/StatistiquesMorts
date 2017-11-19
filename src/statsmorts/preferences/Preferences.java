@@ -131,12 +131,18 @@ public class Preferences {
         
         Section bdd = ini.add("Base de donnees");
         bdd.add("type", "Fichier");
-        bdd.add("fichier", "");
+        bdd.add("bdd_fichier", "");
         bdd.add("type_serveur", "MySQL");
         bdd.add("adresse","localhost");
         bdd.add("port","");
         bdd.add("bdd_serveur","");
         bdd.add("utilisateur",System.getProperty("user.name"));
+        
+        try {
+            ini.store();
+        } catch (IOException ex) {
+            Logger.getLogger(Preferences.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         PreferencesDialog prefsDialog = new PreferencesDialog(null, "Initialisation des Préferences", true, null, this);
         prefsDialog.showDialog();
