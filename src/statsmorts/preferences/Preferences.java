@@ -38,6 +38,7 @@ public class Preferences {
         try {
             if (System.getProperty("os.name").startsWith("Windows")) {
                 ini = new Wini(this.filePreferences);
+                
             }
             else {
                 ini = new Ini(this.filePreferences);

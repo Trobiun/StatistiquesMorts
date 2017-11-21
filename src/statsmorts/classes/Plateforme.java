@@ -35,7 +35,7 @@ public class Plateforme {
     
     @Override
     public String toString() {
-        return "Plateforme : " + nom;
+        return nom;
     }
     
     //MUTATEURS

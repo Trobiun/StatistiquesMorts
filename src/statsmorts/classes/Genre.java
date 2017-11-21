@@ -5,14 +5,19 @@
  */
 package statsmorts.classes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
  * @author Robin
  */
-public class Type {
+public class Genre implements FillDataset {
     
     //ATTRIBUTS
     private final long id;
@@ -21,7 +26,7 @@ public class Type {
     
     
     //CONSTRUCTEURS
-    public Type(long id, String nom) {
+    public Genre(long id, String nom) {
         this.id = id;
         this.nom = nom;
         this.jeux = new HashMap();
@@ -35,13 +40,30 @@ public class Type {
     
     @Override
     public String toString() {
-        return "Type : " + nom;
+        return nom;
     }
     
     
     //MUTATEURS
     public void putJeu(Jeu jeu) {
         jeux.put(jeu.getID(),jeu);
+    }
+    
+    
+    //INTERFACE FILLDATASET
+    @Override
+    public ArrayList<Live> getLivesList() {
+        ArrayList<Live> livesList = new ArrayList();
+        Set<Entry<Long,Jeu>> setJeux = jeux.entrySet();
+        for (Entry<Long,Jeu> entryJeu : setJeux) {
+            livesList.addAll(entryJeu.getValue().getLivesList());
+        }
+        return livesList;
+    }
+    
+    @Override
+    public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
+        
     }
     
 }

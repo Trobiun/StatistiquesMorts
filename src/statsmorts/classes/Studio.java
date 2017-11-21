@@ -5,14 +5,19 @@
  */
 package statsmorts.classes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
  * @author Robin
  */
-public class Studio {
+public class Studio implements FillDataset {
     
     //ATTRIBUTS
     private final long id;
@@ -41,6 +46,23 @@ public class Studio {
     //MUTATEURS
     public void putJeu(Jeu jeu) {
         jeux.putIfAbsent(jeu.getID(),jeu);
+    }
+    
+    
+    //FILL DATASET
+    @Override
+    public ArrayList<Live> getLivesList() {
+        ArrayList<Live> livesList = new ArrayList();
+        Set<Entry<Long,Jeu>> setJeux = jeux.entrySet();
+        for (Entry<Long,Jeu> entryJeu : setJeux) {
+            livesList.addAll(entryJeu.getValue().getLivesList());
+        }
+        return livesList;
+    }
+    
+    @Override
+    public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
+        
     }
     
 }

@@ -11,8 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +22,7 @@ public class BDD {
     
     //ATTRIBUTS
     private Map<Long,Plateforme> plateformes;
-    private Map<Long,Type> types;
+    private Map<Long,Genre> genres;
     private Map<Long,Studio> studios;
     private Map<Long,Jeu> jeux;
     private Map<Long,Run> runs;
@@ -45,8 +43,8 @@ public class BDD {
         return plateformes;
     }
     
-    public Map<Long,Type> getTypes() {
-        return types;
+    public Map<Long,Genre> getGenres() {
+        return genres;
     }
     
     public Map<Long,Studio> getStudios() {
@@ -88,7 +86,7 @@ public class BDD {
     }
     private void initAll() {
         plateformes = initMap(plateformes);
-        types = initMap(types);
+        genres = initMap(genres);
         studios = initMap(studios);
         jeux = initMap(jeux);
         runs = initMap(runs);
@@ -107,10 +105,10 @@ public class BDD {
     
     public void actualiserBDD(Connexion connexion) throws SQLException {
         String requetePlateformes = "SELECT * FROM Plateformes";
-        String requeteTypes = "SELECT * FROM Types";
+        String requeteGenres = "SELECT * FROM Genres";
         String requeteStudios = "SELECT * FROM Studios";
         String requeteJeuPlateforme = "SELECT * FROM JeuPlateforme";
-        String requeteJeuType = "SELECT * FROM JeuType";
+        String requeteJeuGenre = "SELECT * FROM JeuGenre";
         String requeteJeuStudio = "SELECT * FROM JeuStudio";
         String requeteVueGlobale = "SELECT * FROM VueGlobale";
         
@@ -125,15 +123,15 @@ public class BDD {
             plateformes.put(idPlateforme,plateforme);
         }
         
-        long idType;
-        String nomType;
-        Type type;
-        ResultSet resultsTypes = connexion.executerRequete(requeteTypes);
-        while (resultsTypes.next()) {
-            idType = resultsTypes.getLong("typ_id");
-            nomType = resultsTypes.getString("typ_Nom");
-            type = new Type(idType,nomType);
-            types.put(idType,type);
+        long idGenre;
+        String nomGenre;
+        Genre genre;
+        ResultSet resultsGenres = connexion.executerRequete(requeteGenres);
+        while (resultsGenres.next()) {
+            idGenre = resultsGenres.getLong("gen_id");
+            nomGenre = resultsGenres.getString("gen_Nom");
+            genre = new Genre(idGenre,nomGenre);
+            genres.put(idGenre,genre);
         }
         
         long idStudio;
@@ -172,6 +170,7 @@ public class BDD {
                 run = new Run(idRun,titreRun);
                 runs.put(idRun,run);
                 jeu.putRun(run);
+                run.setJeu(jeu);
             }
             else {
                 run = runs.get(idRun);
@@ -185,6 +184,7 @@ public class BDD {
                 live = new Live(idLive,dateDebut,dateFin,morts);
                 lives.put(idLive,live);
                 run.putLive(live);
+                live.setRun(run);
             }
             else {
                 live = lives.get(idLive);
@@ -201,14 +201,14 @@ public class BDD {
             jeu.putPlateforme(plateforme);
         }
         
-        ResultSet resultsJeuType = connexion.executerRequete(requeteJeuType);
-        while (resultsJeuType.next()) {
-            idType = resultsJeuType.getLong("jt_idType");
-            idJeu = resultsJeuType.getLong("jt_idJeu");
-            type = types.get(idType);
+        ResultSet resultsJeuGenre = connexion.executerRequete(requeteJeuGenre);
+        while (resultsJeuGenre.next()) {
+            idGenre = resultsJeuGenre.getLong("jt_idGenre");
+            idJeu = resultsJeuGenre.getLong("jt_idJeu");
+            genre = genres.get(idGenre);
             jeu = jeux.get(idJeu);
-            type.putJeu(jeu);
-            jeu.putType(type);
+            genre.putJeu(jeu);
+            jeu.putGenre(genre);
         }
         
         ResultSet resultsJeuStudio = connexion.executerRequete(requeteJeuStudio);
@@ -241,9 +241,9 @@ public class BDD {
             String requete1 = "CREATE TABLE Plateformes ("
                                                       + "pla_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                                       + "pla_Nom TEXT)";
-            String requete2 = "CREATE TABLE Types ("
-                                                + "typ_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                                + "typ_Nom TEXT)";
+            String requete2 = "CREATE TABLE Genres ("
+                                                + "gen_id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                                + "gen_Nom TEXT)";
             String requete3 = "CREATE TABLE Studios ("
                                                  + "stu_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                                  + "stu_Nom TEXT)";
@@ -255,14 +255,14 @@ public class BDD {
                                                        + "jp_idJeu INTEGER REFERENCES Jeux(jeu_id),"
                                                        + "jp_idPlateforme INTEGER REFERENCES Plateforme(pla_id),"
                                                        + "PRIMARY KEY (jp_idJeu,jp_idPlateforme))";
-            String requete6 = "CREATE TABLE JeuType("
+            String requete6 = "CREATE TABLE JeuGenre("
                                                  + "jt_idJeu INTEGER REFERENCES Jeux(jeu_id),"
-                                                 + "jt_idType INTEGER REFERENCES Types(typ_id),"
-                                                 + "PRIMARY KEY (jt_idJeu,jt_idType))";
+                                                 + "jt_idGenre INTEGER REFERENCES Genres(gen_id),"
+                                                 + "PRIMARY KEY (jt_idJeu,jt_idGenre))";
             String requete7 = "CREATE TABLE JeuStudio("
                                                    + "js_idJeu INTEGER REFERENCES Jeux(jeu_id),"
-                                                   + "js_idType INTEGER REFERENCES Types(typ_id),"
-                                                   + "PRIMARY KEY (js_idJeu,js_idType))";
+                                                   + "js_idStudio INTEGER REFERENCES Studios(stu_id),"
+                                                   + "PRIMARY KEY (js_idJeu,js_idStudio))";
             String requete8 = "CREATE TABLE Runs("
                                              + "run_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                              + "run_idJeu INTEGER REFERENCES Jeux(jeu_id),"

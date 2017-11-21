@@ -7,25 +7,15 @@ package statsmorts;
 
 import java.io.File;
 import java.io.IOException;
-import statsmorts.classes.Connexion;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
 import statsmorts.classes.TypeDatabase;
-import statsmorts.modele.Modele;
+import statsmorts.controler.StatsMortsControler;
+import statsmorts.modele.StatsMortsModele;
 import statsmorts.preferences.Preferences;
 import statsmorts.preferences.ServeurOptions;
+import statsmorts.vue.Fenetre;
 
 /**
  *
@@ -48,7 +38,7 @@ public class Main {
         
         System.out.println("Modèle : ");
         long startModele = System.currentTimeMillis();
-        Modele modele = new Modele(preferences);
+        StatsMortsModele modele = new StatsMortsModele(preferences);
         String type = preferences.getType();
         if (type.equals("Fichier")) {
             modele.connecter(preferences.getBDDFichier());
@@ -70,71 +60,74 @@ public class Main {
                 System.exit(0);
             }
         }
-        modele.actualiser();
-        
         long endModele= System.currentTimeMillis();
         System.out.println("    Total: " + (endModele - startModele) + " ms");
         
+        StatsMortsControler controler = new StatsMortsControler(modele);
         
-        Connexion connexion = new Connexion();
-        connexion.connecter(preferences.getBDDFichier());
+        Fenetre fenetre = new Fenetre("Test", controler, preferences);
         
-        String titre = "Darkwood";
-//        String studio = "Acid Wizard Studio";
-        String requete = "SELECT * FROM VueGlobale WHERE jeu_Titre = ? ORDER BY liv_DateDebut ASC";
-//        requete = "SELECT * FROM VueGlobale WHERE stu_Nom = ? ORDER BY liv_DateDebut ASC";
-        ResultSet rs = connexion.executerPreparedSelect(requete,titre);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-        DefaultCategoryDataset datasetMPD = new DefaultCategoryDataset();
-        float moyenne, sommeMPD = 0, sommeHeures = 0, sommeMoyennes = 0;
-        int count = 0, sommeMorts = 0;
-        long sommeMinutes = 0;
-        while (rs.next()) {
-            String dateDebutString = rs.getString("liv_DateDebut");
-            String dateFinString = rs.getString("liv_DateFin");
-            int morts = rs.getInt("liv_Morts");
-            //calculs heures + minutes
-            if(dateDebutString == null) {
-                continue;
-            }
-            Date dateDebut = df.parse(dateDebutString);
-            Date dateFin = df.parse(dateFinString);
-            long diff = dateFin.getTime() - dateDebut.getTime();
-            long heuresLong = TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS);
-            long minutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
-            float heures = (float)heuresLong + (float)(minutes % 60) / (float)60;
-            
-            float mpd = heures / (float)(morts + 1);
-            count++;
-            sommeMorts += morts;
-            sommeHeures += heures;
-            sommeMinutes += minutes;
-            sommeMPD += mpd;
-            moyenne = sommeMPD / count;
-            sommeMoyennes += moyenne;
-            
-            datasetMPD.addValue(morts, "Morts", dateDebut);
-            datasetMPD.addValue(heures, "Durée du live (heures)", dateDebut);
-            datasetMPD.addValue(mpd, "Durée de vie moyenne", dateDebut);
-            datasetMPD.addValue(moyenne, "Moyenne des durées de vie moyennes", dateDebut);
-        }
+        modele.setObserver(fenetre);
+        modele.actualiser();
         
-        float totalMPD = (float)sommeHeures / (float)(sommeMorts + 1);
-        moyenne = sommeMoyennes / (float)count;
-        datasetMPD.addValue(sommeMorts, "Morts", "Total");
-        datasetMPD.addValue(totalMPD, "Durée de vie moyenne", "Total");
-        datasetMPD.addValue(sommeHeures, "Durée du live (heures)", "Total");
-        datasetMPD.addValue(moyenne, "Moyenne des durées de vie moyennes", "Total");
-        
-        JFreeChart chart = ChartFactory.createLineChart("Morts Lives " + titre, "Date live", "", datasetMPD, PlotOrientation.VERTICAL, true, true, false);
-        
-        LineAndShapeRenderer renderer = (LineAndShapeRenderer)chart.getCategoryPlot().getRenderer();
-        renderer.setBaseShapesVisible(true);
-        
-        ChartFrame frame = new ChartFrame("Morts sur " + titre,chart);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        Fenetre fenetre = new Fenetre("Test");
+//        Connexion connexion = new Connexion();
+//        connexion.connecter(preferences.getBDDFichier());
+//        
+//        String titre = "Darkwood";
+//        String requete = "SELECT * FROM VueGlobale WHERE jeu_Titre = ? ORDER BY liv_DateDebut ASC";
+//        ResultSet rs = connexion.executerPreparedSelect(requete,titre);
+//        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+//        DefaultCategoryDataset datasetMPD = new DefaultCategoryDataset();
+//        float moyenne, sommeMPD = 0, sommeHeures = 0, sommeMoyennes = 0;
+//        int count = 0, sommeMorts = 0;
+//        long sommeMinutes = 0;
+//        while (rs.next()) {
+//            String dateDebutString = rs.getString("liv_DateDebut");
+//            String dateFinString = rs.getString("liv_DateFin");
+//            int morts = rs.getInt("liv_Morts");
+//            //calculs heures + minutes
+//            if(dateDebutString == null) {
+//                continue;
+//            }
+//            Date dateDebut = df.parse(dateDebutString);
+//            Date dateFin = df.parse(dateFinString);
+//            long diff = dateFin.getTime() - dateDebut.getTime();
+//            long heuresLong = TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS);
+//            long minutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+//            float heures = (float)heuresLong + (float)(minutes % 60) / (float)60;
+//            
+//            float mpd = heures / (float)(morts + 1);
+//            count++;
+//            sommeMorts += morts;
+//            sommeHeures += heures;
+//            sommeMinutes += minutes;
+//            sommeMPD += mpd;
+//            moyenne = sommeMPD / count;
+//            sommeMoyennes += moyenne;
+//            
+//            datasetMPD.addValue(morts, "Morts", dateDebut);
+//            datasetMPD.addValue(heures, "Durée du live (heures)", dateDebut);
+//            datasetMPD.addValue(mpd, "Durée de vie moyenne", dateDebut);
+//            datasetMPD.addValue(moyenne, "Moyenne des durées de vie moyennes", dateDebut);
+//        }
+//        
+//        float totalMPD = (float)sommeHeures / (float)(sommeMorts + 1);
+//        moyenne = sommeMoyennes / (float)count;
+//        datasetMPD.addValue(sommeMorts, "Morts", "Total");
+//        datasetMPD.addValue(totalMPD, "Durée de vie moyenne", "Total");
+//        datasetMPD.addValue(sommeHeures, "Durée du live (heures)", "Total");
+//        datasetMPD.addValue(moyenne, "Moyenne des durées de vie moyennes", "Total");
+//        
+//        JFreeChart chart = ChartFactory.createLineChart("Morts Lives " + titre, "Date live", "", datasetMPD, PlotOrientation.VERTICAL, true, true, false);
+//        
+//        LineAndShapeRenderer renderer = (LineAndShapeRenderer)chart.getCategoryPlot().getRenderer();
+//        renderer.setBaseShapesVisible(true);
+//        
+//        ChartFrame frame = new ChartFrame("Morts sur " + titre,chart);
+//        frame.pack();
+//        frame.setVisible(true);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
 }

@@ -149,7 +149,7 @@ public class PreferencesDialog extends JDialog {
                 }
                 if (!bddChanged) {
                     if (controler != null) {
-                        controler.actualiserTout();
+                        controler.actualiser();
                     }
                 }
             }
