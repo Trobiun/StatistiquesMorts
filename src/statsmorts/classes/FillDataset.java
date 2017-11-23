@@ -15,6 +15,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public interface FillDataset {
     
+    public String getTitre();
+    public String getTitreDataset();
     public ArrayList<Live> getLivesList();
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total);
     

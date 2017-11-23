@@ -17,7 +17,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *
  * @author Robin
  */
-public class Genre implements FillDataset {
+public class Genre implements FillDataset, Comparable {
     
     //ATTRIBUTS
     private final long id;
@@ -52,6 +52,16 @@ public class Genre implements FillDataset {
     
     //INTERFACE FILLDATASET
     @Override
+    public String getTitre() {
+        return nom;
+    }
+    
+    @Override
+    public String getTitreDataset() {
+        return nom;
+    }
+    
+    @Override
     public ArrayList<Live> getLivesList() {
         ArrayList<Live> livesList = new ArrayList();
         Set<Entry<Long,Jeu>> setJeux = jeux.entrySet();
@@ -64,6 +74,17 @@ public class Genre implements FillDataset {
     @Override
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
         
+    }
+    
+    //INTERFACE COMPARABLE
+    @Override
+    public int compareTo(Object o) {
+         if (o instanceof Genre) {
+            return this.nom.compareTo(((Genre)o).nom);
+        }
+        else {
+            return this.nom.compareTo(o.toString());
+        }
     }
     
 }

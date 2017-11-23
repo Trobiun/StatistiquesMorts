@@ -18,10 +18,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *
  * @author Robin
  */
-public class Live implements FillDataset {
+public class Live implements FillDataset, Comparable {
     
     //ATTRIBUTS STATIC
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+    public static final SimpleDateFormat DATE_FORMAT_SQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+    public static final SimpleDateFormat DATE_FORMAT_SHORT = new SimpleDateFormat("dd/MM/yyyy");
+    public static final SimpleDateFormat DATE_FORMAT_LONG = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     
     //ATTRIBUTS
     private final long id;
@@ -35,8 +37,8 @@ public class Live implements FillDataset {
     public Live(long id, String dateDebutString, String dateFinString, int morts) {
         this.id = id;
         try {
-            this.dateDebut = DATE_FORMAT.parse(dateDebutString);
-            this.dateFin = DATE_FORMAT.parse(dateFinString);
+            this.dateDebut = DATE_FORMAT_SQL.parse(dateDebutString);
+            this.dateFin = DATE_FORMAT_SQL.parse(dateFinString);
         } catch (ParseException ex) {
             this.dateDebut = new Date(0);
             this.dateFin = new Date(0);
@@ -93,13 +95,11 @@ public class Live implements FillDataset {
         String res = "Date début : " + dateDebut.toString() + "\n"
                 + "Date fin : " + dateFin.toString() + "\n"
                 + "Durée : " + this.getDuration(TimeUnit.HOURS) + " heures\n"
-                + "Durée : " + this.getDuration(TimeUnit.MINUTES) + " minutes\n"
-                + "Morts  : " + morts + "\n"
+                + "Durée : " + this.getDuration(TimeUnit.MINUTES) + " minutes\n\n"
+                + "Morts  : " + morts + "\n\n"
                 + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.HOURS) + " heures\n"
                 + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.MINUTES) + " minutes\n";
         return res;
-//        return dateDebut.toString();
-//        return "Live : durée = " + getDuration(TimeUnit.MINUTES) + " min, morts : " + morts + ", Temps par vie : " + getDuration(TimeUnit.MINUTES);
     }
     
     
@@ -111,6 +111,17 @@ public class Live implements FillDataset {
     
     //INTERFACE FILLDATASET
     @Override
+    public String getTitre() {
+        return DATE_FORMAT_LONG.format(dateDebut) + " - " + DATE_FORMAT_LONG.format(dateFin);
+    }
+    
+    @Override
+    public String getTitreDataset() {
+        String date = DATE_FORMAT_SHORT.format(dateDebut);
+        return this.run.getTitreDataset() + " le " + date;
+    }
+    
+    @Override
     public ArrayList<Live> getLivesList() {
         ArrayList<Live> lives = new ArrayList();
         lives.add(this);
@@ -121,10 +132,19 @@ public class Live implements FillDataset {
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
         float temps  = this.getDuration(unit);
         float dureeVie = this.getDureeVieMoyenne(unit);
-        
         dataset.addValue(morts, "Morts", dateDebut);
         dataset.addValue(temps, "Durée du live", dateDebut);
         dataset.addValue(dureeVie, "Durée de vie moyenne", dateDebut);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+         if (o instanceof Live) {
+            return this.dateDebut.compareTo(((Live)o).dateDebut);
+        }
+        else {
+            return this.toString().compareTo(o.toString());
+        }
     }
     
 }

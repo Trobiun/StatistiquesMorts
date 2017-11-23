@@ -5,6 +5,9 @@
  */
 package statsmorts.controler;
 
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import statsmorts.classes.FillDataset;
 import statsmorts.modele.StatsMortsModele;
 
 /**
@@ -31,11 +34,13 @@ public class StatsMortsControler {
         modele.actualiser();
     }
     
-    public void setRun(long idRun) {
-        modele.setRun(idRun);
+    public void setTimeUnit(TimeUnit unit) {
+        modele.setTimeUnit(unit);
     }
     
-    
+    public void createDataset(String titre, ArrayList<FillDataset> objets) {
+        modele.createDataset(titre, objets);
+    }
     
     public void creerBDD(String pathBDD) {
         String lowerCase = pathBDD.toLowerCase();

@@ -16,9 +16,10 @@ import statsmorts.classes.Run;
  */
 public interface Observer {
     
-    public void updateJeu(Jeu jeu);
-    public void updateRun(long idJeu, Run run);
-    public void updateLive(long idJeu, long idRun, Live live);
-    public void updateDataset(DefaultCategoryDataset dataset);
+    public void clear();
+    public void addJeu(Jeu jeu);
+    public void addRun(long idJeu, Run run);
+    public void addLive(long idJeu, long idRun, Live live);
+    public void updateDataset(String titre, DefaultCategoryDataset dataset);
     
 }

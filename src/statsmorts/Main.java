@@ -6,9 +6,6 @@
 package statsmorts;
 
 import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.text.ParseException;
 import javax.swing.JOptionPane;
 import statsmorts.classes.TypeDatabase;
 import statsmorts.controler.StatsMortsControler;
@@ -26,7 +23,7 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws SQLException, ParseException, IOException {
+    public static void main(String[] args) {
         System.out.println("Préférences : ");
         long start = System.currentTimeMillis();
         File dossPrefs = new File(System.getProperty("user.home") + File.separator + ".StatsMorts");
@@ -63,12 +60,25 @@ public class Main {
         long endModele= System.currentTimeMillis();
         System.out.println("    Total: " + (endModele - startModele) + " ms");
         
+        System.out.println("Controler : ");
+        long startControler = System.currentTimeMillis();
         StatsMortsControler controler = new StatsMortsControler(modele);
+        long endControler = System.currentTimeMillis();
+        System.out.println("    Total : " + (endControler - startControler) + " ms");
         
+        System.out.println("Fenêtre : ");
+        long startFenetre = System.currentTimeMillis();
         Fenetre fenetre = new Fenetre("Test", controler, preferences);
+        long endFenetre = System.currentTimeMillis();
+        System.out.println("    Total : " + (endFenetre - startFenetre) + " ms");
         
+        System.out.println("Actualisation : ");
+        long startActu = System.currentTimeMillis();
         modele.setObserver(fenetre);
         modele.actualiser();
+        long end = System.currentTimeMillis();
+        System.out.println("    Total: " + (end - startActu) + " ms");
+        System.out.println("Total : " + (end - start) + " ms");
         
 //        Fenetre fenetre = new Fenetre("Test");
 //        Connexion connexion = new Connexion();

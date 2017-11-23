@@ -21,6 +21,6 @@ public interface Observable {
     public void notifyJeu(Jeu jeu);
     public void notifyRun(Run run);
     public void notifyLive(Live live);
-    public void notifyDataset(DefaultCategoryDataset dataset);
+    public void notifyDataset(String titre, DefaultCategoryDataset dataset);
     
 }

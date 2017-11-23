@@ -49,7 +49,17 @@ public class Studio implements FillDataset {
     }
     
     
-    //FILL DATASET
+    //INTERFACE FILLDATASET
+    @Override
+    public String getTitre() {
+        return nom;
+    }
+    
+    @Override
+    public String getTitreDataset() {
+        return nom;
+    }
+    
     @Override
     public ArrayList<Live> getLivesList() {
         ArrayList<Live> livesList = new ArrayList();

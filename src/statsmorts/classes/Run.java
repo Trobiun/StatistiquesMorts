@@ -18,7 +18,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *
  * @author Robin
  */
-public class Run implements FillDataset {
+public class Run implements FillDataset, Comparable {
     
     //ATTRIBUTS
     private final long id;
@@ -39,10 +39,6 @@ public class Run implements FillDataset {
     //ACCESSEURS
     public long getID() {
         return id;
-    }
-    
-    public String getTitre() {
-        return titre;
     }
     
     public Jeu getJeu() {
@@ -128,6 +124,16 @@ public class Run implements FillDataset {
     
     //INTERFACE FILLDATASET
     @Override
+    public String getTitre() {
+        return titre;
+    }
+    
+    @Override
+    public String getTitreDataset() {
+        return titre;
+    }
+    
+    @Override
     public ArrayList<Live> getLivesList() {
         ArrayList<Live> livesList = new ArrayList();
         Set<Entry<Long,Live>> setLives = this.lives.entrySet();
@@ -140,12 +146,7 @@ public class Run implements FillDataset {
     
     @Override
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
-        ArrayList<Live> livesList = new ArrayList();
-        Set<Entry<Long,Live>> setLives = this.lives.entrySet();
-        for (Entry<Long,Live> entryLive : setLives) {
-            Live live = entryLive.getValue();
-            livesList.add(live);
-        }
+        ArrayList<Live> livesList = this.getLivesList();
         Collections.sort(livesList, new LiveComparator());
         
         float moyenne = 0, sommeDureeVie = 0, sommeMoyennes = 0;
@@ -171,6 +172,16 @@ public class Run implements FillDataset {
             dataset.addValue(moyenne, "Moyenne des durées de vie moyennes", "Total");
         }
         
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof Run) {
+            return this.titre.compareTo(((Run) o).titre);
+        }
+        else {
+            return this.titre.compareTo(o.toString());
+        }
     }
     
 }

@@ -6,6 +6,7 @@
 package statsmorts.vue;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import statsmorts.classes.FillDataset;
 import statsmorts.classes.Jeu;
 
 /**
@@ -35,6 +36,7 @@ public class JeuTreeNode extends DefaultMutableTreeNode implements Informations 
         return jeu;
     }
     
+    
     //MUTATEURS
     
     
@@ -42,6 +44,11 @@ public class JeuTreeNode extends DefaultMutableTreeNode implements Informations 
     @Override
     public String getInformations() {
         return jeu.toString();
+    }
+
+    @Override
+    public FillDataset getObjectFillDataset() {
+        return jeu;
     }
     
 }

@@ -5,6 +5,8 @@
  */
 package statsmorts.vue;
 
+import statsmorts.classes.FillDataset;
+
 /**
  *
  * @author Robin
@@ -12,5 +14,6 @@ package statsmorts.vue;
 public interface Informations {
     
     public String getInformations();
+    public FillDataset getObjectFillDataset();
     
 }

@@ -21,6 +21,11 @@ import org.ini4j.Wini;
  */
 public class Preferences {
     
+    //ATTRIBUTS STATIC
+    public static final String TYPE_AUCUN_STRING = "aucun";
+    public static final String TYPE_STUDIO_STRING = "studio";
+    public static final String TYPE_GENRE_STRING = "genre";
+    
     //ATTRIBUTS
     private Ini ini;
     private File filePreferences;
@@ -85,6 +90,22 @@ public class Preferences {
     public String getUtilisateur() {
         return ini.fetch("Base de donnees", "utilisateur");
     }
+    public boolean getAffichagePlateforme() {
+        return Boolean.parseBoolean(ini.fetch("Affichage", "affichage_plateforme"));
+    }
+    public String getAffichageStudioGenre() {
+        return ini.fetch("Affichage", "affichage_studio_ou_genre");
+    }
+    public boolean getAffichageJeux() {
+        return Boolean.parseBoolean(ini.fetch("Affichage", "affichage_jeux"));
+    }
+    public boolean getAffichageRuns() {
+        return Boolean.parseBoolean(ini.fetch("Affichage", "affichage_runs"));
+    }
+    public boolean getAffichageLives() {
+        return Boolean.parseBoolean(ini.fetch("Affichage", "affichage_lives"));
+    }
+    
     
     //MUTATEURS
     public void load() {
@@ -116,6 +137,22 @@ public class Preferences {
     public void setUtilisateur(String user) {
         ini.put("Base de donnees", "utilisateur", user);
     }
+    public void setAffichagePlateforme(String afficherPlateformes) {
+        ini.put("Affichage", "affichage_plateformes", afficherPlateformes);
+    }
+    public void setAffichageStudioGenre(String studiosGenres) {
+        ini.put("Affichage", "affichage_studios_ou_genres", studiosGenres);
+    }
+    public void setAffichageJeu(String afficherJeux) {
+        ini.put("Affichage", "affichage_runs", afficherJeux);
+    }
+    public void setAffichageRun(String afficherRuns) {
+        ini.put("Affichage", "affichage_jeux", afficherRuns);
+    }
+    public void setAffichageLive(String afficherLives) {
+        ini.put("Affichage", "affichage_lives", afficherLives);
+    }
+    
     
     public void savePreferences() {
         try {
@@ -138,6 +175,13 @@ public class Preferences {
         bdd.add("port","");
         bdd.add("bdd_serveur","");
         bdd.add("utilisateur",System.getProperty("user.name"));
+        
+        Section affichage = ini.add("Affichage");
+        affichage.add("affichage_plateforme","false");
+        affichage.add("affichage_studio_ou_genre","aucun");
+        affichage.add("affichage_jeu","true");
+        affichage.add("affichage_run","true");
+        affichage.add("affichage_live","true");
         
         try {
             ini.store();
