@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -70,10 +69,18 @@ import statsmorts.preferences.PreferencesDialog;
 public class Fenetre extends JFrame implements Observer {
     
     //CONSTANTES
+    private static final String FICHIER = "Fichier";
     private static final String NOUVEAU = "Nouveau";
     private static final String CREER = "Créer";
     private static final String OUVRIR = "Ouvrir";
+    private static final String ANNULER = "Annuler";
+    private static final String GESTION = "Gestion";
     private static final String QUITTER = "Quitter";
+    private static final String OUTILS = "Outils";
+    private static final String PREFERENCES = "Préférences";
+    private static final String AFFICHAGE = "Affichage";
+    private static final String RACINE = "Racine";
+    private static final String AFFICHER = "Afficher";
     private static final String AJOUTER = "Ajouter";
     private static final String MODIFIER = "Modifier";
     private static final String SUPPRIMER = "Supprimer";
@@ -89,6 +96,12 @@ public class Fenetre extends JFrame implements Observer {
     private static final String RUN = "Run";
     private static final String LIVES = "Lives";
     private static final String LIVE = "Live";
+    private static final String TEMPS = "Temps";
+    private static final String HEURES = "Heures";
+    private static final String MINUTES = "Minutes";
+    private static final String EMPTY = "";
+    private static final String BDD = "Base de données";
+    private static final String EXTENSIONS_BDD = "(.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)";
     
     //ATTRIBUTS
     //SPLIT PANES
@@ -195,6 +208,11 @@ public class Fenetre extends JFrame implements Observer {
     private TimeUnit unit;
     private TypeRacine typeRacine;
     
+    //AFFICHAGE JEUX, RUNS et LIVES
+    private boolean affichageJeuxBool;
+    private boolean affichageRunsBool;
+    private boolean affichageLivesBool;
+    
     //CLASSES PERSO
     private final PlateformePanel plateformePanel;
     private final Preferences preferences;
@@ -228,7 +246,7 @@ public class Fenetre extends JFrame implements Observer {
         this.typeRacine = preferences.getAffichageRacine();
         this.controler = controler;
         this.preferences = preferences;
-        this.prefsDialog = new PreferencesDialog(this, "Préférences", false, this.controler, this.preferences);
+        this.prefsDialog = new PreferencesDialog(this, PREFERENCES, false, this.controler, this.preferences);
         this.plateformePanel = new PlateformePanel(this.controler);
         
         initAll();
@@ -297,31 +315,31 @@ public class Fenetre extends JFrame implements Observer {
         supprimerSousMenu.add(supprimerJeuMenuItem);
         supprimerSousMenu.add(supprimerRunMenuItem);
         supprimerSousMenu.add(supprimerLiveMenuItem);
-
+        
         //AJOUT DU MENU ITEM DU MENU OUTILS
         outilsMenu.add(preferencesMenuItem);
-
+        
         //AJOUT DES MENU ITEMS DU MENU AFFICHAGE
         //AJOUT DES MENU ITEMS DE L'AFFICHAGE RACINE
         affichageRacineSousMenu.add(plateformesAffichageRacineMenuItem);
         affichageRacineSousMenu.add(genresAffichageRacineMenuItem);
         affichageRacineSousMenu.add(studiosAffichageRacineMenuItem);
         affichageRacineSousMenu.add(jeuxAffichageRacineMenuItem);
-
+        
         //AJOUT DES MENU ITEMS DE L'AFFICHAGE TREE NODES
         affichageTreeNodesSousMenu.add(jeuxAffichageTreeNodesMenuItem);
         affichageTreeNodesSousMenu.add(runsAffichageTreeNodesMenuItem);
         affichageTreeNodesSousMenu.add(livesAffichageTreeNodesMenuItem);
-
+        
         //AJOUT DES MENU ITEMS DE L'AFFICHAGE TEMPS
         affichageTempsSousMenu.add(heuresAffichageTempsMenuItem);
         affichageTempsSousMenu.add(minutesAffichageTempsMenuItem);
-
+        
         //AJOUT DES SOUS MENU D'AFFICHAGE
         affichageMenu.add(affichageRacineSousMenu);
         affichageMenu.add(affichageTreeNodesSousMenu);
         affichageMenu.add(affichageTempsSousMenu);
-
+        
         //AJOUT DES MENUS
         menuBar.add(fichierMenu);
         menuBar.add(outilsMenu);
@@ -396,7 +414,7 @@ public class Fenetre extends JFrame implements Observer {
         MenuListener listener = new MenuListener();
         
         //MENU FICHIER
-        fichierMenu = new JMenu("Fichier");
+        fichierMenu = new JMenu(FICHIER);
         
         nouveauMenuItem = new JMenuItem(NOUVEAU);
         nouveauMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK));
@@ -406,12 +424,12 @@ public class Fenetre extends JFrame implements Observer {
         ouvrirMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK));
         ouvrirMenuItem.addActionListener(listener);
         
-        quitterMenuItem = new JMenuItem("Quitter");
+        quitterMenuItem = new JMenuItem(QUITTER);
         quitterMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
         quitterMenuItem.addActionListener(listener);
         
         //SOUS MENU GESTION BASE DE DONNEES
-        gestionBaseDonnees = new JMenu("Gestion");
+        gestionBaseDonnees = new JMenu(GESTION);
         MenuGestionListener gestionListener = new MenuGestionListener();
         //SOUS MENU AJOUTER
         ajouterSousMenu = new JMenu(AJOUTER);
@@ -442,7 +460,7 @@ public class Fenetre extends JFrame implements Observer {
         modifierLiveMenuItem = new JMenuItem(LIVE);
         modifierLiveMenuItem.addActionListener(gestionListener);
         //SOUS MENU SUPPRIMER
-        supprimerSousMenu = new JMenu("Supprrimer");
+        supprimerSousMenu = new JMenu(SUPPRIMER);
         supprimerPlateformeMenuItem = new JMenuItem(PLATEFORME);
         supprimerPlateformeMenuItem.addActionListener(gestionListener);
         supprimerGenreMenuItem = new JMenuItem(GENRE);
@@ -457,16 +475,16 @@ public class Fenetre extends JFrame implements Observer {
         supprimerLiveMenuItem.addActionListener(gestionListener);
         
         //MENU OUTILS
-        outilsMenu = new JMenu("Outils");
+        outilsMenu = new JMenu(OUTILS);
         
-        preferencesMenuItem = new JMenuItem("Préférences");
+        preferencesMenuItem = new JMenuItem(PREFERENCES);
         preferencesMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK));
         preferencesMenuItem.addActionListener(listener);
         
         //MENU AFFICHAGE
-        affichageMenu = new JMenu("Affichage");
+        affichageMenu = new JMenu(AFFICHAGE);
         //SOUS MENU RACINE
-        affichageRacineSousMenu = new JMenu("Racine");
+        affichageRacineSousMenu = new JMenu(RACINE);
         AffichageRacineListener listenerRacine = new AffichageRacineListener();
         
         //RADIO BUTTONS RACINE
@@ -507,7 +525,7 @@ public class Fenetre extends JFrame implements Observer {
         }
         
         //SOUS MENU AFFICHAGE TREENODES
-        affichageTreeNodesSousMenu = new JMenu("Afficher");
+        affichageTreeNodesSousMenu = new JMenu(AFFICHER);
         AffichageTreeNodesListener listenerTreeNodes = new AffichageTreeNodesListener();
         //CHECKBOXES AFFICHAGE TREENODES
         jeuxAffichageTreeNodesMenuItem = new JCheckBoxMenuItem(JEUX);
@@ -523,12 +541,12 @@ public class Fenetre extends JFrame implements Observer {
         livesAffichageTreeNodesMenuItem.addItemListener(listenerTreeNodes);
         
         //SOUS MENU AFFICHAGE TEMPS
-        affichageTempsSousMenu = new JMenu("Temps");
+        affichageTempsSousMenu = new JMenu(TEMPS);
         AffichageTempsListener listenerTemps = new AffichageTempsListener();
         //RADIO BUTTONS TEMPS
-        heuresAffichageTempsMenuItem = new JRadioButtonMenuItem("Heures");
+        heuresAffichageTempsMenuItem = new JRadioButtonMenuItem(HEURES);
         heuresAffichageTempsMenuItem.addItemListener(listenerTemps);
-        minutesAffichageTempsMenuItem = new JRadioButtonMenuItem("Minutes");
+        minutesAffichageTempsMenuItem = new JRadioButtonMenuItem(MINUTES);
         minutesAffichageTempsMenuItem.addItemListener(listenerTemps);
         //BUTTONGROUP TEMPS
         tempsAffichageGroup = new ButtonGroup();
@@ -597,7 +615,7 @@ public class Fenetre extends JFrame implements Observer {
         }
         ((DefaultTreeModel) treeJeux.getModel()).reload(rootTree);
         panelGraph.setChart(null);
-        textPaneInfos.setText("");
+        textPaneInfos.setText(EMPTY);
     }
     
     @Override
@@ -696,7 +714,7 @@ public class Fenetre extends JFrame implements Observer {
     
     @Override
     public void addLive(long idRun, Live live) {
-        ArrayList<SortableTreeNode> arrayRun = mapRuns.getOrDefault(idRun, new ArrayList());
+        ArrayList<SortableTreeNode> arrayRun = mapRuns.getOrDefault(idRun,new ArrayList());
         for (SortableTreeNode nodeRun : arrayRun) {
             SortableTreeNode nodeLive = new SortableTreeNode(live, true);
             nodeRun.add(nodeLive);
@@ -709,8 +727,8 @@ public class Fenetre extends JFrame implements Observer {
     
     @Override
     public void updateDataset(String titre, DefaultCategoryDataset dataset) {
-        JFreeChart chart = ChartFactory.createLineChart("Morts lives " + titre, "Date live", "", dataset, PlotOrientation.VERTICAL, true, true, false);
-        chart.addSubtitle(new TextTitle(unit.equals(TimeUnit.HOURS) ? "Temps en heures" : "Temps en minutes"));
+        JFreeChart chart = ChartFactory.createLineChart("Morts lives " + titre, "Date live", EMPTY, dataset, PlotOrientation.VERTICAL, true, true, false);
+        chart.addSubtitle(new TextTitle(unit.equals(TimeUnit.HOURS) ? TEMPS + " en heures" : TEMPS +" en minutes"));
         LineAndShapeRenderer renderer = (LineAndShapeRenderer) chart.getCategoryPlot().getRenderer();
         renderer.setBaseShapesVisible(true);
         panelGraph.setChart(chart);
@@ -721,6 +739,7 @@ public class Fenetre extends JFrame implements Observer {
         plateformePanel.setNom(nomPlateforme);
     }
     
+    
     //MÉTHODES GRAPHIQUES
     private void ajouterPlateformeInputs() {
         plateformePanel.clearFields();
@@ -728,7 +747,7 @@ public class Fenetre extends JFrame implements Observer {
         JPanel nomPanel = plateformePanel.getNomPanel();
         inputs.add(nomPanel);
         JTextPane nomTextPane = plateformePanel.getNomTextPane();
-        String[] options = {AJOUTER, "Annuler"};
+        String[] options = {AJOUTER, ANNULER};
         int res = JOptionPane.showOptionDialog(this, inputs, "Ajouter plateforme", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
             
@@ -744,7 +763,7 @@ public class Fenetre extends JFrame implements Observer {
 //        inputs.add(plateformePanel);
         inputs.add(idPanel);
         inputs.add(nomPanel);
-        String[] options = {MODIFIER, "Annuler"};
+        String[] options = {MODIFIER, ANNULER};
         int res = JOptionPane.showOptionDialog(this, inputs, "Ajouter plateforme", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
             
@@ -769,13 +788,13 @@ public class Fenetre extends JFrame implements Observer {
                     dialogType = JFileChooser.OPEN_DIALOG;
                     message = OUVRIR;
                 }
-                FileChooser fileBDD = new FileChooser("Base de données", "", JFileChooser.FILES_ONLY, dialogType);
+                FileChooser fileBDD = new FileChooser(BDD, EMPTY, JFileChooser.FILES_ONLY, dialogType);
                 FileNameExtensionFilter fileFilter;
                 if (src.equals(nouveauMenuItem)) {
-                    fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)", "accdb", "mdb", "db", "sdb", "sqlite", "db2", "s2db", "sqlite2", "sl2", "db3", "s3db", "sqlite3", "sl3");
+                    fileFilter = new FileNameExtensionFilter(BDD + " " + EXTENSIONS_BDD, "accdb", "mdb", "db", "sdb", "sqlite", "db2", "s2db", "sqlite2", "sl2", "db3", "s3db", "sqlite3", "sl3");
                 }
                 else {
-                    fileFilter = new FileNameExtensionFilter("Base de données (.accdb,.mdb,.kexi,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)", "accdb", "mdb", "kexi", "db", "sdb", "sqlite", "db2", "s2db", "sqlite2", "sl2", "db3", "s3db", "sqlite3", "sl3");
+                    fileFilter = new FileNameExtensionFilter(BDD + " " + EXTENSIONS_BDD, "accdb", "mdb", "kexi", "db", "sdb", "sqlite", "db2", "s2db", "sqlite2", "sl2", "db3", "s3db", "sqlite3", "sl3");
                 }
                 fileBDD.setFilter(fileFilter);
                 int res = JOptionPane.showConfirmDialog(null, fileBDD, message + " la base de données", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -877,7 +896,7 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     class TreeListener implements TreeSelectionListener {
-
+        
         @Override
         public void valueChanged(TreeSelectionEvent e) {
             Object src = e.getSource();
@@ -886,7 +905,7 @@ public class Fenetre extends JFrame implements Observer {
                 paths = treeJeux.getSelectionPaths();
             }
             if (paths != null) {
-                String informations = "";
+                String informations = EMPTY;
                 ArrayList<FillDataset> nodes = new ArrayList();
                 String titreGraph = null;
                 if (paths.length > 1) {
@@ -917,7 +936,7 @@ public class Fenetre extends JFrame implements Observer {
                     }
                     else {
                         panelGraph.setChart(null);
-                        textPaneInfos.setText("");
+                        textPaneInfos.setText(EMPTY);
                         return;
                     }
                 }
@@ -936,16 +955,7 @@ public class Fenetre extends JFrame implements Observer {
             if (selected) {
                 Object item = e.getItem();
                 if (item.equals(plateformesAffichageRacineMenuItem)) {
-//                    rootTree = new SortableTreeNode(PLATEFORMES,false);
-//                    DefaultTreeModel model = (DefaultTreeModel)treeJeux.getModel();
-//                    SortableTreeNode root = (SortableTreeNode)model.getRoot();
-//                    model.setRoot(rootTree);
                     typeRacine = TypeRacine.PLATEFORMES;
-//                    Set<Entry<Long,SortableTreeNode>> setPlateformes = mapPlateformes.entrySet();
-//                    for (Entry<Long,SortableTreeNode> entryPlateforme : setPlateformes) {
-//                        rootTree.add(entryPlateforme.getValue());
-//                    }
-//                    controler.setRacine(TypeRacine.PLATEFORMES);
                 }
                 if (item.equals(genresAffichageRacineMenuItem)) {
                     typeRacine = TypeRacine.GENRES;
@@ -967,14 +977,15 @@ public class Fenetre extends JFrame implements Observer {
         @Override
         public void itemStateChanged(ItemEvent e) {
             Object item = e.getItem();
+            System.out.println("lol");
             if (item.equals(jeuxAffichageTreeNodesMenuItem)) {
-                
+                affichageJeuxBool = e.getStateChange() == ItemEvent.SELECTED;
             }
             if (item.equals(runsAffichageTreeNodesMenuItem)) {
-                
+                affichageRunsBool = e.getStateChange() == ItemEvent.SELECTED;
             }
             if (item.equals(livesAffichageTreeNodesMenuItem)) {
-                
+                affichageLivesBool = e.getStateChange() == ItemEvent.SELECTED;
             }
         }
         
