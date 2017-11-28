@@ -203,8 +203,8 @@ public class BDD {
         
         ResultSet resultsJeuGenre = connexion.executerRequete(requeteJeuGenre);
         while (resultsJeuGenre.next()) {
-            idGenre = resultsJeuGenre.getLong("jt_idGenre");
-            idJeu = resultsJeuGenre.getLong("jt_idJeu");
+            idGenre = resultsJeuGenre.getLong("jg_idGenre");
+            idJeu = resultsJeuGenre.getLong("jg_idJeu");
             genre = genres.get(idGenre);
             jeu = jeux.get(idJeu);
             genre.putJeu(jeu);

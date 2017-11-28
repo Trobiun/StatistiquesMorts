@@ -16,18 +16,30 @@ public class SortableTreeNode extends DefaultMutableTreeNode implements Informat
     
     //ATTRIBUTS
     private final FillDataset objet;
+    private final boolean isInformations;
+    
     
     //CONSTRUCTEUR
-    public SortableTreeNode(FillDataset userObject) {
+    public SortableTreeNode(FillDataset userObject, boolean isInformations) {
         super(userObject);
         this.objet = userObject;
+        this.isInformations = isInformations;
+    }
+    public SortableTreeNode(String title, boolean isInformations) {
+        super(title);
+        this.objet = null;
+        this.isInformations = isInformations;
     }
     
     
     //ACCESSEURS
+    public boolean isInformations() {
+        return isInformations;
+    }
+    
     @Override
     public String toString() {
-        return objet.getTitre();
+        return isInformations ? objet.getTitre() : super.toString();
     }
     
     
@@ -51,7 +63,7 @@ public class SortableTreeNode extends DefaultMutableTreeNode implements Informat
     }
 
     public void remove() {
-        SortableTreeNode parent = (SortableTreeNode)getParent();
+        SortableTreeNode parentNode = (SortableTreeNode)getParent();
         super.removeFromParent();
     }
     
@@ -77,7 +89,7 @@ public class SortableTreeNode extends DefaultMutableTreeNode implements Informat
     //INTERFACE INFORMATIONS
     @Override
     public String getInformations() {
-        return objet.toString();
+        return isInformations ? objet.toString() : "";
     }
     
     @Override

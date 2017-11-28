@@ -17,7 +17,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *
  * @author Robin
  */
-public class Studio implements FillDataset {
+public class Studio implements FillDataset, Comparable {
     
     //ATTRIBUTS
     private final long id;
@@ -73,6 +73,16 @@ public class Studio implements FillDataset {
     @Override
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
         
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof Studio) {
+            return this.nom.compareTo(((Studio)o).nom);
+        }
+        else {
+            return this.nom.compareTo(o.toString());
+        }
     }
     
 }

@@ -99,14 +99,15 @@ public class Run implements FillDataset, Comparable {
         int mortsTotales = getTotalMorts();
         float heures = getTotalDuration(TimeUnit.HOURS);
         float minutes = getTotalDuration(TimeUnit.MINUTES);
-       String res = "Nombre de lives : " + getNombreLives() + "\n"
-               + "Durée totale : " + getTotalDuration(TimeUnit.HOURS) + " heures\n"
-               + "Durée totale : " + getTotalDuration(TimeUnit.MINUTES) + " minutes\n\n"
-               + "Morts totales : " + mortsTotales + "\n\n"
-               + "Durée de vie moyenne totale : " + getDureeVieMoyenne(heures, mortsTotales) + " heures\n"
-               + "Durée de vie moyenne totale : " + getDureeVieMoyenne(minutes, mortsTotales) + " minutes\n\n"
-               + "Moyennes des durées de vie : " + getMoyenneDureesVie(TimeUnit.HOURS) + " heures\n"
-               + "Moyennes des durées de vie : " + getMoyenneDureesVie(TimeUnit.MINUTES) + " minutes\n";
+        String res = "Titre : " + titre + "\n"
+                + "Nombre de lives : " + getNombreLives() + "\n"
+                + "Durée totale : " + getTotalDuration(TimeUnit.HOURS) + " heures\n"
+                + "Durée totale : " + getTotalDuration(TimeUnit.MINUTES) + " minutes\n\n"
+                + "Morts totales : " + mortsTotales + "\n\n"
+                + "Durée de vie moyenne totale : " + getDureeVieMoyenne(heures, mortsTotales) + " heures\n"
+                + "Durée de vie moyenne totale : " + getDureeVieMoyenne(minutes, mortsTotales) + " minutes\n\n"
+                + "Moyennes des durées de vie : " + getMoyenneDureesVie(TimeUnit.HOURS) + " heures\n"
+                + "Moyennes des durées de vie : " + getMoyenneDureesVie(TimeUnit.MINUTES) + " minutes\n";
         return res;
     }
     
@@ -147,7 +148,7 @@ public class Run implements FillDataset, Comparable {
     @Override
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
         ArrayList<Live> livesList = this.getLivesList();
-        Collections.sort(livesList, new LiveComparator());
+        Collections.sort(livesList);
         
         float moyenne = 0, sommeDureeVie = 0, sommeMoyennes = 0;
         int count = 0, sommeMorts = 0;
@@ -173,11 +174,13 @@ public class Run implements FillDataset, Comparable {
         }
         
     }
-
+    
+    
+    //INTERFACE COMPARABLE
     @Override
     public int compareTo(Object o) {
         if (o instanceof Run) {
-            return this.titre.compareTo(((Run) o).titre);
+            return this.titre.compareTo(((Run)o).titre);
         }
         else {
             return this.titre.compareTo(o.toString());

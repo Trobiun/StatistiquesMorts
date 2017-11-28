@@ -136,7 +136,9 @@ public class Live implements FillDataset, Comparable {
         dataset.addValue(temps, "Durée du live", dateDebut);
         dataset.addValue(dureeVie, "Durée de vie moyenne", dateDebut);
     }
-
+    
+    
+    //INTERFACE COMPARABLE
     @Override
     public int compareTo(Object o) {
          if (o instanceof Live) {

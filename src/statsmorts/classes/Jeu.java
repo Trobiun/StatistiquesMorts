@@ -6,6 +6,7 @@
 package statsmorts.classes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -44,10 +45,6 @@ public class Jeu implements FillDataset, Comparable {
     public long getID() {
         return id;
     }
-    
-//    public String getTitre() {
-//        return titre;
-//    }
     
     public Studio getStudio() {
         return studio;
@@ -184,7 +181,7 @@ public class Jeu implements FillDataset, Comparable {
     @Override
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
         ArrayList<Live> livesList = this.getLivesList();
-        livesList.sort(new LiveComparator());
+        Collections.sort(livesList);
         
         float moyenne = 0, sommeDureeVie = 0, sommeMoyennes = 0;
         int count = 0, sommeMorts = 0;
@@ -210,6 +207,7 @@ public class Jeu implements FillDataset, Comparable {
         }
         
     }
+    
     
     //INTERFACE COMPARABLE
     @Override

@@ -31,7 +31,6 @@ public class Main {
         Preferences preferences = new Preferences(dossPrefs.getPath() + File.separator + "Preferences.ini");
         long endPrefs = System.currentTimeMillis();
         System.out.println("    Total : " + (endPrefs - start) + " ms");
-        System.out.println();
         
         System.out.println("Modèle : ");
         long startModele = System.currentTimeMillis();
