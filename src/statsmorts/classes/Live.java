@@ -92,10 +92,13 @@ public class Live implements FillDataset, Comparable {
     
     @Override
     public String toString() {
+        float heures = this.getDuration(TimeUnit.HOURS);
+        float minutes = this.getDuration(TimeUnit.MINUTES);
         String res = "Date début : " + dateDebut.toString() + "\n"
                 + "Date fin : " + dateFin.toString() + "\n"
-                + "Durée : " + this.getDuration(TimeUnit.HOURS) + " heures\n"
-                + "Durée : " + this.getDuration(TimeUnit.MINUTES) + " minutes\n\n"
+                + "Durée : " + heures + " heures\n"
+                + "Durée : " + (int)(heures) + "h" + (int)(minutes % 60) + "m\n"
+                + "Durée : " + minutes + " minutes\n\n"
                 + "Morts  : " + morts + "\n\n"
                 + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.HOURS) + " heures\n"
                 + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.MINUTES) + " minutes\n";
