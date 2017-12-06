@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -78,19 +79,25 @@ public class Run implements FillDataset, Comparable {
     public float getMoyenneDureesVie(TimeUnit unit) {
         float moyenneDesMoyennes = 0, sommeDureeVie = 0, moyenne, sommeMoyennes = 0;
         int count = 0;
+        TreeSet<Live> livesTreeSet = new TreeSet();
         Set<Entry<Long,Live>> livesSet = lives.entrySet();
         for (Entry<Long,Live> liveEntry : livesSet) {
-            Live live = liveEntry.getValue();
+            livesTreeSet.add(liveEntry.getValue());
+        }
+        for (Live live : livesTreeSet) {
+//            Live live = liveEntry.getValue();
             count++;
             sommeDureeVie += live.getDureeVieMoyenne(unit);
             moyenne = sommeDureeVie / (float)count;
             sommeMoyennes += moyenne;
 //            System.out.println("DureeVie : " + live.getDureeVieMoyenne(unit));
 //            System.out.println("sommeMoyennes = " + sommeDureeVie);
-//            System.out.println("moyenneDureeVie = " + moyenneDureeVie);
+//            System.out.println("moyenneDureeVie = " + moyenne);
 //            System.out.println("Count = " + count);
+//            System.out.println();
         }
         moyenneDesMoyennes = sommeMoyennes / (float)count;
+//        System.out.println("Moyenne des moyennes : " + moyenneDesMoyennes);
         return moyenneDesMoyennes;
     }
     
@@ -101,13 +108,14 @@ public class Run implements FillDataset, Comparable {
         float minutes = getTotalDuration(TimeUnit.MINUTES);
         String res = "Titre : " + titre + "\n"
                 + "Nombre de lives : " + getNombreLives() + "\n"
-                + "Durée totale : " + getTotalDuration(TimeUnit.HOURS) + " heures\n"
-                + "Durée totale : " + getTotalDuration(TimeUnit.MINUTES) + " minutes\n\n"
+                + "Durée totale : " + heures + " heures\n"
+                + "Durée totale : " + (int)(heures) + "h" + (int)(minutes % 60) + "m\n"
+                + "Durée totale : " + minutes + " minutes\n\n"
                 + "Morts totales : " + mortsTotales + "\n\n"
                 + "Durée de vie moyenne totale : " + getDureeVieMoyenne(heures, mortsTotales) + " heures\n"
                 + "Durée de vie moyenne totale : " + getDureeVieMoyenne(minutes, mortsTotales) + " minutes\n\n"
-                + "Moyennes des durées de vie : " + getMoyenneDureesVie(TimeUnit.HOURS) + " heures\n"
-                + "Moyennes des durées de vie : " + getMoyenneDureesVie(TimeUnit.MINUTES) + " minutes\n";
+                + "Moyenne des durées de vie : " + getMoyenneDureesVie(TimeUnit.HOURS) + " heures\n"
+                + "Moyenne des durées de vie : " + getMoyenneDureesVie(TimeUnit.MINUTES) + " minutes\n";
         return res;
     }
     
