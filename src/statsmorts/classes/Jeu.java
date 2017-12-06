@@ -89,6 +89,15 @@ public class Jeu implements FillDataset, Comparable {
         return res;
     }
     
+    public float getMoyenneDureeVie(TimeUnit unit) {
+        float moyenne = 0, sommeMoyennes = 0;
+        Set<Entry<Long,Run>> runsSet = runs.entrySet();
+        for (Entry<Long,Run> runEntry : runsSet) {
+            sommeMoyennes += runEntry.getValue().getMoyenneDureesVie(unit);
+        }
+        return sommeMoyennes / runs.size();
+    }
+    
     private String plateformesToString() {
         String res = "Plateformes : ";
         Set<Entry<Long,Plateforme>> plateformesSet = plateformes.entrySet();
@@ -129,13 +138,16 @@ public class Jeu implements FillDataset, Comparable {
         res += "Total de runs : " + runs.size() + "\n";
         res += "Total de lives : " + getTotalLives() + "\n\n";
         float dureeTotaleHeures = getTotalDuration(TimeUnit.HOURS);
-        float dureeTotaleMinutes = dureeTotaleHeures * 60;
+        float dureeTotaleMinutes = getTotalDuration(TimeUnit.MINUTES);
         res += "Durée totale : " + dureeTotaleHeures + " heures\n";
+        res += "Durée totale : " + (int)dureeTotaleHeures + "h" + (int)(dureeTotaleMinutes % 60) + "m\n";
         res += "Durée totale : " + dureeTotaleMinutes + " minutes\n\n";
         int totalMorts = getTotalMorts();
         res += "Total de morts : " + totalMorts + "\n\n";
         res += "Durée de vie moyenne : " + (dureeTotaleHeures / ((float)totalMorts + 1)) + " heures\n";
         res += "Durée de vie moyenne : " + (dureeTotaleMinutes / ((float)totalMorts + 1)) + " minutes\n\n";
+        res += "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.HOURS) + " heures\n";
+        res += "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.MINUTES) + " minutes\n\n";
         return res;
     }
     
