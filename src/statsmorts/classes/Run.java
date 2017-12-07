@@ -107,7 +107,7 @@ public class Run implements FillDataset, Comparable {
         float heures = getTotalDuration(TimeUnit.HOURS);
         float minutes = getTotalDuration(TimeUnit.MINUTES);
         String res = "Titre : " + titre + "\n"
-                + "Nombre de lives : " + getNombreLives() + "\n"
+                + "Nombre de lives : " + getNombreLives() + "\n\n"
                 + "Durée totale : " + heures + " heures\n"
                 + "Durée totale : " + (int)(heures) + "h" + (int)(minutes % 60) + "m\n"
                 + "Durée totale : " + minutes + " minutes\n\n"
@@ -170,7 +170,7 @@ public class Run implements FillDataset, Comparable {
             moyenne = sommeDureeVie / count;
             sommeMoyennes += moyenne;
             live.fillDataset(dataset, unit, false);
-            dataset.addValue(moyenne,"Moyenne des durées de vie moyennes",live.getDateDebut());
+            dataset.addValue(moyenne,"Moyenne des durées de vie",live.getDateDebut());
         }
         if (total) {
             float dureeVieMoyenneTotale = (float)sommeTime / (float)(sommeMorts + 1);
@@ -178,7 +178,7 @@ public class Run implements FillDataset, Comparable {
             dataset.addValue(sommeMorts, "Morts", "Total");
             dataset.addValue(dureeVieMoyenneTotale, "Durée de vie moyenne", "Total");
             dataset.addValue(sommeTime, "Durée du live", "Total");
-            dataset.addValue(moyenne, "Moyenne des durées de vie moyennes", "Total");
+            dataset.addValue(moyenne, "Moyenne des durées de vie", "Total");
         }
         
     }
