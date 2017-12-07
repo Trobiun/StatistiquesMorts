@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -90,12 +91,21 @@ public class Jeu implements FillDataset, Comparable {
     }
     
     public float getMoyenneDureeVie(TimeUnit unit) {
-        float moyenne = 0, sommeMoyennes = 0;
+        float moyenneDesMoyennes = 0, sommeDureeVie = 0, moyenne, sommeMoyennes = 0;
+        int count = 0;
+        TreeSet<Live> livesTreeSet = new TreeSet();
         Set<Entry<Long,Run>> runsSet = runs.entrySet();
         for (Entry<Long,Run> runEntry : runsSet) {
-            sommeMoyennes += runEntry.getValue().getMoyenneDureesVie(unit);
+            livesTreeSet.addAll(runEntry.getValue().getLivesList());
         }
-        return sommeMoyennes / runs.size();
+        for (Live live : livesTreeSet) {
+            count++;
+            sommeDureeVie += live.getDureeVieMoyenne(unit);
+            moyenne = sommeDureeVie / (float)count;
+            sommeMoyennes += moyenne;
+        }
+        moyenneDesMoyennes = sommeMoyennes / (float)count;
+        return moyenneDesMoyennes;
     }
     
     private String plateformesToString() {
@@ -207,7 +217,7 @@ public class Jeu implements FillDataset, Comparable {
             moyenne = sommeDureeVie / count;
             sommeMoyennes += moyenne;
             live.fillDataset(dataset, unit, false);
-            dataset.addValue(moyenne,"Moyenne des durées de vie moyennes",Live.DATE_FORMAT_SHORT.format(live.getDateDebut()));
+            dataset.addValue(moyenne,"Moyenne des durées de vie",Live.DATE_FORMAT_SHORT.format(live.getDateDebut()));
         }
         if (total) {
             float dureeVieMoyenneTotale = (float)sommeTime / (float)(sommeMorts + 1);
@@ -215,7 +225,7 @@ public class Jeu implements FillDataset, Comparable {
             dataset.addValue(sommeMorts, "Morts", "Total");
             dataset.addValue(dureeVieMoyenneTotale, "Durée de vie moyenne", "Total");
             dataset.addValue(sommeTime, "Durée du live", "Total");
-            dataset.addValue(moyenne, "Moyenne des durées de vie moyennes", "Total");
+            dataset.addValue(moyenne, "Moyenne des durées de vie", "Total");
         }
         
     }
