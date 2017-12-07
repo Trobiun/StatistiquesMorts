@@ -86,7 +86,7 @@ public class Preferences {
     public String getUtilisateur() {
         return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.UTILISATEUR);
     }
-    public TypeGroup getAffichageRacine() {
+    public TypeGroup getAffichageGroup() {
         return TypeGroup.valueOf(ini.fetch(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_GROUPE));
     }
     public Temps getAffichageTemps() {
