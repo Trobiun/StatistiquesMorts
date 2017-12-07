@@ -11,12 +11,11 @@ package statsmorts.vue;
  */
 public class TexteConstantes {
     
-    //CONSTANTES
+    //CONSTANTES TEXTE IHM
     public static final String FICHIER = "Fichier";
     public static final String NOUVEAU = "Nouveau";
     public static final String CREER = "Créer";
     public static final String OUVRIR = "Ouvrir";
-    public static final String ANNULER = "Annuler";
     public static final String GESTION = "Gestion";
     public static final String QUITTER = "Quitter";
     public static final String OUTILS = "Outils";
@@ -44,5 +43,14 @@ public class TexteConstantes {
     public static final String EMPTY = "";
     public static final String BDD = "Base de données";
     public static final String EXTENSIONS_BDD = "(.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)";
+    
+    //BOUTONS JDIALOG
+    public static final String OK = "OK";
+    public static final String APPLIQUER = "Appliquer";
+    public static final String ANNULER = "Annuler";
+    
+    //AFFICHAGE DE AFFICHAGE_OPTIONS
+    public static final String GROUPER_PAR = "Grouper par";
+    public static final String AFFICHAGE_TEMPS = "Affichage du temps";
     
 }
