@@ -34,6 +34,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -172,7 +173,7 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem supprimerLivePopupMenuItem;
     
     private TimeUnit unit;
-    private TypeGroup typeRacine;
+    private TypeGroup typeGroup;
     
     //CLASSES PERSO
     private final PlateformePanels plateformePanels;
@@ -205,7 +206,7 @@ public class Fenetre extends JFrame implements Observer {
         super.addWindowListener(exitListener);
         
         this.unit = TimeUnit.HOURS;
-        this.typeRacine = preferences.getAffichageRacine();
+        this.typeGroup = preferences.getAffichageRacine();
         this.controler = controler;
         this.preferences = preferences;
         this.prefsDialog = new PreferencesDialog(this, TexteConstantes.PREFERENCES, false, this.controler, this.preferences);
@@ -450,7 +451,7 @@ public class Fenetre extends JFrame implements Observer {
         affichageMenu = new JMenu(TexteConstantes.AFFICHAGE);
         //SOUS MENU RACINE
         affichageRacineSousMenu = new JMenu(TexteConstantes.GROUP);
-        AffichageRacineListener listenerRacine = new AffichageRacineListener();
+        AffichageGroupeListener listenerRacine = new AffichageGroupeListener();
         
         //RADIO BUTTONS RACINE
         plateformesAffichageRacineMenuItem = new JRadioButtonMenuItem(TexteConstantes.PLATEFORMES);
@@ -590,7 +591,7 @@ public class Fenetre extends JFrame implements Observer {
         SortableTreeNode nodePlateforme = new SortableTreeNode(plateforme, true);
         mapPlateformes.put(plateforme.getID(), nodePlateforme);
         plateformePanels.addItem(plateforme.getID());
-        if (typeRacine.equals(TypeGroup.PLATEFORMES)) {
+        if (typeGroup.equals(TypeGroup.PLATEFORMES)) {
             rootTree.add(nodePlateforme);
             rootTree.sort();
             treeJeux.updateUI();
@@ -602,7 +603,7 @@ public class Fenetre extends JFrame implements Observer {
         SortableTreeNode nodeGenre = new SortableTreeNode(genre, true);
         mapGenres.put(genre.getID(), nodeGenre);
         genrePanels.addItem(genre.getID());
-        if (typeRacine.equals(TypeGroup.GENRES)) {
+        if (typeGroup.equals(TypeGroup.GENRES)) {
             rootTree.add(nodeGenre);
             rootTree.sort();
         }
@@ -612,7 +613,7 @@ public class Fenetre extends JFrame implements Observer {
     public void addStudio(Studio studio) {
         SortableTreeNode nodeStudio = new SortableTreeNode(studio, true);
         mapStudios.put(studio.getID(), nodeStudio);
-        if (typeRacine.equals(TypeGroup.STUDIOS)) {
+        if (typeGroup.equals(TypeGroup.STUDIOS)) {
             rootTree.add(nodeStudio);
             rootTree.sort();
         }
@@ -620,7 +621,7 @@ public class Fenetre extends JFrame implements Observer {
     
     @Override
     public void addJeu(Jeu jeu) {
-        if (typeRacine.equals(TypeGroup.PLATEFORMES)) {
+        if (typeGroup.equals(TypeGroup.PLATEFORMES)) {
             Set<Entry<Long, Plateforme>> setPlateformes = jeu.getPlateformes().entrySet();
 //            ArrayList<SortableTreeNode> arrayJeu = mapJeux.getOrDefault(jeu, new ArrayList());
 //            arrayJeu.add(nodeJeu);
@@ -633,7 +634,7 @@ public class Fenetre extends JFrame implements Observer {
                 mapPlateformes.get(entryPlateforme.getKey()).sort();
             }
         }
-        if (typeRacine.equals(TypeGroup.GENRES)) {
+        if (typeGroup.equals(TypeGroup.GENRES)) {
             Set<Entry<Long, Genre>> setGenres = jeu.getGenres().entrySet();
 //            ArrayList<SortableTreeNode> arrayJeu = mapJeux.getOrDefault(jeu, new ArrayList());
 //            arrayJeu.add(nodeJeu);
@@ -646,13 +647,13 @@ public class Fenetre extends JFrame implements Observer {
                 mapGenres.get(entryGenre.getKey()).sort();
             }
         }
-        if (typeRacine.equals(TypeGroup.STUDIOS)) {
+        if (typeGroup.equals(TypeGroup.STUDIOS)) {
             SortableTreeNode nodeJeu = new SortableTreeNode(jeu, true);
             mapJeux.putIfAbsent(jeu.getID(),new ArrayList());
             mapJeux.get(jeu.getID()).add(nodeJeu);
             mapStudios.get(jeu.getStudio().getID()).add(nodeJeu);
         }
-        if (typeRacine.equals(TypeGroup.JEUX)) {
+        if (typeGroup.equals(TypeGroup.JEUX)) {
             SortableTreeNode nodeJeu = new SortableTreeNode(jeu, true);
 //            ArrayList<SortableTreeNode> arrayJeu = mapJeux.getOrDefault(jeu, new ArrayList());
             mapJeux.putIfAbsent(jeu.getID(), new ArrayList());
@@ -698,7 +699,7 @@ public class Fenetre extends JFrame implements Observer {
     
     @Override
     public void removePlateforme(long idPlateforme) {
-        if (typeRacine.equals(TypeGroup.PLATEFORMES)) {
+        if (typeGroup.equals(TypeGroup.PLATEFORMES)) {
             ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapPlateformes.get(idPlateforme));
         }
         mapPlateformes.remove(idPlateforme);
@@ -756,11 +757,11 @@ public class Fenetre extends JFrame implements Observer {
         JPanel inputs = new JPanel(new BorderLayout());
         JPanel nomPanel = plateformePanels.getNomPanel();
         inputs.add(nomPanel);
-        JTextPane nomTextPane = plateformePanels.getNomTextPane();
+        JTextField nomTextField = plateformePanels.getNomTextField();
         String[] options = {TexteConstantes.AJOUTER, TexteConstantes.ANNULER};
         int res = JOptionPane.showOptionDialog(this, inputs, "Ajouter plateforme", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
-            controler.ajouterPlateforme(nomTextPane.getText());
+            controler.ajouterPlateforme(nomTextField.getText());
         }
     }
     
@@ -773,11 +774,11 @@ public class Fenetre extends JFrame implements Observer {
         inputs.add(idPanel);
         inputs.add(nomPanel);
         JComboBox idComboBox = plateformePanels.getIDComboBox();
-        JTextPane nomTextPane = plateformePanels.getNomTextPane();
+        JTextField nomTextField = plateformePanels.getNomTextField();
         String[] options = {TexteConstantes.MODIFIER, TexteConstantes.ANNULER};
         int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.MODIFIER + " " + TexteConstantes.PLATEFORME, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
-            controler.modifierPlateforme((long)idComboBox.getSelectedItem(),nomTextPane.getText());
+            controler.modifierPlateforme((long)idComboBox.getSelectedItem(),nomTextField.getText());
         }
     }
     
@@ -791,12 +792,16 @@ public class Fenetre extends JFrame implements Observer {
         inputs.add(nomPanel);
         
         JComboBox idComboBox = plateformePanels.getIDComboBox();
-        JTextPane nomTextPane = plateformePanels.getNomTextPane();
-        nomTextPane.setEditable(false);
+        JTextField nomTextField = plateformePanels.getNomTextField();
+        nomTextField.setEditable(false);
         String[] options = {TexteConstantes.SUPPRIMER, TexteConstantes.ANNULER};
         int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.SUPPRIMER + " " + TexteConstantes.PLATEFORME, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
             controler.supprimerPlateforme((long)idComboBox.getSelectedItem());
+            if (treeJeux.isSelectionEmpty()) {
+                textPaneInfos.setText(TexteConstantes.EMPTY);
+                panelGraph.setChart(null);
+            }
         }
     }
     
@@ -806,7 +811,7 @@ public class Fenetre extends JFrame implements Observer {
         JPanel nomPanel = genrePanels.getNomPanel();
         
         inputs.add(nomPanel);
-        JTextPane nomTextPane = genrePanels.getNomTextPane();
+        JTextField nomTextField = genrePanels.getNomTextField();
         String[] options = { TexteConstantes.AJOUTER, TexteConstantes.ANNULER };
         int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.AJOUTER + " " + TexteConstantes.GENRE, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
@@ -823,7 +828,7 @@ public class Fenetre extends JFrame implements Observer {
         inputs.add(idPanel);
         inputs.add(nomPanel);
         
-        JTextPane nomTextPane = genrePanels.getNomTextPane();
+        JTextField nomTextField = genrePanels.getNomTextField();
         String[] options = { TexteConstantes.MODIFIER, TexteConstantes.ANNULER };
         int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.MODIFIER + " " + TexteConstantes.GENRE, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
@@ -841,8 +846,8 @@ public class Fenetre extends JFrame implements Observer {
         inputs.add(idPanel);
         inputs.add(nomPanel);
         
-        JTextPane nomTextPane = genrePanels.getNomTextPane();
-        nomTextPane.setEditable(false);
+        JTextField nomTextField = genrePanels.getNomTextField();
+        nomTextField.setEditable(false);
         String[] options = { TexteConstantes.SUPPRIMER, TexteConstantes.ANNULER };
         int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.SUPPRIMER + " " + TexteConstantes.GENRE, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
@@ -876,7 +881,7 @@ public class Fenetre extends JFrame implements Observer {
                     fileFilter = new FileNameExtensionFilter(TexteConstantes.BDD + " " + TexteConstantes.EXTENSIONS_BDD, "accdb", "mdb", "kexi", "db", "sdb", "sqlite", "db2", "s2db", "sqlite2", "sl2", "db3", "s3db", "sqlite3", "sl3");
                 }
                 fileBDD.setFilter(fileFilter);
-                int res = JOptionPane.showConfirmDialog(null, fileBDD, message + " la base de données", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                int res = JOptionPane.showConfirmDialog(null, fileBDD, message + " une base de données", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (res == JOptionPane.YES_OPTION) {
                     if (src.equals(nouveauMenuItem)) {
                         controler.creerBDD(fileBDD.getPath());
@@ -1026,7 +1031,7 @@ public class Fenetre extends JFrame implements Observer {
         
     }
     
-    class AffichageRacineListener implements ItemListener {
+    class AffichageGroupeListener implements ItemListener {
         
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -1034,18 +1039,18 @@ public class Fenetre extends JFrame implements Observer {
             if (selected) {
                 Object item = e.getItem();
                 if (item.equals(plateformesAffichageRacineMenuItem)) {
-                    typeRacine = TypeGroup.PLATEFORMES;
+                    typeGroup = TypeGroup.PLATEFORMES;
                 }
                 if (item.equals(genresAffichageRacineMenuItem)) {
-                    typeRacine = TypeGroup.GENRES;
+                    typeGroup = TypeGroup.GENRES;
                 }
                 if (item.equals(studiosAffichageRacineMenuItem)) {
-                    typeRacine = TypeGroup.STUDIOS;
+                    typeGroup = TypeGroup.STUDIOS;
                 }
                 if (item.equals(jeuxAffichageRacineMenuItem)) {
-                    typeRacine = TypeGroup.JEUX;
+                    typeGroup = TypeGroup.JEUX;
                 }
-                controler.setRacine(typeRacine);
+                controler.setGroup(typeGroup);
             }
         }
         
