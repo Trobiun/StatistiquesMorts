@@ -8,7 +8,7 @@ package statsmorts.controler;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import statsmorts.classes.FillDataset;
-import statsmorts.classes.TypeRacine;
+import statsmorts.classes.TypeGroup;
 import statsmorts.modele.StatsMortsModele;
 
 /**
@@ -39,8 +39,8 @@ public class StatsMortsControler {
         modele.setTimeUnit(unit);
     }
     
-    public void setRacine(TypeRacine type) {
-        modele.setTypeRacine(type);
+    public void setGroup(TypeGroup type) {
+        modele.setGroup(type);
     }
     
     public void createDataset(String titre, ArrayList<FillDataset> objets) {
@@ -49,6 +49,10 @@ public class StatsMortsControler {
     
     public void fillPlateformePanel(long idPlateforme) {
         modele.fillPlateformePanel(idPlateforme);
+    }
+    
+    public void fillGenrePanel(long idGenre) {
+        
     }
     
     public void creerBDD(String pathBDD) {
@@ -75,6 +79,94 @@ public class StatsMortsControler {
          || lowerCase.endsWith(".sl3") || lowerCase.endsWith(".kexi")) {
             modele.ouvrirBDD(pathBDD);
         }
+    }
+    
+    public void ajouterPlateforme(String nomPlateforme) {
+        if (!nomPlateforme.isEmpty()) {
+            modele.ajouterPlateforme(nomPlateforme);
+        }
+    }
+    
+    public void modifierPlateforme(long idPlateforme, String nomPlateforme) {
+        if (!nomPlateforme.isEmpty()) {
+            modele.modifierPlateforme(idPlateforme, nomPlateforme);
+        }
+    }
+    
+    public void supprimerPlateforme(long idPlateforme) {
+        modele.supprimerPlateforme(idPlateforme);
+    }
+    
+    public void ajouterGenre(String nomGenre) {
+        if (!nomGenre.isEmpty()) {
+            
+        }
+    }
+    
+    public void modifierGenre(long idGenre, String nomGenre) {
+        if (!nomGenre.isEmpty()) {
+            
+        }
+    }
+    
+    public void supprimerGenre(long idGenre) {
+        
+    }
+    
+    public void ajouterStudio(String nomStudio) {
+        
+    }
+    
+    public void modifierStudio(long idStudio, String nomStudio) {
+        if (!nomStudio.isEmpty()) {
+            
+        }
+    }
+    
+    public void supprimerStudio(long idStudio) {
+        
+    }
+    
+    public void ajouterJeu(String titreJeu) {
+        if (!titreJeu.isEmpty()) {
+            
+        }
+    }
+    
+    public void modifierJeu(long idJeu) {
+        
+    }
+    
+    public void supprimerJeu(long idJeu) {
+        
+    }
+    
+    public void ajouterRun(long idRun, String titreRun, long idJeu) {
+        if (!titreRun.isEmpty()) {
+            
+        }
+    }
+    
+    public void modifierRun(long idRun, String titreRun) {
+        if (!titreRun.isEmpty()) {
+            
+        }
+    }
+    
+    public void supprimerRun(long idRun) {
+        
+    }
+    
+    public void ajouterLive() {
+        
+    }
+    
+    public void modifierLive(long idLive) {
+        
+    }
+    
+    public void supprimerLive(long idLive) {
+        
     }
     
     public void deconnecter() {
