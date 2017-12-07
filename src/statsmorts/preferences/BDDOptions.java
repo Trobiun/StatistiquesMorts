@@ -58,12 +58,12 @@ public class BDDOptions extends JPanel {
     
     
     //ACCESSEURS
-    public String getType() {
+    public TypeServeurFichier getType() {
         if (radioServeur.isSelected()) {
-            return "Serveur";
+            return TypeServeurFichier.SERVEUR;
         }
         else {
-            return "Fichier";
+            return TypeServeurFichier.FICHIER;
         }
     }
     
@@ -125,8 +125,8 @@ public class BDDOptions extends JPanel {
         fileChooser.setFilter(new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3"));
     }
     private void initRadioButtons() {
-        radioFichier = new JRadioButton("Fichier");
-        radioServeur = new JRadioButton("Serveur");
+        radioFichier = new JRadioButton(TexteConstantesPreferences.FICHIER);
+        radioServeur = new JRadioButton(TexteConstantesPreferences.SERVEUR);
         
         setType(preferences.getType());
     }
@@ -134,7 +134,7 @@ public class BDDOptions extends JPanel {
         groupTypeDatabase = new ButtonGroup();
     }
     private void initButtons() {
-        buttonServeur = new JButton("Configurer");
+        buttonServeur = new JButton(TexteConstantesPreferences.CONFIGURER);
         buttonServeur.addActionListener(new ServeurListener());
     }
     
@@ -179,9 +179,9 @@ public class BDDOptions extends JPanel {
         fileChooser.setText(preferences.getBDDFichier());
         setType(preferences.getType());
     }
-    private void setType(String type) {
+    private void setType(TypeServeurFichier type) {
         switch (type) {
-            case "Serveur" :
+            case SERVEUR :
                 radioServeur.setSelected(true);
                 break;
             default :

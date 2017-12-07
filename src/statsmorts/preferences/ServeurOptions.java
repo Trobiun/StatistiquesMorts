@@ -46,10 +46,11 @@ public class ServeurOptions extends JPanel {
     private final Preferences preferences;
     private final boolean acceptFile;
     
+    
     //CONSTRUCTEUR
     public ServeurOptions(Preferences preferences, boolean acceptFile) {
         super(new GridBagLayout());
-        
+        this.setPreferredSize(new Dimension(400,250));
         this.preferences = preferences;
         this.acceptFile = acceptFile;
         
@@ -137,9 +138,9 @@ public class ServeurOptions extends JPanel {
         };
     }
     private void initRadios() {
-        radioFichier = new JRadioButton("Fichier");
-        radioMySQL = new JRadioButton("MySQL");
-        radioPostgreSQL = new JRadioButton("PostgreSQL");
+        radioFichier = new JRadioButton(TexteConstantesPreferences.FICHIER);
+        radioMySQL = new JRadioButton(TexteConstantesPreferences.MYSQL);
+        radioPostgreSQL = new JRadioButton(TexteConstantesPreferences.POSTGRESQL);
     }
     private void initGroup() {
         groupType = new ButtonGroup();
@@ -166,6 +167,8 @@ public class ServeurOptions extends JPanel {
         
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 5;
+        gbc.weighty = 5;
         
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -179,6 +182,7 @@ public class ServeurOptions extends JPanel {
         
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.gridheight = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         add(panelBaseDonnees,gbc);
         
@@ -192,6 +196,7 @@ public class ServeurOptions extends JPanel {
         }
         
         gbc.gridy = 4;
+        gbc.gridheight = GridBagConstraints.REMAINDER;
         add(panelType,gbc);
     }
     

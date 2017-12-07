@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import statsmorts.controler.StatsMortsControler;
+import statsmorts.vue.TexteConstantes;
 
 /**
  *
@@ -27,9 +28,11 @@ public class PreferencesDialog extends JDialog {
     private final Preferences preferences;
     private final StatsMortsControler controler;
     private boolean stateChanged;
+    private String typeServeur;
     
     private JTabbedPane tabbedPane;
     private BDDOptions panelBDD;
+    private AffichageOptions panelAffichage;
     private JPanel panelBoutons;
     
     private JButton ok;
@@ -43,6 +46,7 @@ public class PreferencesDialog extends JDialog {
         this.controler = controler;
         this.preferences = prefs;
         stateChanged = false;
+        typeServeur = preferences.getTypeServeur();
         
         setPreferredSize(new Dimension(520,250));
         setSize(getPreferredSize());
@@ -67,7 +71,8 @@ public class PreferencesDialog extends JDialog {
     }
     
     private void setComponents() {
-        tabbedPane.add("Base de données", panelBDD);
+        tabbedPane.add(TexteConstantes.BDD, panelBDD);
+        tabbedPane.add(TexteConstantes.AFFICHAGE,panelAffichage);
         
         panelBoutons.add(ok);
         if (controler != null) {
@@ -87,17 +92,19 @@ public class PreferencesDialog extends JDialog {
     private void initPanels() {
         panelBDD = new BDDOptions(preferences);
         
+        panelAffichage = new AffichageOptions(preferences);
+        
         panelBoutons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelBoutons.setPreferredSize(new Dimension(480,40));
     }
     private void initButtons() {
         BoutonsListener boutonListener = new BoutonsListener();
         
-        ok = new JButton("OK");
+        ok = new JButton(TexteConstantes.OK);
         ok.addActionListener(boutonListener);
-        annuler = new JButton("Annuler");
+        annuler = new JButton(TexteConstantes.ANNULER);
         annuler.addActionListener(boutonListener);
-        appliquer = new JButton("Applquer");
+        appliquer = new JButton(TexteConstantes.APPLIQUER);
         appliquer.addActionListener(boutonListener);
     }
     
@@ -133,6 +140,7 @@ public class PreferencesDialog extends JDialog {
         private void appliquer() {
             String pathBDD = panelBDD.getBDDFichier();
             boolean bddChanged = !pathBDD.equals(preferences.getBDDFichier());
+            boolean typeBDDChanged = !preferences.getTypeServeur().equals(typeServeur);
             
             preferences.setBDDFichier(pathBDD);
             preferences.setType(panelBDD.getType());
@@ -151,6 +159,9 @@ public class PreferencesDialog extends JDialog {
                     if (controler != null) {
                         controler.actualiser();
                     }
+                }
+                if (typeBDDChanged) {
+                    
                 }
             }
         }

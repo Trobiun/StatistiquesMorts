@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
-import statsmorts.classes.TypeRacine;
+import statsmorts.classes.TypeGroup;
 
 
 /**
@@ -65,38 +65,32 @@ public class Preferences {
         return res;
     }
     
-    public String getType() {
-        return ini.fetch("Base de donnees", "type");
+    public TypeServeurFichier getType() {
+        return TypeServeurFichier.valueOf(ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.TYPE));
     }
     public String getBDDFichier() {
-        return ini.fetch("Base de donnees", "bdd_fichier");
+        return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.BDD_FICHIER);
     }
     public String getTypeServeur() {
-        return ini.fetch("Base de donnees", "type_serveur");
+        return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.TYPE_SERVEUR);
     }
     public String getAdresse() {
-        return ini.fetch("Base de donnees", "adresse");
+        return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.ADRESSE);
     }
     public String getPort() {
-        return ini.fetch("Base de donnees", "port");
+        return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.PORT);
     }
     public String getBDDServeur() {
-        return ini.fetch("Base de donnees", "bdd_serveur");
+        return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.BDD_SERVEUR);
     }
     public String getUtilisateur() {
-        return ini.fetch("Base de donnees", "utilisateur");
+        return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.UTILISATEUR);
     }
-    public TypeRacine getAffichageRacine() {
-        return TypeRacine.valueOf(ini.fetch("Affichage", "affichage_racine"));
+    public TypeGroup getAffichageRacine() {
+        return TypeGroup.valueOf(ini.fetch(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_GROUPE));
     }
-    public boolean getAffichageJeux() {
-        return Boolean.parseBoolean(ini.fetch("Affichage", "affichage_jeux"));
-    }
-    public boolean getAffichageRuns() {
-        return Boolean.parseBoolean(ini.fetch("Affichage", "affichage_runs"));
-    }
-    public boolean getAffichageLives() {
-        return Boolean.parseBoolean(ini.fetch("Affichage", "affichage_lives"));
+    public Temps getAffichageTemps() {
+        return Temps.valueOf(ini.fetch(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_TEMPS));
     }
     
     
@@ -109,40 +103,33 @@ public class Preferences {
         }
     }
     
-    public void setType(String type) {
-        ini.put("Base de donnees", "type", type);
+    public void setType(TypeServeurFichier type) {
+        ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.TYPE, type);
     }
     public void setBDDFichier(String path) {
-        ini.put("Base de donnees", "bdd_fichier", path);
+        ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.BDD_FICHIER, path);
     }
     public void setTypeServeur(String type) {
-        ini.put("Base de donnees", "type_serveur", type);
+        ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.TYPE_SERVEUR, type);
     }
     public void setAdresse(String adresse) {
-        ini.put("Base de donnees", "adresse", adresse);
+        ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.ADRESSE, adresse);
     }
     public void setPort(String port) {
-        ini.put("Base de donnees", "port", port);
+        ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.PORT, port);
     }
     public void setBDDServeur(String bdd) {
-        ini.put("Base de donnees", "bdd_serveur", bdd);
+        ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.BDD_SERVEUR, bdd);
     }
     public void setUtilisateur(String user) {
-        ini.put("Base de donnees", "utilisateur", user);
+        ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.UTILISATEUR, user);
     }
     public void setAffichageRacine(String racine) {
-        ini.put("Affichage", "affichage_racine", racine);
+        ini.put(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_GROUPE, racine);
     }
-    public void setAffichageJeu(String afficherJeux) {
-        ini.put("Affichage", "affichage_runs", afficherJeux);
+    public void setAffichageTemps(String temps) {
+        ini.put(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_TEMPS, temps);
     }
-    public void setAffichageRun(String afficherRuns) {
-        ini.put("Affichage", "affichage_jeux", afficherRuns);
-    }
-    public void setAffichageLive(String afficherLives) {
-        ini.put("Affichage", "affichage_lives", afficherLives);
-    }
-    
     
     public void savePreferences() {
         try {
@@ -157,20 +144,18 @@ public class Preferences {
         ini.clear();
         ini.setFile(filePreferences);
         
-        Section bdd = ini.add("Base de donnees");
-        bdd.add("type", "Fichier");
-        bdd.add("bdd_fichier", "");
-        bdd.add("type_serveur", "MySQL");
-        bdd.add("adresse","localhost");
-        bdd.add("port","");
-        bdd.add("bdd_serveur","");
-        bdd.add("utilisateur",System.getProperty("user.name"));
+        Section bdd = ini.add(TexteConstantesPreferences.BASE_DE_DONNEES);
+        bdd.add(TexteConstantesPreferences.TYPE, TypeServeurFichier.FICHIER);
+        bdd.add(TexteConstantesPreferences.BDD_FICHIER, TexteConstantesPreferences.EMPTY);
+        bdd.add(TexteConstantesPreferences.TYPE_SERVEUR, TexteConstantesPreferences.TYPE_SERVEUR_DEFAULT);
+        bdd.add(TexteConstantesPreferences.ADRESSE, TexteConstantesPreferences.ADRESSE_DEFAULT);
+        bdd.add(TexteConstantesPreferences.PORT, TexteConstantesPreferences.EMPTY);
+        bdd.add(TexteConstantesPreferences.BDD_SERVEUR, TexteConstantesPreferences.EMPTY);
+        bdd.add(TexteConstantesPreferences.UTILISATEUR,System.getProperty("user.name"));
         
-        Section affichage = ini.add("Affichage");
-        affichage.add("affichage_racine",TypeRacine.JEUX);
-        affichage.add("affichage_jeux","true");
-        affichage.add("affichage_runs","true");
-        affichage.add("affichage_lives","true");
+        Section affichage = ini.add(TexteConstantesPreferences.AFFICHAGE);
+        affichage.add(TexteConstantesPreferences.AFFICHAGE_GROUPE,TypeGroup.JEUX);
+        affichage.add(TexteConstantesPreferences.AFFICHAGE_TEMPS,Temps.HEURES);
         
         try {
             ini.store();
@@ -178,7 +163,7 @@ public class Preferences {
             Logger.getLogger(Preferences.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        PreferencesDialog prefsDialog = new PreferencesDialog(null, "Initialisation des Préferences", true, null, this);
+        PreferencesDialog prefsDialog = new PreferencesDialog(null, TexteConstantesPreferences.INITIALISATION_TEXTE, true, null, this);
         prefsDialog.showDialog();
         try {
             ini.store();
