@@ -5,14 +5,13 @@
  */
 package statsmorts.vue;
 
-import javax.swing.JPanel;
 import statsmorts.controler.StatsMortsControler;
 
 /**
  *
  * @author Robin
  */
-public class LivePanel extends ObjectDatabasePanel {
+public class LivePanel extends ObjectDatabasePanels {
     
     //ATTRIBUTS
     
