@@ -124,10 +124,10 @@ public class Preferences {
     public void setUtilisateur(String user) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.UTILISATEUR, user);
     }
-    public void setAffichageRacine(String racine) {
-        ini.put(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_GROUPE, racine);
+    public void setAffichageGroup(TypeGroup group) {
+        ini.put(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_GROUPE, group);
     }
-    public void setAffichageTemps(String temps) {
+    public void setAffichageTemps(Temps temps) {
         ini.put(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_TEMPS, temps);
     }
     
