@@ -28,6 +28,9 @@ public class Connexion {
     
     
     //ACCESSSEURS
+    public Statement getStatement() {
+        return statement;
+    }
     
     
     //MUTATEURS
@@ -124,7 +127,7 @@ public class Connexion {
     }
     
     public ResultSet executerPreparedUpdate(String requete, String  ... args) {
-        String upperCase = requete.toUpperCase();
+        String upperCase = requete.substring(0,7).toUpperCase();
         ResultSet res = null;
         if (upperCase.startsWith("UPDATE") || upperCase.startsWith("INSERT") || upperCase.startsWith("DELETE")) {
             try (PreparedStatement prepared = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
@@ -138,7 +141,12 @@ public class Connexion {
                             prepared.setBoolean(i+1, Boolean.parseBoolean(args[i].replace("(bool)","")));
                         }
                         else {
-                            prepared.setString(i+1, args[i]);
+                            if (args[i].startsWith("(long)")) {
+                                prepared.setLong(i+1,Long.parseLong(args[i].replace("(long)","")));
+                            }
+                            else {
+                                prepared.setString(i+1, args[i]);
+                            }
                         }
                     }
                 }
