@@ -41,7 +41,7 @@ public class SortableTreeNode extends DefaultMutableTreeNode implements Informat
     public String toString() {
         return isInformations ? objet.getTitre() : super.toString();
     }
-    
+
     
     //MUTATEURS
     public void add(SortableTreeNode newChild) {
