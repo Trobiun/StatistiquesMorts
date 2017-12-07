@@ -6,12 +6,17 @@
 package statsmorts;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import statsmorts.classes.TypeDatabase;
 import statsmorts.controler.StatsMortsControler;
 import statsmorts.modele.StatsMortsModele;
 import statsmorts.preferences.Preferences;
 import statsmorts.preferences.ServeurOptions;
+import statsmorts.preferences.TypeServeurFichier;
 import statsmorts.vue.Fenetre;
 
 /**
@@ -24,6 +29,11 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
         System.out.println("Préférences : ");
         long start = System.currentTimeMillis();
         File dossPrefs = new File(System.getProperty("user.home") + File.separator + ".StatsMorts");
@@ -35,8 +45,8 @@ public class Main {
         System.out.println("Modèle : ");
         long startModele = System.currentTimeMillis();
         StatsMortsModele modele = new StatsMortsModele(preferences);
-        String type = preferences.getType();
-        if (type.equals("Fichier")) {
+        TypeServeurFichier type = preferences.getType();
+        if (type.equals(TypeServeurFichier.FICHIER)) {
             modele.connecter(preferences.getBDDFichier());
         }
         else {
@@ -67,7 +77,7 @@ public class Main {
         
         System.out.println("Fenêtre : ");
         long startFenetre = System.currentTimeMillis();
-        Fenetre fenetre = new Fenetre("Test", controler, preferences);
+        Fenetre fenetre = new Fenetre("Statistiques des morts de MyGowD", controler, preferences);
         long endFenetre = System.currentTimeMillis();
         System.out.println("    Total : " + (endFenetre - startFenetre) + " ms");
         
@@ -78,7 +88,6 @@ public class Main {
         long end = System.currentTimeMillis();
         System.out.println("    Total: " + (end - startActu) + " ms");
         System.out.println("Total : " + (end - start) + " ms");
-        
 //        Fenetre fenetre = new Fenetre("Test");
 //        Connexion connexion = new Connexion();
 //        connexion.connecter(preferences.getBDDFichier());
