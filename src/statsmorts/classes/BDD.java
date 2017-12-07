@@ -75,6 +75,11 @@ public class BDD {
     }
     
     //MUTATEURS
+    public void ajouterPlateforme(Plateforme plateforme) {
+        plateformes.put(plateforme.getID(),plateforme);
+    }
+    
+    
     private Map initMap(Map map) {
         if (map == null) {
             map = new HashMap();
