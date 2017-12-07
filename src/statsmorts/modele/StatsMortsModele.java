@@ -5,6 +5,7 @@
  */
 package statsmorts.modele;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -25,7 +26,7 @@ import statsmorts.classes.Plateforme;
 import statsmorts.classes.Run;
 import statsmorts.classes.Studio;
 import statsmorts.classes.TypeDatabase;
-import statsmorts.classes.TypeRacine;
+import statsmorts.classes.TypeGroup;
 import statsmorts.observer.Observable;
 import statsmorts.observer.Observer;
 import statsmorts.preferences.Preferences;
@@ -43,9 +44,10 @@ public class StatsMortsModele implements Observable {
     private TimeUnit timeUnit;
     private TreeSet<Live> livesForDataset;
     private String titreForDataset;
-    private TypeRacine typeRacine;
+    private TypeGroup typeRacine;
     
     private Observer observer;
+    
     
     //CONSTRUCTEUR
     public StatsMortsModele(Preferences prefs) {
@@ -57,6 +59,9 @@ public class StatsMortsModele implements Observable {
     
     
     //ACCESSEURS
+    public boolean hasObserver() {
+        return observer != null;
+    }
     
     
     //MUTATEURS
@@ -80,6 +85,36 @@ public class StatsMortsModele implements Observable {
         bdd = new BDD(connexion, type, serveur, user, password);
     }
     
+    public void ajouterPlateforme(String nomPlateforme) {
+        String requete = "INSERT INTO Plateformes (pla_Nom) VALUES (?)";
+        try {
+            ResultSet result = connexion.executerPreparedUpdate(requete, nomPlateforme);
+            ResultSet resultID = connexion.getStatement().getGeneratedKeys();
+            if (resultID.next()) {
+                Plateforme plateforme = new Plateforme(resultID.getLong(1),nomPlateforme);
+                bdd.ajouterPlateforme(plateforme);
+                notifyAddPlateforme(plateforme);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StatsMortsModele.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void modifierPlateforme(long idPlateforme, String nomPlateforme) {
+        String requete = "UPDATE Plateformes SET pla_Nom = ? WHERE pla_id = ?";
+        ResultSet result = connexion.executerPreparedUpdate(requete,nomPlateforme,"(long)" + idPlateforme);
+        bdd.getPlateformes().get(idPlateforme).rename(nomPlateforme);
+    }
+    
+    public void supprimerPlateforme(long idPlateforme) {
+        String requete = "DELETE FROM Plateformes WHERE pla_id = ?";
+        ResultSet result = connexion.executerPreparedUpdate(requete,"(long)" + idPlateforme);
+        bdd.getPlateformes().remove(idPlateforme);
+        notifyRemovePlateforme(idPlateforme);
+        //actualiser();
+    }
+    
+    
     public void setTimeUnit(TimeUnit unit) {
         if (!this.timeUnit.equals(unit)) {
             this.timeUnit = unit;
@@ -95,41 +130,41 @@ public class StatsMortsModele implements Observable {
         }
         if (observer != null) {
             observer.clear(this.typeRacine);
-            if (typeRacine.equals(TypeRacine.PLATEFORMES)) {
+//            if (typeRacine.equals(TypeGroup.PLATEFORMES)) {
                 Set<Entry<Long, Plateforme>> plateformes = bdd.getPlateformes().entrySet();
                 for (Entry<Long, Plateforme> entryPlateforme : plateformes) {
                     Plateforme plateforme = entryPlateforme.getValue();
-                    notifyPlateforme(plateforme);
+                    notifyAddPlateforme(plateforme);
                 }
-            }
-            if (typeRacine.equals(TypeRacine.GENRES)) {
+//            }
+//            if (typeRacine.equals(TypeGroup.GENRES)) {
                 Set<Entry<Long, Genre>> genres = bdd.getGenres().entrySet();
                 for (Entry<Long, Genre> entryGenre : genres) {
                     Genre genre = entryGenre.getValue();
-                    notifyGenre(genre);
+                    notifyAddGenre(genre);
                 }
-            }
-            if (typeRacine.equals(TypeRacine.STUDIOS)){
+//            }
+//            if (typeRacine.equals(TypeGroup.STUDIOS)){
                 Set<Entry<Long, Studio>> studios = bdd.getStudios().entrySet();
                 for (Entry<Long, Studio> entryStudio : studios) {
                     Studio studio = entryStudio.getValue();
-                    notifyStudio(studio);
+                    notifyAddStudio(studio);
                 }
-            }
+//            }
             Set<Entry<Long,Jeu>> set = bdd.getJeux().entrySet();
             for (Entry<Long,Jeu> entryJeu : set) {
                 Jeu jeu = entryJeu.getValue();
-                notifyJeu(jeu);
+                notifyAddJeu(jeu);
                 Map<Long,Run> runsMap = jeu.getRuns();
                 Set<Entry<Long,Run>> runsSet = runsMap.entrySet();
                 for (Entry<Long,Run> runEntry : runsSet) {
                     Run run = runEntry.getValue();
-                    notifyRun(run);
+                    notifyAddRun(run);
                     Map<Long,Live> livesMap = run.getLives();
                     Set<Entry<Long,Live>> livesSet = livesMap.entrySet();
                     for (Entry<Long,Live> liveEntry : livesSet) {
                         Live live = liveEntry.getValue();
-                        notifyLive(live);
+                        notifyAddLive(live);
                     }
                 }
             }
@@ -138,6 +173,10 @@ public class StatsMortsModele implements Observable {
     
     public void fillPlateformePanel(long idPlateforme) {
         notifyFillPlateforme(idPlateforme);
+    }
+    
+    public void fillGenrePanel(long idGenre) {
+        notifyFillGenre(idGenre);
     }
     
     public void createDataset(String titre, ArrayList<FillDataset> nodes) {
@@ -159,10 +198,10 @@ public class StatsMortsModele implements Observable {
             sommeMorts += live.getMorts();
             sommeDureeVie += live.getDureeVieMoyenne(timeUnit);
             count++;
-            moyenne = sommeDureeVie / count;
+            moyenne = sommeDureeVie / (float)count;
             sommeMoyennes += moyenne;
             live.fillDataset(dataset, timeUnit, false);
-            dataset.addValue(moyenne,"Moyenne des durées de vie moyennes",live.getDateDebut());
+            dataset.addValue(moyenne,"Moyenne des durées de vie",live.getDateDebut());
         }
         if (livesForDataset.size() > 1) {
             float dureeVieMoyenneTotale = (float)sommeTime / (float)(sommeMorts + 1);
@@ -170,7 +209,7 @@ public class StatsMortsModele implements Observable {
             dataset.addValue(sommeMorts, "Morts", "Total");
             dataset.addValue(dureeVieMoyenneTotale, "Durée de vie moyenne", "Total");
             dataset.addValue(sommeTime, "Durée du live", "Total");
-            dataset.addValue(moyenne, "Moyenne des durées de vie moyennes", "Total");
+            dataset.addValue(moyenne, "Moyenne des durées de vie", "Total");
         }
         notifyDataset(titreForDataset, dataset);
     }
@@ -187,51 +226,93 @@ public class StatsMortsModele implements Observable {
     }
     
     @Override
-    public void setTypeRacine(TypeRacine type) {
+    public void setGroup(TypeGroup type) {
         this.typeRacine = type;
         this.actualiser();
     }
     
     @Override
-    public void notifyPlateforme(Plateforme plateforme) {
-        if (observer != null) {
+    public void notifyAddPlateforme(Plateforme plateforme) {
+        if (hasObserver()) {
             observer.addPlateforme(plateforme);
         }
     }
     
     @Override
-    public void notifyGenre(Genre genre) {
-        if(observer != null) {
+    public void notifyAddGenre(Genre genre) {
+        if(hasObserver()) {
             observer.addGenre(genre);
         }
     }
     
     @Override
-    public void notifyStudio(Studio studio) {
-        if (observer != null) {
+    public void notifyAddStudio(Studio studio) {
+        if (hasObserver()) {
             observer.addStudio(studio);
         }
     }
     
     @Override
-    public void notifyJeu(Jeu jeu) {
-        if (observer != null) {
+    public void notifyAddJeu(Jeu jeu) {
+        if (hasObserver()) {
             observer.addJeu(jeu);
         }
     }
     
     @Override
-    public void notifyRun(Run run) {
-        if (observer != null) {
+    public void notifyAddRun(Run run) {
+        if (hasObserver()) {
             observer.addRun(run.getJeu().getID(),run);
         }
     }
     
     @Override
-    public void notifyLive(Live live) {
-        if (observer != null) {
+    public void notifyAddLive(Live live) {
+        if (hasObserver()) {
             Run run = live.getRun();
             observer.addLive(run.getID(), live);
+        }
+    }
+    
+    @Override
+    public void notifyRemovePlateforme(long idPlateforme) {
+        if (hasObserver()) {
+            observer.removePlateforme(idPlateforme);
+        }
+    }
+    
+    @Override
+    public void notifyRemoveGenre(long idGenre) {
+        if (hasObserver()) {
+            
+        }
+    }
+    
+    @Override
+    public void notifyRemoveStudio(long idStudio) {
+        if (hasObserver()) {
+            
+        }
+    }
+    
+    @Override
+    public void notifyRemoveJeu(long idJeu) {
+        if (hasObserver()) {
+            
+        }
+    }
+    
+    @Override
+    public void notifyRemoveRun(long idRun) {
+        if (hasObserver()) {
+            
+        }
+    }
+    
+    @Override
+    public void notifyRemoveLive(long idLive) {
+        if (hasObserver()) {
+            
         }
     }
     
@@ -246,6 +327,13 @@ public class StatsMortsModele implements Observable {
     public void notifyFillPlateforme(long idPlateforme) {
         if (observer != null) {
             observer.fillPlateforme(idPlateforme,bdd.getPlateformes().get(idPlateforme).getTitre());
+        }
+    }
+    
+    @Override
+    public void notifyFillGenre(long idGenre) {
+        if (observer != null) {
+            observer.fillGenre(idGenre,bdd.getGenres().get(idGenre).getTitre());
         }
     }
     
