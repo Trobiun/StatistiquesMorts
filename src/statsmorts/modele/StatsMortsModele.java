@@ -44,7 +44,7 @@ public class StatsMortsModele implements Observable {
     private TimeUnit timeUnit;
     private TreeSet<Live> livesForDataset;
     private String titreForDataset;
-    private TypeGroup typeRacine;
+    private TypeGroup typeGroup;
     
     private Observer observer;
     
@@ -54,7 +54,8 @@ public class StatsMortsModele implements Observable {
         connexion = new Connexion();
         preferences = prefs;
         timeUnit = TimeUnit.HOURS;
-        typeRacine = preferences.getAffichageRacine();
+        typeGroup = preferences.getAffichageGroup();
+        livesForDataset = new TreeSet();
     }
     
     
@@ -81,7 +82,7 @@ public class StatsMortsModele implements Observable {
         bdd = new BDD(connexion,database);
     }
     
-    public void connecter(TypeDatabase type, String serveur, String user, String password) {
+    public void connecter(TypeDatabase type, String serveur, String user, char[] password) {
         bdd = new BDD(connexion, type, serveur, user, password);
     }
     
@@ -89,9 +90,10 @@ public class StatsMortsModele implements Observable {
         String requete = "INSERT INTO Plateformes (pla_Nom) VALUES (?)";
         try {
             ResultSet result = connexion.executerPreparedUpdate(requete, nomPlateforme);
-            ResultSet resultID = connexion.getStatement().getGeneratedKeys();
+            ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
             if (resultID.next()) {
-                Plateforme plateforme = new Plateforme(resultID.getLong(1),nomPlateforme);
+                System.out.println("lol");
+                Plateforme plateforme = new Plateforme(resultID.getInt(1),nomPlateforme);
                 bdd.ajouterPlateforme(plateforme);
                 notifyAddPlateforme(plateforme);
             }
@@ -118,7 +120,9 @@ public class StatsMortsModele implements Observable {
     public void setTimeUnit(TimeUnit unit) {
         if (!this.timeUnit.equals(unit)) {
             this.timeUnit = unit;
-            actualiserDataset();
+            if (!livesForDataset.isEmpty()) {
+                actualiserDataset();
+            }
         }
     }
     
@@ -129,7 +133,7 @@ public class StatsMortsModele implements Observable {
             Logger.getLogger(StatsMortsModele.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (observer != null) {
-            observer.clear(this.typeRacine);
+            observer.clear(this.typeGroup);
 //            if (typeRacine.equals(TypeGroup.PLATEFORMES)) {
                 Set<Entry<Long, Plateforme>> plateformes = bdd.getPlateformes().entrySet();
                 for (Entry<Long, Plateforme> entryPlateforme : plateformes) {
@@ -227,7 +231,7 @@ public class StatsMortsModele implements Observable {
     
     @Override
     public void setGroup(TypeGroup type) {
-        this.typeRacine = type;
+        this.typeGroup = type;
         this.actualiser();
     }
     
