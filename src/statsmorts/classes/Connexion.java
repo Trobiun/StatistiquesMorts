@@ -20,6 +20,7 @@ public class Connexion {
     private String database;
     private Connection connexion;
     private Statement statement;
+    private PreparedStatement preparedStatement;
     
     //CONSTRUCTEUR
     public Connexion() {
@@ -28,10 +29,17 @@ public class Connexion {
     
     
     //ACCESSSEURS
+    public TypeDatabase getType() {
+        return type;
+    }
+    
     public Statement getStatement() {
         return statement;
     }
     
+    public PreparedStatement getPreparedStatement() {
+        return preparedStatement;
+    }
     
     //MUTATEURS
     private void setType(TypeDatabase type) {
@@ -83,10 +91,10 @@ public class Connexion {
         }
     }
     
-    public void connecter(TypeDatabase type, String serveur, String user, String password) {
+    public void connecter(TypeDatabase type, String serveur, String user, char[] password) {
         setType(type);
         setDatabase(type.getPrefixe() + serveur + type.getSuffixe());
-        setConnection(user,password);
+        setConnection(user,new String(password));
         try {
             statement.setQueryTimeout(30);
         } catch (SQLException ex) {
@@ -114,11 +122,11 @@ public class Connexion {
     public ResultSet executerPreparedSelect(String requete, String ... args) {
         if (requete.toUpperCase().startsWith("SELECT")) {
             try {
-                PreparedStatement prepared = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                preparedStatement = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
                 
-                preparedSetParameters(prepared, args);
+                preparedSetParameters(preparedStatement, args);
                 
-                return prepared.executeQuery();
+                return preparedStatement.executeQuery();
             } catch (SQLException ex) {
                 Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -130,29 +138,30 @@ public class Connexion {
         String upperCase = requete.substring(0,7).toUpperCase();
         ResultSet res = null;
         if (upperCase.startsWith("UPDATE") || upperCase.startsWith("INSERT") || upperCase.startsWith("DELETE")) {
-            try (PreparedStatement prepared = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+            try {
+                preparedStatement = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
                 //mise en place des paramètres pour le PreparedStatement
                 for (int i = 0; i < args.length; i++) {
                     if (args[i].startsWith("(int)")) {
-                        prepared.setInt(i+1, Integer.parseInt(args[i].replace("(int)","")));
+                        preparedStatement.setInt(i+1, Integer.parseInt(args[i].replace("(int)","")));
                     }
                     else {
                         if (args[i].startsWith("(bool)")) {
-                            prepared.setBoolean(i+1, Boolean.parseBoolean(args[i].replace("(bool)","")));
+                            preparedStatement.setBoolean(i+1, Boolean.parseBoolean(args[i].replace("(bool)","")));
                         }
                         else {
                             if (args[i].startsWith("(long)")) {
-                                prepared.setLong(i+1,Long.parseLong(args[i].replace("(long)","")));
+                                preparedStatement.setLong(i+1,Long.parseLong(args[i].replace("(long)","")));
                             }
                             else {
-                                prepared.setString(i+1, args[i]);
+                                preparedStatement.setString(i+1, args[i]);
                             }
                         }
                     }
                 }
                 
-                prepared.executeUpdate();
-                prepared.close();
+                preparedStatement.executeUpdate();
+//                preparedStatement.close();
             } catch (SQLException ex) {
                 Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -182,6 +191,13 @@ public class Connexion {
         if (statement != null) {
             try {
                 statement.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if (preparedStatement != null) {
+            try {
+                preparedStatement.close();
             } catch (SQLException ex) {
                 Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
             }

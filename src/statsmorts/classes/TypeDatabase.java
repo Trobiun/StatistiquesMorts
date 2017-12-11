@@ -12,7 +12,7 @@ package statsmorts.classes;
 public enum TypeDatabase {
     
     //ENUMERATION
-    Access("net.ucanaccess.jdbc.UcanaccessDriver","jdbc:ucanaccess://",";newdatabaseversion=V2007"),
+    Access("net.ucanaccess.jdbc.UcanaccessDriver","jdbc:ucanaccess://",";newdatabaseversion=V2010"),
     SQLite("org.sqlite.JDBC","jdbc:sqlite:"),
     MySQL("com.mysql.jdbc.Driver","jdbc:mysql://"),
     PostgreSQL("org.postgresql.Driver","jdbc:postgresql://");

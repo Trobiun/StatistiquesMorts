@@ -20,6 +20,10 @@ import java.util.logging.Logger;
  */
 public class BDD {
     
+    //ATTRIBUTS STATIC
+    private static final String AUTOINCREMENT_ACCESS = "AUTOINCREMENT PRIMARY KEY";
+    private static final String AUTOINCREMENT = "INTEGER PRIMARY KEY AUTOINCREMENT";
+    
     //ATTRIBUTS
     private Map<Long,Plateforme> plateformes;
     private Map<Long,Genre> genres;
@@ -33,7 +37,7 @@ public class BDD {
     public BDD(Connexion connexion, String path) {
         this.connecter(connexion,path);
     }
-    public BDD(Connexion connexion, TypeDatabase type, String serveur, String user, String password) {
+    public BDD(Connexion connexion, TypeDatabase type, String serveur, String user, char[] password) {
         this.connecter(connexion, type, serveur, user, password);
     }
     
@@ -103,7 +107,7 @@ public class BDD {
         initAll();
     }
     
-    public void connecter(Connexion connexion, TypeDatabase type, String serveur, String user, String password) {
+    public void connecter(Connexion connexion, TypeDatabase type, String serveur, String user, char[] password) {
         connexion.connecter(type, serveur, user, password);
         initAll();
     }
@@ -116,6 +120,11 @@ public class BDD {
         String requeteJeuGenre = "SELECT * FROM JeuGenre";
         String requeteJeuStudio = "SELECT * FROM JeuStudio";
         String requeteVueGlobale = "SELECT * FROM VueGlobale";
+        if (connexion.getType().equals(TypeDatabase.Access)) {
+            requeteVueGlobale = "SELECT * FROM "
+                              + "Jeux LEFT OUTER JOIN "
+                              + "(Runs LEFT OUTER JOIN Lives ON run_id = liv_Run) ON run_idJeu = jeu_id";
+        }
         
         long idPlateforme;
         String nomPlateforme;
@@ -242,42 +251,57 @@ public class BDD {
         if (creation) {
             file.delete();
             connexion.connecter(database);
+            TypeDatabase type = connexion.getType();
+            String requete1 = "CREATE TABLE Plateformes (";
+            requete1 += "pla_id ";
+            requete1 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
+            requete1 += ",pla_Nom TEXT)";
             
-            String requete1 = "CREATE TABLE Plateformes ("
-                                                      + "pla_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                                      + "pla_Nom TEXT)";
-            String requete2 = "CREATE TABLE Genres ("
-                                                + "gen_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                                + "gen_Nom TEXT)";
-            String requete3 = "CREATE TABLE Studios ("
-                                                 + "stu_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                                 + "stu_Nom TEXT)";
-            String requete4 = "CREATE TABLE Jeux ("
-                                               + "jeu_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                               + "jeu_Titre TEXT,"
-                                               + "jeu_AnneSortie INTEGER)";
+            String requete2 = "CREATE TABLE Genres (";
+            requete2 += "gen_id ";
+            requete2 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
+            requete2 += ",gen_Nom TEXT)";
+            
+            String requete3 = "CREATE TABLE Studios (";
+            requete3 += "stu_id ";
+            requete3 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
+            requete3 += ",stu_Nom TEXT)";
+            
+            String requete4 = "CREATE TABLE Jeux (";
+            requete4 += "jeu_id ";
+            requete4 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
+            requete4 += ",jeu_Titre TEXT";
+            requete4 += ",jeu_AnneSortie INTEGER)";
+            
             String requete5 = "CREATE TABLE JeuPlateforme("
                                                        + "jp_idJeu INTEGER REFERENCES Jeux(jeu_id),"
-                                                       + "jp_idPlateforme INTEGER REFERENCES Plateforme(pla_id),"
+                                                       + "jp_idPlateforme INTEGER REFERENCES Plateformes(pla_id),"
                                                        + "PRIMARY KEY (jp_idJeu,jp_idPlateforme))";
+            
             String requete6 = "CREATE TABLE JeuGenre("
                                                  + "jt_idJeu INTEGER REFERENCES Jeux(jeu_id),"
                                                  + "jt_idGenre INTEGER REFERENCES Genres(gen_id),"
                                                  + "PRIMARY KEY (jt_idJeu,jt_idGenre))";
+            
             String requete7 = "CREATE TABLE JeuStudio("
                                                    + "js_idJeu INTEGER REFERENCES Jeux(jeu_id),"
                                                    + "js_idStudio INTEGER REFERENCES Studios(stu_id),"
                                                    + "PRIMARY KEY (js_idJeu,js_idStudio))";
-            String requete8 = "CREATE TABLE Runs("
-                                             + "run_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                             + "run_idJeu INTEGER REFERENCES Jeux(jeu_id),"
-                                             + "run_Titre TEXT)";
-            String requete9 = "CREATE TABLE Lives("
-                                              + "liv_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                              + "liv_DateDebut DATETIME NOT NULL,"
-                                              + "liv_DateFin DATETIME NOT NULL,"
-                                              + "liv_Run INTEGER REFERENCES Runs(run_id),"
-                                              + "liv_Morts INTEGER)";
+            
+            String requete8 = "CREATE TABLE Runs(";
+            requete8 += "run_id ";
+            requete8 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
+            requete8 += ",run_idJeu INTEGER REFERENCES Jeux(jeu_id)";
+            requete8 += ",run_Titre TEXT)";
+            
+            String requete9 = "CREATE TABLE Lives(";
+            requete9 += "liv_id ";
+            requete9 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
+            requete9 += ",liv_DateDebut DATETIME NOT NULL";
+            requete9 += ",liv_DateFin DATETIME NOT NULL";
+            requete9 += ",liv_Run INTEGER REFERENCES Runs(run_id)";
+            requete9 += ",liv_Morts INTEGER)";
+            
             String requete10 = "CREATE VIEW VueGlobale AS "
                                             + "SELECT * FROM( "
                                             + "Jeux LEFT OUTER JOIN "
@@ -292,7 +316,9 @@ public class BDD {
             connexion.executerUpdate(requete7);
             connexion.executerUpdate(requete8);
             connexion.executerUpdate(requete9);
-            connexion.executerUpdate(requete10);
+            if (!type.equals(TypeDatabase.Access)) {
+                connexion.executerUpdate(requete10);
+            }
             
             res = new BDD(connexion,database);
             
