@@ -11,11 +11,16 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import statsmorts.classes.TypeDatabase;
+import statsmorts.classes.TypeGroup;
 import statsmorts.controler.StatsMortsControler;
+import statsmorts.vue.Fenetre;
 import statsmorts.vue.TexteConstantes;
 
 /**
@@ -27,7 +32,9 @@ public class PreferencesDialog extends JDialog {
     //ATTRIBUTS
     private final Preferences preferences;
     private final StatsMortsControler controler;
-    private boolean stateChanged;
+    private Fenetre fenetreParent;
+    
+    private TypeServeurFichier typeBDD;
     private String typeServeur;
     
     private JTabbedPane tabbedPane;
@@ -35,23 +42,25 @@ public class PreferencesDialog extends JDialog {
     private AffichageOptions panelAffichage;
     private JPanel panelBoutons;
     
-    private JButton ok;
+    private JButton valider;
     private JButton appliquer;
     private JButton annuler;
     
     
     //CONSTRUCTEUR
+    public PreferencesDialog(Fenetre parent, String title, boolean modal, StatsMortsControler controler, Preferences prefs) {
+        this((JFrame)parent, title, modal, controler, prefs);
+        this.fenetreParent = parent;
+    }
     public PreferencesDialog(JFrame parent, String title, boolean modal, StatsMortsControler controler, Preferences prefs) {
-        super(parent, title, modal);
+        super(parent,title,modal);
         this.controler = controler;
         this.preferences = prefs;
-        stateChanged = false;
-        typeServeur = preferences.getTypeServeur();
+        this.fenetreParent = null;
         
-        setPreferredSize(new Dimension(520,250));
-        setSize(getPreferredSize());
-        setLocationRelativeTo(null);
-        setResizable(false);
+        typeServeur = preferences.getTypeServeur();
+        typeBDD = preferences.getType();
+        
         setLayout(new BorderLayout(10,5));
         
         initAll();
@@ -59,6 +68,10 @@ public class PreferencesDialog extends JDialog {
         
         add(tabbedPane, BorderLayout.CENTER);
         add(panelBoutons, BorderLayout.SOUTH);
+        
+        pack();
+        setLocationRelativeTo(parent);
+        setResizable(false);
     }
     
     
@@ -74,10 +87,10 @@ public class PreferencesDialog extends JDialog {
         tabbedPane.add(TexteConstantes.BDD, panelBDD);
         tabbedPane.add(TexteConstantes.AFFICHAGE,panelAffichage);
         
-        panelBoutons.add(ok);
+        panelBoutons.add(valider);
         if (controler != null) {
-            panelBoutons.add(annuler);
             panelBoutons.add(appliquer);
+            panelBoutons.add(annuler);
         }
     }
     
@@ -100,70 +113,217 @@ public class PreferencesDialog extends JDialog {
     private void initButtons() {
         BoutonsListener boutonListener = new BoutonsListener();
         
-        ok = new JButton(TexteConstantes.OK);
-        ok.addActionListener(boutonListener);
+        valider = new JButton(TexteConstantes.VALIDER);
+        valider.addActionListener(boutonListener);
         annuler = new JButton(TexteConstantes.ANNULER);
         annuler.addActionListener(boutonListener);
         appliquer = new JButton(TexteConstantes.APPLIQUER);
         appliquer.addActionListener(boutonListener);
     }
     
-    
     //LISTENERS
     class BoutonsListener implements ActionListener {
+       
+        private void showServeurConnectionDialog() {
+            ServeurOptions options = panelBDD.getServeurOptions();
+            options.setPasswordFieldVisible(true);
+            Object[] boutons = {"Se connecter", "Quitter"};
+            int res;
+            res = JOptionPane.showOptionDialog(null, options, "Se connecter à une base de données", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, boutons, null);
+            if (res == JOptionPane.YES_OPTION && !options.getType().equals("Fichier")) {
+                controler.connecterServeur(TypeDatabase.valueOf(options.getType()), options.getAdresse(), options.getPort(), options.getBaseDonnees(), options.getUtilisateur(), options.getMotDePasse());
+            }
+            if (res == JOptionPane.YES_OPTION && options.getType().equals("Fichier")) {
+                controler.ouvrirBDD(preferences.getBDDFichier());
+            }
+            if (res == JOptionPane.NO_OPTION) {
+                
+            }
+        }
+        
         
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
-            if (src.equals(ok)) {
-                stateChanged = true;
+            if (src.equals(valider)) {
                 appliquer();
                 preferences.savePreferences();
-                stateChanged = false;
                 setVisible(false);
             }
             if (src.equals(appliquer)) {
-                stateChanged = true;
                 appliquer();
             }
             if (src.equals(annuler)) {
                 preferences.load();
                 panelBDD.reset();
-                if (stateChanged) {
-                    appliquer();
-                }
-                stateChanged = false;
+                panelAffichage.reset();
+                appliquer();
                 setVisible(false);
             }
         }
         
         private void appliquer() {
             String pathBDD = panelBDD.getBDDFichier();
-            boolean bddChanged = !pathBDD.equals(preferences.getBDDFichier());
-            boolean typeBDDChanged = !preferences.getTypeServeur().equals(typeServeur);
+            File fileBDD = new File(pathBDD);
             
-            preferences.setBDDFichier(pathBDD);
-            preferences.setType(panelBDD.getType());
-            preferences.setTypeServeur(panelBDD.getTypeServeur());
-            preferences.setAdresse(panelBDD.getAdresse());
-            preferences.setPort(panelBDD.getPort());
-            preferences.setBDDServeur(panelBDD.getBDDServeur());
-            preferences.setUtilisateur(panelBDD.getUtilisateur());
+            boolean bddFichierChanged = !preferences.getBDDFichier().equals(pathBDD);
+            boolean typeBDDChanged = !preferences.getType().equals(panelBDD.getType());
+            boolean typeServeurChanged = !preferences.getTypeServeur().equals(panelBDD.getTypeServeur());
+            boolean adresseServeurChanged = !preferences.getAdresse().equals(panelBDD.getAdresse());
+            boolean portChanged = Integer.parseInt(preferences.getPort()) != panelBDD.getPort();
+            boolean bddServeurChanged = !preferences.getBDDServeur().equals(panelBDD.getBDDServeur());
+            boolean utilisateurChanged = !preferences.getUtilisateur().equals(panelBDD.getUtilisateur());
+            boolean affichageGroupChanged = !preferences.getAffichageGroup().equals(panelAffichage.getAffichageGroup());
+            boolean affichageTempsChanged = !preferences.getAffichageTemps().equals(panelAffichage.getAffichageTemps());
+//            boolean bddChanged = !pathBDD.equals(preferences.getBDDFichier());
+             boolean stateChanged = bddFichierChanged || 
+                    typeBDDChanged || 
+                    typeServeurChanged || 
+                    adresseServeurChanged || 
+                    portChanged || 
+                    bddServeurChanged || 
+                    utilisateurChanged || 
+                    affichageGroupChanged || 
+                    affichageTempsChanged;
+            
             if (stateChanged) {
-                if (bddChanged) {
-                    if (controler != null) {
-                        controler.ouvrirBDD(pathBDD);
-                    }
-                }
-                if (!bddChanged) {
-                    if (controler != null) {
-                        controler.actualiser();
-                    }
-                }
+                preferences.setBDDFichier(pathBDD);
+                preferences.setType(panelBDD.getType());
+                preferences.setTypeServeur(panelBDD.getTypeServeur());
+                preferences.setAdresse(panelBDD.getAdresse());
+                preferences.setPort(panelBDD.getPort());
+                preferences.setBDDServeur(panelBDD.getBDDServeur());
+                preferences.setUtilisateur(panelBDD.getUtilisateur());
+                
+                preferences.setAffichageGroup(panelAffichage.getAffichageGroup());
+                preferences.setAffichageTemps(panelAffichage.getAffichageTemps());
+                
+                typeBDDChanged = !preferences.getType().equals(typeBDD);
+                
                 if (typeBDDChanged) {
-                    
+                    typeBDD = panelBDD.getType();
+                    if (typeBDD.equals(TypeServeurFichier.FICHIER)) {
+                        if (controler != null) {
+//                            File fileBDD = new File(pathBDD);
+                            if (fileBDD.isFile()) {
+                                controler.ouvrirBDD(pathBDD);
+                            }
+                            else {
+                                controler.creerBDD(pathBDD);
+                            }
+                        }
+                    }
+                    else {
+                        showServeurConnectionDialog();
+//                        ServeurOptions options = panelBDD.getServeurOptions();
+//                        options.setPasswordFieldVisible(true);
+//                        Object[] boutons = {"Se connecter", "Quitter"};
+//                        int res;
+//                        res = JOptionPane.showOptionDialog(null, options, "Se connecter à une base de données", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, boutons, null);
+//                        if (res == JOptionPane.YES_OPTION && !options.getType().equals("Fichier")) {
+//                            controler.connecterServeur(TypeDatabase.valueOf(options.getType()), options.getAdresse(), options.getPort(), options.getBaseDonnees(), options.getUtilisateur(), options.getMotDePasse());
+//                        }
+//                        if (res == JOptionPane.YES_OPTION && options.getType().equals("Fichier")) {
+//                            controler.ouvrirBDD(preferences.getBDDFichier());
+//                        }
+//                        if (res == JOptionPane.NO_OPTION) {
+//                            
+//                        }
+                    }
+                }
+                else {
+                    if (typeBDD.equals(TypeServeurFichier.FICHIER) && bddFichierChanged) {
+                        if (controler != null) {
+                            if (fileBDD.isFile()) {
+                                controler.ouvrirBDD(pathBDD);
+                            }
+                            else {
+                                controler.creerBDD(pathBDD);
+                            }
+                        }
+                    }
+                    boolean paramServeurChanged = (typeServeurChanged
+                            || adresseServeurChanged
+                            || portChanged
+                            || bddServeurChanged
+                            || utilisateurChanged);
+                    if (typeBDD.equals(TypeServeurFichier.SERVEUR) && paramServeurChanged) {
+                        showServeurConnectionDialog();
+//                        ServeurOptions options = panelBDD.getServeurOptions();
+//                        options.setPasswordFieldVisible(true);
+//                        Object[] boutons = {"Se connecter", "Quitter"};
+//                        int res;
+//                        res = JOptionPane.showOptionDialog(null, options, "Se connecter à une base de données", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, boutons, null);
+//                        if (res == JOptionPane.YES_OPTION && !options.getType().equals("Fichier")) {
+//                            controler.connecterServeur(TypeDatabase.valueOf(options.getType()), options.getAdresse(), options.getPort(), options.getBaseDonnees(), options.getUtilisateur(), options.getMotDePasse());
+//                        }
+//                        if (res == JOptionPane.YES_OPTION && options.getType().equals("Fichier")) {
+//                            controler.ouvrirBDD(preferences.getBDDFichier());
+//                        }
+//                        if (res == JOptionPane.NO_OPTION) {
+//                            
+//                        }
+                    }
+                }
+                if (affichageGroupChanged) {
+                    if (fenetreParent != null) {
+                        fenetreParent.setGroup(preferences.getAffichageGroup());
+                    }
+                }
+                if (affichageTempsChanged) {
+                    if (fenetreParent != null) {
+                        fenetreParent.setTemps(preferences.getAffichageTemps());
+                    }
                 }
             }
+            
+            /*
+            if (stateChanged) {
+                if (typeBDDChanged) {
+                    if (typeBDD.equals(TypeServeurFichier.FICHIER)) {
+                        if (controler != null) {
+//                            File fileBDD = new File(pathBDD);
+                            if (fileBDD.exists()) {
+                                controler.ouvrirBDD(pathBDD);
+                            }
+                            else {
+                                controler.creerBDD(pathBDD);
+                            }
+                        }
+                    }
+                    else {
+                        ServeurOptions options;// = new ServeurOptions(preferences, true);
+                        options = panelBDD.getServeurOptions();
+                        Object[] boutons = {"Se connecter", "Quitter"};
+                        int res;
+                        res = JOptionPane.showOptionDialog(null, options, "Se connecter à une base de données", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, boutons, null);
+                        if (res == JOptionPane.YES_OPTION && !options.getType().equals("Fichier")) {
+                            controler.connecterServeur(TypeDatabase.valueOf(options.getType()), options.getAdresse(), options.getPort(), options.getBaseDonnees(), options.getUtilisateur(), options.getMotDePasse());
+                        }
+                        if (res == JOptionPane.YES_OPTION && options.getType().equals("Fichier")) {
+                            controler.ouvrirBDD(preferences.getBDDFichier());
+                        }
+                    }
+                }
+                else {
+                    if (bddChanged) {
+                        if (controler != null) {
+//                            File fileBDD = new File(pathBDD);
+                            if (fileBDD.exists()) {
+                                controler.ouvrirBDD(pathBDD);
+                            }
+                            else {
+                                controler.creerBDD(pathBDD);
+                            }
+                        }
+                    }
+                    else {
+                        if (controler != null) {
+                            controler.actualiser();
+                        }
+                    }
+                }
+            }*/
         }
         
     }
