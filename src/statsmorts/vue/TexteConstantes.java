@@ -42,10 +42,12 @@ public class TexteConstantes {
     public static final String MINUTES = "Minutes";
     public static final String EMPTY = "";
     public static final String BDD = "Base de données";
+    public static final String SERVEUR = "Serveur";
+    public static final String TYPE = "Type";
     public static final String EXTENSIONS_BDD = "(.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)";
     
     //BOUTONS JDIALOG
-    public static final String OK = "OK";
+    public static final String VALIDER = "Valider";
     public static final String APPLIQUER = "Appliquer";
     public static final String ANNULER = "Annuler";
     
