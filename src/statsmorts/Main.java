@@ -45,9 +45,17 @@ public class Main {
         System.out.println("Modèle : ");
         long startModele = System.currentTimeMillis();
         StatsMortsModele modele = new StatsMortsModele(preferences);
+        boolean connexionReussie = false;
         TypeServeurFichier type = preferences.getType();
         if (type.equals(TypeServeurFichier.FICHIER)) {
-            modele.connecter(preferences.getBDDFichier());
+            String pathBDD = preferences.getBDDFichier();
+            File fileBDD = new File(pathBDD);
+            if (fileBDD.exists()) {
+                modele.connecter(pathBDD);
+            }
+            else  {
+                modele.creerBDD(pathBDD);
+            }
         }
         else {
             ServeurOptions options = new ServeurOptions(preferences,true);
@@ -55,7 +63,7 @@ public class Main {
             int res;
             res = JOptionPane.showOptionDialog(null,options,"Se connecter à une base de données",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,boutons,null);
             if (res == JOptionPane.YES_OPTION && !options.getType().equals("Fichier")) {
-                modele.connecter(TypeDatabase.valueOf(options.getType()), options.getAdresse() + ":" + options.getPort() + "/" + options.getBaseDonnees(), options.getUtilisateur(),options.getPassword());
+                modele.connecter(TypeDatabase.valueOf(options.getType()), options.getAdresse() + ":" + options.getPort() + "/" + options.getBaseDonnees(), options.getUtilisateur(),options.getMotDePasse());
             }
             if (res == JOptionPane.YES_OPTION  && options.getType().equals("Fichier")) {
                 modele.connecter(preferences.getBDDFichier());
