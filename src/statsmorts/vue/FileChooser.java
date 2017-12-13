@@ -6,6 +6,7 @@
 package statsmorts.vue;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -25,35 +26,56 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class FileChooser extends JPanel{
     
     //ATTRIBUTS
+    private JPanel panelButtons;
     private JFileChooser fileChooser;
-    private final int typeDialog;
+    private int typeDialog;
     private JTextField textField;
     private String text;
-    private JButton open;
+    private JButton buttonOpen;
+    private JButton buttonCreer;
+    
+    private final boolean create;
+    private String defaultExtension;
+    
     
     //CONSTRUCTEUR
-    public FileChooser(String title, String text, int mode, int typeDialog) {
+    public FileChooser(String title, String text, int mode, int typeDialog, boolean create) {
         super(new BorderLayout(5,5));
         this.typeDialog = typeDialog;
+        this.create = create;
         
         init(text,mode);
         
         setBorder(new TitledBorder(BorderFactory.createEmptyBorder(), title));
         
-        add(textField, BorderLayout.CENTER);
-        add(open, BorderLayout.EAST);
+        setComponents();
     }
     
     private void init(String text, int mode) {
+        panelButtons = new JPanel(new GridLayout(1,2,5,5));
+        
         this.text = text;
         textField = new JTextField(text);
-        
         fileChooser = new JFileChooser(new File(text));
+        
         fileChooser.setFileSelectionMode(mode);
         fileChooser.setSelectedFile(new File(text));
         
-        open = new JButton(UIManager.getIcon("FileView.directoryIcon"));
-        open.addActionListener(new ButtonListener());
+        ButtonsListener listener = new ButtonsListener();
+        buttonOpen = new JButton(UIManager.getIcon("FileView.directoryIcon"));
+        buttonOpen.addActionListener(listener);
+        
+        buttonCreer = new JButton("Créer");
+        buttonCreer.addActionListener(listener);
+    }
+    
+    private void setComponents() {
+        panelButtons.add(buttonOpen);
+        if (create) {
+            panelButtons.add(buttonCreer);
+        }
+        add(textField, BorderLayout.CENTER);
+        add(panelButtons, BorderLayout.EAST);
     }
     
     
@@ -61,8 +83,11 @@ public class FileChooser extends JPanel{
     public String getPath() {
         File file = new File(textField.getText());
         
-        boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile() || fileChooser.getDialogType() == JFileChooser.SAVE_DIALOG);
-        boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory() || fileChooser.getDialogType() == JFileChooser.SAVE_DIALOG);
+        boolean correctFile = ((fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile()) 
+                || (fileChooser.getDialogType() == JFileChooser.SAVE_DIALOG) 
+                || (typeDialog == JFileChooser.SAVE_DIALOG));
+        boolean correctDir = ((fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory()) 
+                || (fileChooser.getDialogType() == JFileChooser.SAVE_DIALOG));
         
         if (correctFile || correctDir) {
             setText(file.getAbsolutePath());
@@ -91,33 +116,64 @@ public class FileChooser extends JPanel{
         textField.setText(text);
     }
     
-    public void setFilter(FileNameExtensionFilter filter) {
+    public void setFilter(FileNameExtensionFilter filter, String defaultExtension) {
         fileChooser.setFileFilter(filter);
+        this.defaultExtension = defaultExtension;
     }
     
     
     //LISTENERS
-    class ButtonListener implements ActionListener {
+    class ButtonsListener implements ActionListener {
         
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == open) {
+            if (e.getSource().equals(buttonOpen)) {
+                fileChooser.setDialogType(typeDialog);
                 fileChooser.setCurrentDirectory(new File(textField.getText()));
                 int returnVal;
                 if (typeDialog == JFileChooser.OPEN_DIALOG) {
-                    returnVal = fileChooser.showOpenDialog(open.getParent());
+                    returnVal = fileChooser.showOpenDialog(buttonOpen.getParent());
                 }
                 else {
-                    returnVal = fileChooser.showSaveDialog(open.getParent());
+                    returnVal = fileChooser.showSaveDialog(buttonOpen.getParent());
                 }
-                
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
                     /*boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory());
                     boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile());
                     if (correctDir || correctFile) {*/
-                        textField.setText(file.getAbsolutePath());
+                    if (fileChooser.getFileFilter().accept(file)) {
+                        setText(file.getAbsolutePath());
+//                        textField.setText(file.getAbsolutePath());
+                    }
+                    else {
+                        setText(file.getAbsolutePath() + "." + defaultExtension);
+//                        textField.setText();
+                    }
                     //}
+                }
+            }
+            if (e.getSource().equals(buttonCreer)) {
+                fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+                typeDialog = JFileChooser.SAVE_DIALOG;
+                fileChooser.setCurrentDirectory(new File(textField.getText()).getParentFile());
+                
+                int returnVal = fileChooser.showSaveDialog(buttonCreer.getParent());
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    /*boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory());
+                    boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile());
+                    if (correctDir || correctFile) {*/
+//                        textField.setText(file.getAbsolutePath());
+                    //}
+                    if (fileChooser.getFileFilter().accept(file)) {
+//                        textField.setText(file.getAbsolutePath());
+                        setText(file.getAbsolutePath());
+                    }
+                    else {
+//                        textField.setText(file.getAbsolutePath() + "." + defaultExtension);
+                        setText(file.getAbsolutePath() + "." + defaultExtension);
+                    }
                 }
             }
         }
