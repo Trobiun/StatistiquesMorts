@@ -21,6 +21,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import statsmorts.vue.FileChooser;
+import statsmorts.vue.TexteConstantes;
 
 /**
  *
@@ -44,6 +45,7 @@ public class BDDOptions extends JPanel {
     
     private final Preferences preferences;
     private final ServeurOptions serveurOptions;
+    
     
     //CONSTRUCTEUR
     public BDDOptions(Preferences prefs) {
@@ -71,6 +73,10 @@ public class BDDOptions extends JPanel {
         return fileChooser.getPath();
     }
     
+    public ServeurOptions getServeurOptions() {
+        return serveurOptions;
+    }
+    
     public String getTypeServeur() {
         return serveurOptions.getType();
     }
@@ -79,7 +85,7 @@ public class BDDOptions extends JPanel {
         return serveurOptions.getAdresse();
     }
     
-    public String getPort() {
+    public int getPort() {
         return serveurOptions.getPort();
     }
     
@@ -102,27 +108,26 @@ public class BDDOptions extends JPanel {
     }
     private void initPanels() {
         panelBaseDonnees = new JPanel(new GridBagLayout());
+        panelBaseDonnees.setBorder(new TitledBorder(TexteConstantes.BDD));
         
-        panelBaseDonnees.setBorder(new TitledBorder("Base de données"));
-        
-        panelFichier = new JPanel(new BorderLayout());
-        panelFichier.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),"Fichier"));
+        panelFichier = new JPanel(new BorderLayout(5,5));
+        panelFichier.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.FICHIER));
         
         panelServeur = new JPanel(new GridLayout(1,3));
-        panelServeur.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),"Serveur"));
+        panelServeur.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.SERVEUR));
         
         panelType = new JPanel(new GridLayout(3,1));
-        panelType.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),"Type"));
+        panelType.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TYPE));
     }
     private void initFileChooser() {
         if(preferences.getBDDFichier() != null) {
-            fileChooser = new FileChooser("", preferences.getBDDFichier(), JFileChooser.FILES_ONLY, JFileChooser.OPEN_DIALOG);
+            fileChooser = new FileChooser(TexteConstantes.EMPTY, preferences.getBDDFichier(), JFileChooser.FILES_ONLY, JFileChooser.OPEN_DIALOG,true);
         }
         else {
-            fileChooser = new FileChooser("", "", JFileChooser.FILES_ONLY, JFileChooser.OPEN_DIALOG);
+            fileChooser = new FileChooser(TexteConstantes.EMPTY, TexteConstantes.EMPTY, JFileChooser.FILES_ONLY, JFileChooser.OPEN_DIALOG,true);
         }
         
-        fileChooser.setFilter(new FileNameExtensionFilter("Base de données (.accdb,.mdb,.db,.sdb,.sqlite,.db2,.s2db,.sqlite2.sl2,.db3,.s3db,.sqlite3,.sl3)","accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3"));
+        fileChooser.setFilter(new FileNameExtensionFilter(TexteConstantes.BDD + " " + TexteConstantes.EXTENSIONS_BDD,"accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3"),"sqlite3");
     }
     private void initRadioButtons() {
         radioFichier = new JRadioButton(TexteConstantesPreferences.FICHIER);
@@ -175,9 +180,12 @@ public class BDDOptions extends JPanel {
     
     //MUTATEURS PUBLICS
     public void reset() {
-        serveurOptions.reset();
+        resetServeurOptions();
         fileChooser.setText(preferences.getBDDFichier());
         setType(preferences.getType());
+    }
+    public void resetServeurOptions() {
+        serveurOptions.reset();
     }
     private void setType(TypeServeurFichier type) {
         switch (type) {
@@ -189,12 +197,6 @@ public class BDDOptions extends JPanel {
         }
     }
     
-    public void appliquer() {
-        preferences.setType(getType());
-        preferences.setBDDFichier(fileChooser.getPath());
-        serveurOptions.appliquer();
-    }
-    
     
     //LISTENER
     class ServeurListener implements ActionListener {
@@ -202,9 +204,13 @@ public class BDDOptions extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource().equals(buttonServeur)) {
+                serveurOptions.setPasswordFieldVisible(false);
                 int res = JOptionPane.showConfirmDialog(null,serveurOptions, "Configuration serveur", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (res == JOptionPane.CANCEL_OPTION) {
-                    reset();
+                    resetServeurOptions();
+                }
+                else {
+                    
                 }
             }
         }
