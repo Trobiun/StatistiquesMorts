@@ -10,6 +10,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
+import statsmorts.classes.TypeGroup;
 import statsmorts.vue.TexteConstantes;
 
 /**
@@ -43,9 +44,19 @@ public class AffichageOptions extends JPanel {
         initAll();
         
         setComponents();
+        
+        reset();
     }
     
+    
     //ACCESSEURS
+    public TypeGroup getAffichageGroup() {
+        return buttonsAffichageGroupToEnumeration();
+    }
+    
+    public Temps getAffichageTemps() {
+        return buttonsTempsToEnumeration();
+    }
     
     
     //MUTATEURS
@@ -65,6 +76,7 @@ public class AffichageOptions extends JPanel {
         buttonAffichageGenres = new JRadioButton(TexteConstantes.GENRES);
         buttonAffichageStudios = new JRadioButton(TexteConstantes.STUDIOS);
         buttonAffichageJeux = new JRadioButton(TexteConstantes.JEUX);
+        
         groupAffichageGroup.add(buttonAffichagePlateformes);
         groupAffichageGroup.add(buttonAffichageGenres);
         groupAffichageGroup.add(buttonAffichageStudios);
@@ -88,6 +100,73 @@ public class AffichageOptions extends JPanel {
         
         add(panelAffichageGroup);
         add(panelAffichageTemps);
+    }
+    
+    public void reset() {
+        enumerationToButtonsAffichageGroup(preferences.getAffichageGroup());
+        enumerationToButtonsTemps(preferences.getAffichageTemps());
+    }
+    
+    
+    //FONCTIONS DE CONVERSION
+    private TypeGroup buttonsAffichageGroupToEnumeration() {
+        TypeGroup res = TypeGroup.JEUX;
+        if (buttonAffichagePlateformes.isSelected()) {
+            res = TypeGroup.PLATEFORMES;
+        }
+        if (buttonAffichageGenres.isSelected()) {
+            res = TypeGroup.GENRES;
+        }
+        if (buttonAffichageStudios.isSelected()) {
+            res = TypeGroup.STUDIOS;
+        }
+        if (buttonAffichageJeux.isSelected()) {
+            res = TypeGroup.JEUX;
+        }
+        return res;
+    }
+    
+    private void enumerationToButtonsAffichageGroup(TypeGroup group) {
+       switch (group) {
+           case PLATEFORMES :
+                buttonAffichagePlateformes.setSelected(true);
+                break;
+            case GENRES :
+                buttonAffichageGenres.setSelected(true);
+                break;
+            case STUDIOS :
+                buttonAffichageStudios.setSelected(true);
+                break;
+            case JEUX :
+                buttonAffichageJeux.setSelected(true);
+                break;
+            default :
+                buttonAffichageJeux.setSelected(true);
+       }
+    }
+    
+    private Temps buttonsTempsToEnumeration() {
+        Temps res = Temps.HEURES;
+        if (buttonTempsHeures.isSelected()) {
+            res = Temps.HEURES;
+        }
+        if (buttonTempsMinutes.isSelected()) {
+            res = Temps.MINUTES;
+        }
+        return res;
+    }
+    
+    private void enumerationToButtonsTemps(Temps temps) {
+        switch (temps) {
+            case HEURES :
+                 buttonTempsHeures.setSelected(true);
+                 break;
+            case MINUTES :
+                buttonTempsMinutes.setSelected(true);
+                break;
+            default :
+                buttonTempsMinutes.setSelected(true);
+        }
     }
     
 }
