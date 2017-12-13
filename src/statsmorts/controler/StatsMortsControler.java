@@ -8,6 +8,7 @@ package statsmorts.controler;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import statsmorts.classes.FillDataset;
+import statsmorts.classes.TypeDatabase;
 import statsmorts.classes.TypeGroup;
 import statsmorts.modele.StatsMortsModele;
 
@@ -79,6 +80,10 @@ public class StatsMortsControler {
          || lowerCase.endsWith(".sl3") || lowerCase.endsWith(".kexi")) {
             modele.ouvrirBDD(pathBDD);
         }
+    }
+    
+    public void connecterServeur(TypeDatabase typeBDD, String adresseServeur, int port, String nomBDD, String utilisateur, char[] password) {
+        modele.connecter(typeBDD, nomBDD, nomBDD, password);
     }
     
     public void ajouterPlateforme(String nomPlateforme) {
