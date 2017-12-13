@@ -19,6 +19,7 @@ public class TexteConstantesPreferences {
     public static final String AFFICHAGE = "Affichage";
     public static final String TYPE = "type";
     public static final String BDD_FICHIER = "bdd_fichier";
+    public static final String CREER = "Créer";
     public static final String TYPE_SERVEUR = "type_serveur";
     public static final String ADRESSE = "adresse";
     public static final String PORT = "port";
