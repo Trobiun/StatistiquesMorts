@@ -53,7 +53,7 @@ public class StatsMortsModele implements Observable {
     public StatsMortsModele(Preferences prefs) {
         connexion = new Connexion();
         preferences = prefs;
-        timeUnit = TimeUnit.HOURS;
+        timeUnit = preferences.getAffichageTemps().getTimeUnit();
         typeGroup = preferences.getAffichageGroup();
         livesForDataset = new TreeSet();
     }
@@ -79,10 +79,12 @@ public class StatsMortsModele implements Observable {
     }
     
     public void connecter(String database) {
+        deconnecter();
         bdd = new BDD(connexion,database);
     }
     
     public void connecter(TypeDatabase type, String serveur, String user, char[] password) {
+        deconnecter();
         bdd = new BDD(connexion, type, serveur, user, password);
     }
     
