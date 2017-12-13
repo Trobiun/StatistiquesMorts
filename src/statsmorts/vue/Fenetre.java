@@ -62,6 +62,7 @@ import statsmorts.controler.StatsMortsControler;
 import statsmorts.observer.Observer;
 import statsmorts.preferences.Preferences;
 import statsmorts.preferences.PreferencesDialog;
+import statsmorts.preferences.Temps;
 
 /**
  *
@@ -172,7 +173,7 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem supprimerRunPopupMenuItem;
     private JMenuItem supprimerLivePopupMenuItem;
     
-    private TimeUnit unit;
+    private Temps temps;
     private TypeGroup typeGroup;
     
     //CLASSES PERSO
@@ -205,8 +206,8 @@ public class Fenetre extends JFrame implements Observer {
         };
         super.addWindowListener(exitListener);
         
-        this.unit = TimeUnit.HOURS;
-        this.typeGroup = preferences.getAffichageRacine();
+        this.temps = preferences.getAffichageTemps();
+        this.typeGroup = preferences.getAffichageGroup();
         this.controler = controler;
         this.preferences = preferences;
         this.prefsDialog = new PreferencesDialog(this, TexteConstantes.PREFERENCES, false, this.controler, this.preferences);
@@ -473,7 +474,7 @@ public class Fenetre extends JFrame implements Observer {
         racineAffichageGroup.add(studiosAffichageRacineMenuItem);
         racineAffichageGroup.add(jeuxAffichageRacineMenuItem);
         racineAffichageGroup.clearSelection();
-        switch (preferences.getAffichageRacine()) {
+        switch (typeGroup) {
             case PLATEFORMES:
                 plateformesAffichageRacineMenuItem.setSelected(true);
                 break;
@@ -519,7 +520,17 @@ public class Fenetre extends JFrame implements Observer {
         tempsAffichageGroup.add(heuresAffichageTempsMenuItem);
         tempsAffichageGroup.add(minutesAffichageTempsMenuItem);
         tempsAffichageGroup.clearSelection();
-        heuresAffichageTempsMenuItem.setSelected(true);
+        
+        switch (temps) {
+            case HEURES :
+                heuresAffichageTempsMenuItem.setSelected(true);
+                break;
+            case MINUTES :
+                minutesAffichageTempsMenuItem.setSelected(true);
+                break;
+            default : 
+                heuresAffichageTempsMenuItem.setSelected(true);
+        }
     }
     private void initPopupMenu() {
         popupMenu = new JPopupMenu();
@@ -557,6 +568,37 @@ public class Fenetre extends JFrame implements Observer {
     
     
     //MUTATEURS
+    public void setGroup(TypeGroup group) {
+        switch (group) {
+            case PLATEFORMES :
+                plateformesAffichageRacineMenuItem.setSelected(true);
+                break;
+            case GENRES :
+                genresAffichageRacineMenuItem.setSelected(true);
+                break;
+            case STUDIOS :
+                studiosAffichageRacineMenuItem.setSelected(true);
+                break;
+            case JEUX :
+                jeuxAffichageRacineMenuItem.setSelected(true);
+                break;
+            default :
+                jeuxAffichageRacineMenuItem.setSelected(true);
+        }
+    }
+    
+    public void setTemps(Temps temps) {
+        switch (temps) {
+            case HEURES :
+                heuresAffichageTempsMenuItem.setSelected(true);
+                break;
+            case MINUTES :
+                minutesAffichageTempsMenuItem.setSelected(true);
+                break;
+            default :
+                minutesAffichageTempsMenuItem.setSelected(true);
+        }
+    }
     
     
     //OBSERVER
@@ -734,7 +776,7 @@ public class Fenetre extends JFrame implements Observer {
     @Override
     public void updateDataset(String titre, DefaultCategoryDataset dataset) {
         JFreeChart chart = ChartFactory.createLineChart("Morts lives " + titre, "Date live", TexteConstantes.EMPTY, dataset, PlotOrientation.VERTICAL, true, true, false);
-        chart.addSubtitle(new TextTitle(unit.equals(TimeUnit.HOURS) ? TexteConstantes.TEMPS + " en heures" : TexteConstantes.TEMPS +" en minutes"));
+        chart.addSubtitle(new TextTitle(temps.getTimeUnit().equals(TimeUnit.HOURS) ? TexteConstantes.TEMPS + " en heures" : TexteConstantes.TEMPS +" en minutes"));
         LineAndShapeRenderer renderer = (LineAndShapeRenderer) chart.getCategoryPlot().getRenderer();
         renderer.setBaseShapesVisible(true);
         panelGraph.setChart(chart);
@@ -872,7 +914,7 @@ public class Fenetre extends JFrame implements Observer {
                     dialogType = JFileChooser.OPEN_DIALOG;
                     message = TexteConstantes.OUVRIR;
                 }
-                FileChooser fileBDD = new FileChooser(TexteConstantes.BDD, TexteConstantes.EMPTY, JFileChooser.FILES_ONLY, dialogType);
+                FileChooser fileBDD = new FileChooser(TexteConstantes.BDD, TexteConstantes.EMPTY, JFileChooser.FILES_ONLY, dialogType,false);
                 FileNameExtensionFilter fileFilter;
                 if (src.equals(nouveauMenuItem)) {
                     fileFilter = new FileNameExtensionFilter(TexteConstantes.BDD + " " + TexteConstantes.EXTENSIONS_BDD, "accdb", "mdb", "db", "sdb", "sqlite", "db2", "s2db", "sqlite2", "sl2", "db3", "s3db", "sqlite3", "sl3");
@@ -880,7 +922,7 @@ public class Fenetre extends JFrame implements Observer {
                 else {
                     fileFilter = new FileNameExtensionFilter(TexteConstantes.BDD + " " + TexteConstantes.EXTENSIONS_BDD, "accdb", "mdb", "kexi", "db", "sdb", "sqlite", "db2", "s2db", "sqlite2", "sl2", "db3", "s3db", "sqlite3", "sl3");
                 }
-                fileBDD.setFilter(fileFilter);
+                fileBDD.setFilter(fileFilter,"sqlite3");
                 int res = JOptionPane.showConfirmDialog(null, fileBDD, message + " une base de données", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (res == JOptionPane.YES_OPTION) {
                     if (src.equals(nouveauMenuItem)) {
@@ -1083,11 +1125,11 @@ public class Fenetre extends JFrame implements Observer {
             if (selected) {
                 Object item = e.getItem();
                 if (item.equals(heuresAffichageTempsMenuItem)) {
-                    unit = TimeUnit.HOURS;
+                    temps = Temps.HEURES;
                     controler.setTimeUnit(TimeUnit.HOURS);
                 }
                 if (item.equals(minutesAffichageTempsMenuItem)) {
-                    unit = TimeUnit.MINUTES;
+                    temps = Temps.MINUTES;
                     controler.setTimeUnit(TimeUnit.MINUTES);
                 }
             }
