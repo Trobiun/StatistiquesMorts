@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
@@ -115,7 +117,7 @@ public class Preferences {
     public void setAdresse(String adresse) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.ADRESSE, adresse);
     }
-    public void setPort(String port) {
+    public void setPort(int port) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.PORT, port);
     }
     public void setBDDServeur(String bdd) {
@@ -149,7 +151,7 @@ public class Preferences {
         bdd.add(TexteConstantesPreferences.BDD_FICHIER, TexteConstantesPreferences.EMPTY);
         bdd.add(TexteConstantesPreferences.TYPE_SERVEUR, TexteConstantesPreferences.TYPE_SERVEUR_DEFAULT);
         bdd.add(TexteConstantesPreferences.ADRESSE, TexteConstantesPreferences.ADRESSE_DEFAULT);
-        bdd.add(TexteConstantesPreferences.PORT, TexteConstantesPreferences.EMPTY);
+        bdd.add(TexteConstantesPreferences.PORT, 3306);
         bdd.add(TexteConstantesPreferences.BDD_SERVEUR, TexteConstantesPreferences.EMPTY);
         bdd.add(TexteConstantesPreferences.UTILISATEUR,System.getProperty("user.name"));
         
@@ -162,9 +164,13 @@ public class Preferences {
         } catch (IOException ex) {
             Logger.getLogger(Preferences.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        PreferencesDialog prefsDialog = new PreferencesDialog(null, TexteConstantesPreferences.INITIALISATION_TEXTE, true, null, this);
+        JFrame framePrefs = new JFrame();
+        framePrefs.setVisible(true);
+        framePrefs.setLocationRelativeTo(null);
+        PreferencesDialog prefsDialog = new PreferencesDialog(framePrefs, TexteConstantesPreferences.INITIALISATION_TEXTE, true, null, this);
+        prefsDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         prefsDialog.showDialog();
+        framePrefs.setVisible(false);
         try {
             ini.store();
         } catch (IOException ex) {
