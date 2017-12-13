@@ -50,7 +50,7 @@ public class ServeurOptions extends JPanel {
     //CONSTRUCTEUR
     public ServeurOptions(Preferences preferences, boolean acceptFile) {
         super(new GridBagLayout());
-        this.setPreferredSize(new Dimension(400,250));
+        //this.setPreferredSize(new Dimension(400,250));
         this.preferences = preferences;
         this.acceptFile = acceptFile;
         
@@ -61,13 +61,20 @@ public class ServeurOptions extends JPanel {
         reset();
     }
     
+    
     //ACCESSEURS
     public String getAdresse() {
         return fieldAdresse.getText();
     }
     
-    public String getPort() {
-        return fieldPort.getText();
+    public int getPort() {
+        int res = 0;
+        try {
+            res = Integer.parseInt(fieldPort.getText());
+        } catch (NumberFormatException e) {
+            
+        }
+        return res;
     }
     
     public String getBaseDonnees() {
@@ -78,8 +85,8 @@ public class ServeurOptions extends JPanel {
         return fieldUtilisateur.getText();
     }
     
-    public String getPassword() {
-        return new String(fieldPassword.getPassword());
+    public char[] getMotDePasse() {
+        return fieldPassword.getPassword();
     }
     
     public String getType() {
@@ -91,6 +98,7 @@ public class ServeurOptions extends JPanel {
         }
         return "Fichier";
     }
+    
     
     //MUTATEURS
     private void initAll() {
@@ -190,10 +198,8 @@ public class ServeurOptions extends JPanel {
         gbc.gridy = 2;
         add(panelUser,gbc);
         
-        if (acceptFile) {
-            gbc.gridy = 3;
-            add(panelPassword,gbc);
-        }
+        gbc.gridy = 3;
+        add(panelPassword,gbc);
         
         gbc.gridy = 4;
         gbc.gridheight = GridBagConstraints.REMAINDER;
@@ -229,13 +235,10 @@ public class ServeurOptions extends JPanel {
         }
     }
     
-    
-    public void appliquer() {
-        preferences.setTypeServeur(getType());
-        preferences.setAdresse(fieldAdresse.getText());
-        preferences.setPort(fieldPort.getText());
-        preferences.setBDDServeur(fieldBaseDonnees.getText());
-        preferences.setUtilisateur(fieldUtilisateur.getText());
+    public void setPasswordFieldVisible(boolean isVisible) {
+        panelPassword.setVisible(isVisible);
+//        panelPassword.getParent().revalidate();
+//        panelPassword.getParent().repaint();
     }
     
     public void reset() {
