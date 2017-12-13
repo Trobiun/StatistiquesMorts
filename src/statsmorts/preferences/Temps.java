@@ -5,27 +5,35 @@
  */
 package statsmorts.preferences;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  *
  * @author Robin
  */
 public enum Temps {
     
-    HEURES("heures"),
-    MINUTES("minutes");
+    HEURES("heures",TimeUnit.HOURS),
+    MINUTES("minutes",TimeUnit.MINUTES);
     
     //ATTRIBUTS
     private final String nom;
+    private final TimeUnit unit;
     
     
     //CONSTRUCTEUR
-    private Temps(String nom) {
+    private Temps(String nom, TimeUnit unit) {
         this.nom = nom;
+        this.unit = unit;
     }
     
     
     //ACCESSEURS
     public String getNom() {
         return nom;
+    }
+    
+    public TimeUnit getTimeUnit() {
+        return unit;
     }
 }
