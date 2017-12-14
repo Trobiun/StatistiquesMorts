@@ -5,6 +5,7 @@
  */
 package statsmorts.vue;
 
+import constantes.TexteConstantes;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -65,7 +66,7 @@ public class FileChooser extends JPanel{
         buttonOpen = new JButton(UIManager.getIcon("FileView.directoryIcon"));
         buttonOpen.addActionListener(listener);
         
-        buttonCreer = new JButton("Créer");
+        buttonCreer = new JButton(TexteConstantes.CREER);
         buttonCreer.addActionListener(listener);
     }
     
@@ -147,7 +148,7 @@ public class FileChooser extends JPanel{
 //                        textField.setText(file.getAbsolutePath());
                     }
                     else {
-                        setText(file.getAbsolutePath() + "." + defaultExtension);
+                        setText(file.getAbsolutePath() + TexteConstantes.DOT + defaultExtension);
 //                        textField.setText();
                     }
                     //}
@@ -172,7 +173,7 @@ public class FileChooser extends JPanel{
                     }
                     else {
 //                        textField.setText(file.getAbsolutePath() + "." + defaultExtension);
-                        setText(file.getAbsolutePath() + "." + defaultExtension);
+                        setText(file.getAbsolutePath() + TexteConstantes.DOT + defaultExtension);
                     }
                 }
             }

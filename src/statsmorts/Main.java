@@ -16,8 +16,10 @@ import statsmorts.controler.StatsMortsControler;
 import statsmorts.modele.StatsMortsModele;
 import statsmorts.preferences.Preferences;
 import statsmorts.preferences.ServeurOptions;
+import constantes.TexteConstantesPreferences;
 import statsmorts.preferences.TypeServeurFichier;
 import statsmorts.vue.Fenetre;
+import constantes.TexteConstantes;
 
 /**
  *
@@ -59,15 +61,18 @@ public class Main {
         }
         else {
             ServeurOptions options = new ServeurOptions(preferences,true);
-            Object[] boutons = {"Se connecter","Quitter"};
+            Object[] boutons = {TexteConstantes.CONNEECTER,TexteConstantes.QUITTER};
             int res;
-            res = JOptionPane.showOptionDialog(null,options,"Se connecter à une base de données",JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,boutons,null);
-            if (res == JOptionPane.YES_OPTION && !options.getType().equals("Fichier")) {
+            res = JOptionPane.showOptionDialog(null,options,TexteConstantesPreferences.TITRE_SERVEUR_OPTIONS,JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,boutons,null);
+            //connexion à un serveur
+            if (res == JOptionPane.YES_OPTION && !options.getType().equals(TexteConstantesPreferences.FICHIER)) {
                 modele.connecter(TypeDatabase.valueOf(options.getType()), options.getAdresse() + ":" + options.getPort() + "/" + options.getBaseDonnees(), options.getUtilisateur(),options.getMotDePasse());
             }
-            if (res == JOptionPane.YES_OPTION  && options.getType().equals("Fichier")) {
+            //connexion à un fichier
+            if (res == JOptionPane.YES_OPTION  && options.getType().equals(TexteConstantesPreferences.FICHIER)) {
                 modele.connecter(preferences.getBDDFichier());
             }
+            //quitter
             if (res == JOptionPane.NO_OPTION) {
                 long end = System.currentTimeMillis();
                 System.out.println("Total : " + (end - start) + " ms");
@@ -85,7 +90,7 @@ public class Main {
         
         System.out.println("Fenêtre : ");
         long startFenetre = System.currentTimeMillis();
-        Fenetre fenetre = new Fenetre("Statistiques des morts de MyGowD", controler, preferences);
+        Fenetre fenetre = new Fenetre(TexteConstantes.TITRE_FENETRE, controler, preferences);
         long endFenetre = System.currentTimeMillis();
         System.out.println("    Total : " + (endFenetre - startFenetre) + " ms");
         
@@ -96,64 +101,6 @@ public class Main {
         long end = System.currentTimeMillis();
         System.out.println("    Total: " + (end - startActu) + " ms");
         System.out.println("Total : " + (end - start) + " ms");
-//        Fenetre fenetre = new Fenetre("Test");
-//        Connexion connexion = new Connexion();
-//        connexion.connecter(preferences.getBDDFichier());
-//        
-//        String titre = "Darkwood";
-//        String requete = "SELECT * FROM VueGlobale WHERE jeu_Titre = ? ORDER BY liv_DateDebut ASC";
-//        ResultSet rs = connexion.executerPreparedSelect(requete,titre);
-//        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-//        DefaultCategoryDataset datasetMPD = new DefaultCategoryDataset();
-//        float moyenne, sommeMPD = 0, sommeHeures = 0, sommeMoyennes = 0;
-//        int count = 0, sommeMorts = 0;
-//        long sommeMinutes = 0;
-//        while (rs.next()) {
-//            String dateDebutString = rs.getString("liv_DateDebut");
-//            String dateFinString = rs.getString("liv_DateFin");
-//            int morts = rs.getInt("liv_Morts");
-//            //calculs heures + minutes
-//            if(dateDebutString == null) {
-//                continue;
-//            }
-//            Date dateDebut = df.parse(dateDebutString);
-//            Date dateFin = df.parse(dateFinString);
-//            long diff = dateFin.getTime() - dateDebut.getTime();
-//            long heuresLong = TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS);
-//            long minutes = TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
-//            float heures = (float)heuresLong + (float)(minutes % 60) / (float)60;
-//            
-//            float mpd = heures / (float)(morts + 1);
-//            count++;
-//            sommeMorts += morts;
-//            sommeHeures += heures;
-//            sommeMinutes += minutes;
-//            sommeMPD += mpd;
-//            moyenne = sommeMPD / count;
-//            sommeMoyennes += moyenne;
-//            
-//            datasetMPD.addValue(morts, "Morts", dateDebut);
-//            datasetMPD.addValue(heures, "Durée du live (heures)", dateDebut);
-//            datasetMPD.addValue(mpd, "Durée de vie moyenne", dateDebut);
-//            datasetMPD.addValue(moyenne, "Moyenne des durées de vie moyennes", dateDebut);
-//        }
-//        
-//        float totalMPD = (float)sommeHeures / (float)(sommeMorts + 1);
-//        moyenne = sommeMoyennes / (float)count;
-//        datasetMPD.addValue(sommeMorts, "Morts", "Total");
-//        datasetMPD.addValue(totalMPD, "Durée de vie moyenne", "Total");
-//        datasetMPD.addValue(sommeHeures, "Durée du live (heures)", "Total");
-//        datasetMPD.addValue(moyenne, "Moyenne des durées de vie moyennes", "Total");
-//        
-//        JFreeChart chart = ChartFactory.createLineChart("Morts Lives " + titre, "Date live", "", datasetMPD, PlotOrientation.VERTICAL, true, true, false);
-//        
-//        LineAndShapeRenderer renderer = (LineAndShapeRenderer)chart.getCategoryPlot().getRenderer();
-//        renderer.setBaseShapesVisible(true);
-//        
-//        ChartFrame frame = new ChartFrame("Morts sur " + titre,chart);
-//        frame.pack();
-//        frame.setVisible(true);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
 }

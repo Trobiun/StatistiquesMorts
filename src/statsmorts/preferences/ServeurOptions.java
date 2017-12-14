@@ -5,6 +5,7 @@
  */
 package statsmorts.preferences;
 
+import constantes.TexteConstantesPreferences;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -91,12 +92,12 @@ public class ServeurOptions extends JPanel {
     
     public String getType() {
         if (radioMySQL.isSelected()) {
-            return "MySQL";
+            return TexteConstantesPreferences.MYSQL;
         }
         if (radioPostgreSQL.isSelected()) {
-            return "PostgreSQL";
+            return TexteConstantesPreferences.POSTGRESQL;
         }
-        return "Fichier";
+        return TexteConstantesPreferences.FICHIER;
     }
     
     

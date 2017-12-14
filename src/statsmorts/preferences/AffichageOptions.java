@@ -11,7 +11,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import statsmorts.classes.TypeGroup;
-import statsmorts.vue.TexteConstantes;
+import constantes.TexteConstantes;
 
 /**
  *

@@ -5,7 +5,6 @@
  */
 package statsmorts.vue;
 
-import javax.swing.JPanel;
 import statsmorts.controler.StatsMortsControler;
 
 /**

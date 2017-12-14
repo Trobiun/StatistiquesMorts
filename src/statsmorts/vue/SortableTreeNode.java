@@ -5,6 +5,7 @@
  */
 package statsmorts.vue;
 
+import constantes.TexteConstantes;
 import javax.swing.tree.DefaultMutableTreeNode;
 import statsmorts.classes.FillDataset;
 
@@ -46,10 +47,10 @@ public class SortableTreeNode extends DefaultMutableTreeNode implements Informat
     //MUTATEURS
     public void add(SortableTreeNode newChild) {
         int cc = getChildCount();
-        Comparable newObject = (Comparable) newChild.getUserObject();
+        Comparable newObject = (Comparable)newChild.getUserObject();
         for (int i = 0; i < cc; i++) {
-            SortableTreeNode child = (SortableTreeNode) getChildAt(i);
-            Comparable childObject = (Comparable) child.getUserObject();
+            SortableTreeNode child = (SortableTreeNode)getChildAt(i);
+            Comparable childObject = (Comparable)child.getUserObject();
             if (newObject.compareTo(childObject) < 0) {
                 super.insert(newChild, i);
                 return;
@@ -71,10 +72,10 @@ public class SortableTreeNode extends DefaultMutableTreeNode implements Informat
         int cc = getChildCount();
         for (int i = 0; i < cc - 1; i++) {
             for (int j = i + 1; j <= cc - 1; j++) {
-                SortableTreeNode here = (SortableTreeNode) getChildAt(i);
-                SortableTreeNode there = (SortableTreeNode) getChildAt(j);
-                Comparable hereObject = (Comparable) here.getUserObject();
-                Comparable thereObject = (Comparable) there.getUserObject();
+                SortableTreeNode here = (SortableTreeNode)getChildAt(i);
+                SortableTreeNode there = (SortableTreeNode)getChildAt(j);
+                Comparable hereObject = (Comparable)here.getUserObject();
+                Comparable thereObject = (Comparable)there.getUserObject();
                 if (hereObject.compareTo(thereObject) > 0) {
                     super.remove(here);
                     super.remove(there);
@@ -89,7 +90,7 @@ public class SortableTreeNode extends DefaultMutableTreeNode implements Informat
     //INTERFACE INFORMATIONS
     @Override
     public String getInformations() {
-        return isInformations ? objet.toString() : "";
+        return isInformations ? objet.toString() : TexteConstantes.EMPTY;
     }
     
     @Override

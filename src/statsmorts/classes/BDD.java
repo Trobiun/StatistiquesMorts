@@ -5,6 +5,8 @@
  */
 package statsmorts.classes;
 
+import constantes.TexteConstantes;
+import constantes.TexteConstantesSQL;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -21,8 +23,10 @@ import java.util.logging.Logger;
 public class BDD {
     
     //ATTRIBUTS STATIC
-    private static final String AUTOINCREMENT_ACCESS = "AUTOINCREMENT PRIMARY KEY";
-    private static final String AUTOINCREMENT = "INTEGER PRIMARY KEY AUTOINCREMENT";
+    private static final String AUTOINCREMENT_ACCESS = TexteConstantesSQL.AUTOINCREMENT
+            + TexteConstantes.SPACE + TexteConstantesSQL.PRIMARY_KEY;
+    private static final String AUTOINCREMENT = TexteConstantesSQL.SQL_INTEGER + TexteConstantes.SPACE
+            + TexteConstantesSQL.PRIMARY_KEY + TexteConstantes.SPACE + TexteConstantesSQL.AUTOINCREMENT;
     
     //ATTRIBUTS
     private Map<Long,Plateforme> plateformes;
@@ -113,17 +117,15 @@ public class BDD {
     }
     
     public void actualiserBDD(Connexion connexion) throws SQLException {
-        String requetePlateformes = "SELECT * FROM Plateformes";
-        String requeteGenres = "SELECT * FROM Genres";
-        String requeteStudios = "SELECT * FROM Studios";
-        String requeteJeuPlateforme = "SELECT * FROM JeuPlateforme";
-        String requeteJeuGenre = "SELECT * FROM JeuGenre";
-        String requeteJeuStudio = "SELECT * FROM JeuStudio";
-        String requeteVueGlobale = "SELECT * FROM VueGlobale";
+        String requetePlateformes = TexteConstantesSQL.SELECT_PLATEFORMES;
+        String requeteGenres = TexteConstantesSQL.SELECT_GENRES;
+        String requeteStudios = TexteConstantesSQL.SELECT_STUDIOS;
+        String requeteJeuPlateforme = TexteConstantesSQL.SELECT_JEU_PLATEFORME;
+        String requeteJeuGenre = TexteConstantesSQL.SELECT_JEU_GENRE;
+        String requeteJeuStudio = TexteConstantesSQL.SELECT_JEU__STUDIO;
+        String requeteVueGlobale = TexteConstantesSQL.SELECT_VUE_GLOBALE;
         if (connexion.getType().equals(TypeDatabase.Access)) {
-            requeteVueGlobale = "SELECT * FROM "
-                              + "Jeux LEFT OUTER JOIN "
-                              + "(Runs LEFT OUTER JOIN Lives ON run_id = liv_Run) ON run_idJeu = jeu_id";
+            requeteVueGlobale = TexteConstantesSQL.SELECT_VUE_GLOBALE_SQL;
         }
         
         long idPlateforme;
@@ -131,8 +133,8 @@ public class BDD {
         Plateforme plateforme;
         ResultSet resultsPlateformes = connexion.executerRequete(requetePlateformes);
         while (resultsPlateformes.next()) {
-            idPlateforme = resultsPlateformes.getLong("pla_id");
-            nomPlateforme = resultsPlateformes.getString("pla_Nom");
+            idPlateforme = resultsPlateformes.getLong(TexteConstantesSQL.TABLE_PLATEFORMES_ID);
+            nomPlateforme = resultsPlateformes.getString(TexteConstantesSQL.TABLE_PLATEFORMES_NOM);
             plateforme = new Plateforme(idPlateforme,nomPlateforme);
             plateformes.put(idPlateforme,plateforme);
         }
@@ -142,8 +144,8 @@ public class BDD {
         Genre genre;
         ResultSet resultsGenres = connexion.executerRequete(requeteGenres);
         while (resultsGenres.next()) {
-            idGenre = resultsGenres.getLong("gen_id");
-            nomGenre = resultsGenres.getString("gen_Nom");
+            idGenre = resultsGenres.getLong(TexteConstantesSQL.TABLE_GENRES_ID);
+            nomGenre = resultsGenres.getString(TexteConstantesSQL.TABLE_GENRES_NOM);
             genre = new Genre(idGenre,nomGenre);
             genres.put(idGenre,genre);
         }
@@ -153,8 +155,8 @@ public class BDD {
         Studio studio;
         ResultSet resultsStudios = connexion.executerRequete(requeteStudios);
         while (resultsStudios.next()) {
-            idStudio = resultsStudios.getLong("stu_id");
-            nomStudio = resultsStudios.getString("stu_Nom");
+            idStudio = resultsStudios.getLong(TexteConstantesSQL.TABLE_STUDIOS_ID);
+            nomStudio = resultsStudios.getString(TexteConstantesSQL.TABLE_STUDIOS_NOM);
             studio = new Studio(idStudio,nomStudio);
             studios.put(idStudio, studio);
         }
@@ -167,9 +169,9 @@ public class BDD {
         Live live;
         ResultSet resultsVueGlobale = connexion.executerRequete(requeteVueGlobale);
         while (resultsVueGlobale.next()) {
-            idJeu = resultsVueGlobale.getLong("jeu_id");
-            titreJeu = resultsVueGlobale.getString("jeu_Titre");
-            anneeSortieJeu = resultsVueGlobale.getInt("jeu_AnneeSortie");
+            idJeu = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID);
+            titreJeu = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_JEUX_TITRE);
+            anneeSortieJeu = resultsVueGlobale.getInt(TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE);
             if (!jeux.containsKey(idJeu) && idJeu > 0) {
                 jeu = new Jeu(idJeu,titreJeu,anneeSortieJeu);
                 jeux.put(idJeu,jeu);
@@ -178,8 +180,8 @@ public class BDD {
                 jeu = jeux.get(idJeu);
             }
             
-            idRun = resultsVueGlobale.getLong("run_id");
-            titreRun = resultsVueGlobale.getString("run_Titre");
+            idRun = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_RUNS_ID);
+            titreRun = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_RUNS_TITRE);
             if (!runs.containsKey(idRun) && idRun > 0) {
                 run = new Run(idRun,titreRun);
                 runs.put(idRun,run);
@@ -190,10 +192,10 @@ public class BDD {
                 run = runs.get(idRun);
             }
             
-            idLive = resultsVueGlobale.getLong("liv_id");
-            dateDebut = resultsVueGlobale.getString("liv_DateDebut");
-            dateFin = resultsVueGlobale.getString("liv_DateFin");
-            morts = resultsVueGlobale.getInt("liv_Morts");
+            idLive = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_LIVES_ID);
+            dateDebut = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_LIVES_DATE_DEBUT);
+            dateFin = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_LIVES_DATE_FIN);
+            morts = resultsVueGlobale.getInt(TexteConstantesSQL.TABLE_LIVES_MORTS);
             if (!lives.containsKey(idLive) && idLive > 0) {
                 live = new Live(idLive,dateDebut,dateFin,morts);
                 lives.put(idLive,live);
@@ -207,8 +209,8 @@ public class BDD {
         
         ResultSet resultsJeuPlateforme = connexion.executerRequete(requeteJeuPlateforme);
         while (resultsJeuPlateforme.next()) {
-            idPlateforme = resultsJeuPlateforme.getLong("jp_idPlateforme");
-            idJeu = resultsJeuPlateforme.getLong("jp_idJeu");
+            idPlateforme = resultsJeuPlateforme.getLong(TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME);
+            idJeu = resultsJeuPlateforme.getLong(TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU);
             plateforme = plateformes.get(idPlateforme);
             jeu = jeux.get(idJeu);
             plateforme.putJeu(jeu);
@@ -217,8 +219,8 @@ public class BDD {
         
         ResultSet resultsJeuGenre = connexion.executerRequete(requeteJeuGenre);
         while (resultsJeuGenre.next()) {
-            idGenre = resultsJeuGenre.getLong("jg_idGenre");
-            idJeu = resultsJeuGenre.getLong("jg_idJeu");
+            idGenre = resultsJeuGenre.getLong(TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE);
+            idJeu = resultsJeuGenre.getLong(TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU);
             genre = genres.get(idGenre);
             jeu = jeux.get(idJeu);
             genre.putJeu(jeu);
@@ -227,8 +229,8 @@ public class BDD {
         
         ResultSet resultsJeuStudio = connexion.executerRequete(requeteJeuStudio);
         while (resultsJeuStudio.next()) {
-            idStudio = resultsJeuStudio.getLong("js_idStudio");
-            idJeu = resultsJeuStudio.getLong("js_idJeu");
+            idStudio = resultsJeuStudio.getLong(TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO);
+            idJeu = resultsJeuStudio.getLong(TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU);
             studio = studios.get(idStudio);
             jeu = jeux.get(idJeu);
             studio.putJeu(jeu);
@@ -252,60 +254,143 @@ public class BDD {
             file.delete();
             connexion.connecter(database);
             TypeDatabase type = connexion.getType();
-            String requete1 = "CREATE TABLE Plateformes (";
-            requete1 += "pla_id ";
+            
+            //table Plateformes
+            String requete1 = TexteConstantesSQL.CREATE_TABLE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_PLATEFORMES + TexteConstantes.SPACE + "(";
+            //champ pla_id clé primaire
+            requete1 += TexteConstantesSQL.TABLE_PLATEFORMES_ID + TexteConstantes.SPACE;
             requete1 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            requete1 += ",pla_Nom TEXT)";
+            //champ pla_Nom
+            requete1 += "," + TexteConstantesSQL.TABLE_PLATEFORMES_NOM + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_TEXT + ")";
             
-            String requete2 = "CREATE TABLE Genres (";
-            requete2 += "gen_id ";
+            //table Genres
+            String requete2 = TexteConstantesSQL.CREATE_TABLE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_GENRES + TexteConstantes.SPACE + "(";
+            //champ gen_id clé primaire
+            requete2 += TexteConstantesSQL.TABLE_GENRES_ID + TexteConstantes.SPACE;
             requete2 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            requete2 += ",gen_Nom TEXT)";
+            //champ gen_Nom
+            requete2 += "," + TexteConstantesSQL.TABLE_GENRES_NOM + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_TEXT + ")";
             
-            String requete3 = "CREATE TABLE Studios (";
-            requete3 += "stu_id ";
+            //table Studios
+            String requete3 = TexteConstantesSQL.CREATE_TABLE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_STUDIOS + " (";
+            //champ stu_id clé primaire
+            requete3 += TexteConstantesSQL.TABLE_STUDIOS_ID + TexteConstantes.SPACE;
             requete3 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            requete3 += ",stu_Nom TEXT)";
+            //champ stu_Nom
+            requete3 += "," + TexteConstantesSQL.TABLE_STUDIOS_NOM + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_TEXT + ")";
             
-            String requete4 = "CREATE TABLE Jeux (";
-            requete4 += "jeu_id ";
+            //table Jeux
+            String requete4 = TexteConstantesSQL.CREATE_TABLE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_JEUX + TexteConstantes.SPACE + "(";
+            //champ jeu_id clé primaire
+            requete4 += TexteConstantesSQL.TABLE_JEUX_ID + TexteConstantes.SPACE;
             requete4 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            requete4 += ",jeu_Titre TEXT";
-            requete4 += ",jeu_AnneSortie INTEGER)";
+            //champ jeu_Titre
+            requete4 += "," + TexteConstantesSQL.TABLE_JEUX_TITRE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_TEXT;
+            //champ jeu_AnneeSortie
+            requete4 += "," + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_INTEGER + ")";
             
-            String requete5 = "CREATE TABLE JeuPlateforme("
-                                                       + "jp_idJeu INTEGER REFERENCES Jeux(jeu_id),"
-                                                       + "jp_idPlateforme INTEGER REFERENCES Plateformes(pla_id),"
-                                                       + "PRIMARY KEY (jp_idJeu,jp_idPlateforme))";
+            //table Plateformes
+            String requete5 = TexteConstantesSQL.CREATE_TABLE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_JEU_PLATEFORME + TexteConstantes.SPACE + "("
+                        //champ idJeu
+                        + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU + TexteConstantes.SPACE
+                            + TexteConstantesSQL.SQL_INTEGER + TexteConstantes.SPACE + TexteConstantesSQL.REFERENCES + TexteConstantes.SPACE
+                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID + "),"
+                        //champ idPlateforme
+                        + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME + TexteConstantes.SPACE
+                            + TexteConstantesSQL.SQL_INTEGER + TexteConstantes.SPACE + TexteConstantesSQL.REFERENCES + TexteConstantes.SPACE
+                            + TexteConstantesSQL.TABLE_PLATEFORMES + "(" + TexteConstantesSQL.TABLE_PLATEFORMES_ID + "),"
+                        //clé primaire
+                        + TexteConstantesSQL.PRIMARY_KEY + TexteConstantes.SPACE + "("
+                            + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU + ","
+                            + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME + "))";
             
-            String requete6 = "CREATE TABLE JeuGenre("
-                                                 + "jt_idJeu INTEGER REFERENCES Jeux(jeu_id),"
-                                                 + "jt_idGenre INTEGER REFERENCES Genres(gen_id),"
-                                                 + "PRIMARY KEY (jt_idJeu,jt_idGenre))";
+            //table JeuGenre
+            String requete6 = TexteConstantesSQL.CREATE_TABLE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_JEU_GENRE + "("
+                        //champ idJeu
+                        + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU  + TexteConstantes.SPACE
+                            + TexteConstantesSQL.SQL_INTEGER + TexteConstantes.SPACE + TexteConstantesSQL.REFERENCES + TexteConstantes.SPACE
+                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID +  "),"
+                        //champ idGenre
+                        + TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE + TexteConstantes.SPACE
+                            + TexteConstantesSQL.SQL_INTEGER + TexteConstantes.SPACE + TexteConstantesSQL.REFERENCES + TexteConstantes.SPACE
+                            + TexteConstantesSQL.TABLE_GENRES + "(" + TexteConstantesSQL.TABLE_GENRES_ID + "),"
+                        //clé primaire
+                        + TexteConstantesSQL.PRIMARY_KEY + TexteConstantes.SPACE + "("
+                            + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU + ","
+                            + TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE + "))";
             
-            String requete7 = "CREATE TABLE JeuStudio("
-                                                   + "js_idJeu INTEGER REFERENCES Jeux(jeu_id),"
-                                                   + "js_idStudio INTEGER REFERENCES Studios(stu_id),"
-                                                   + "PRIMARY KEY (js_idJeu,js_idStudio))";
+            //table JeuStudio
+            String requete7 = TexteConstantesSQL.CREATE_TABLE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_JEU_STUDIO + "("
+                        //champ js_idJeu
+                        + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + TexteConstantes.SPACE
+                            + TexteConstantesSQL.SQL_INTEGER + TexteConstantes.SPACE + TexteConstantesSQL.REFERENCES + TexteConstantes.SPACE
+                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID + "),"
+                        //champ js_idStudio
+                        + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO + TexteConstantes.SPACE
+                            + TexteConstantesSQL.SQL_INTEGER + TexteConstantes.SPACE + TexteConstantesSQL.REFERENCES + TexteConstantes.SPACE
+                            + TexteConstantesSQL.TABLE_STUDIOS + "(" + TexteConstantesSQL.TABLE_STUDIOS_ID + "),"
+                        //clé primaire
+                        + TexteConstantesSQL.PRIMARY_KEY + TexteConstantes.SPACE + "("
+                            + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + ","
+                            + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO + "))";
             
-            String requete8 = "CREATE TABLE Runs(";
-            requete8 += "run_id ";
+            //table Runs
+            String requete8 = TexteConstantesSQL.CREATE_TABLE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_RUNS + "(";
+            //champ run_id clé primaire
+            requete8 += TexteConstantesSQL.TABLE_RUNS_ID + TexteConstantes.SPACE;
             requete8 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            requete8 += ",run_idJeu INTEGER REFERENCES Jeux(jeu_id)";
-            requete8 += ",run_Titre TEXT)";
+            //champ run_idJeu
+            requete8 += "," + TexteConstantesSQL.TABLE_RUNS_ID_JEU + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_INTEGER + TexteConstantes.SPACE
+                    + TexteConstantesSQL.REFERENCES + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_JEUX +"(" + TexteConstantesSQL.TABLE_JEUX_ID +")";
+            //champ run_Titre
+            requete8 += "," + TexteConstantesSQL.TABLE_RUNS_TITRE +TexteConstantesSQL.SQL_TEXT + ")";
             
-            String requete9 = "CREATE TABLE Lives(";
-            requete9 += "liv_id ";
+            //table Lives
+            String requete9 = TexteConstantesSQL.CREATE_TABLE + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_LIVES + "(";
+            //champ liv_id clé primaire
+            requete9 += TexteConstantesSQL.TABLE_LIVES_ID + TexteConstantes.SPACE;
             requete9 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            requete9 += ",liv_DateDebut DATETIME NOT NULL";
-            requete9 += ",liv_DateFin DATETIME NOT NULL";
-            requete9 += ",liv_Run INTEGER REFERENCES Runs(run_id)";
-            requete9 += ",liv_Morts INTEGER)";
+            //champ liv_DateDebut
+            requete9 += "," + TexteConstantesSQL.TABLE_LIVES_DATE_DEBUT + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_DATETIME + TexteConstantes.SPACE
+                    + TexteConstantesSQL.NOT_NULL;
+            //champ liv_DateFin
+            requete9 += "," + TexteConstantesSQL.TABLE_LIVES_DATE_FIN + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_DATETIME + TexteConstantes.SPACE
+                    + TexteConstantesSQL.NOT_NULL;
+            //champ liv_Run
+            requete9 += "," + TexteConstantesSQL.TABLE_LIVES_RUN + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_INTEGER + TexteConstantes.SPACE
+                    + TexteConstantesSQL.REFERENCES + TexteConstantes.SPACE
+                    + TexteConstantesSQL.TABLE_RUNS + "(" + TexteConstantesSQL.TABLE_RUNS_ID + ")";
+            //champ liv_Morts
+            requete9 += "," + TexteConstantesSQL.TABLE_LIVES_MORTS + TexteConstantes.SPACE
+                    + TexteConstantesSQL.SQL_INTEGER + ")";
             
-            String requete10 = "CREATE VIEW VueGlobale AS "
-                                            + "SELECT * FROM( "
-                                            + "Jeux LEFT OUTER JOIN "
-                                            + "(Runs LEFT OUTER JOIN Lives ON run_id = liv_Run) ON run_idJeu = jeu_id)";
+            //vue VueGlobale
+            String requete10 = TexteConstantesSQL.CREATE_VIEW + TexteConstantes.SPACE
+                    + TexteConstantesSQL.VUE_GLOBALE + " AS "
+                        + TexteConstantesSQL.SELECT_VUE_GLOBALE_SQL;
+//                    CTexteConstantesSQL.CREATE_VIEW + "VueGlobale AS "
+//                                            + "SELECT * FROM( "
+//                                            + "Jeux LEFT OUTER JOIN "
+//                                            + "(Runs LEFT OUTER JOIN Lives ON run_id = liv_Run) ON run_idJeu = jeu_id)";
             
             connexion.executerUpdate(requete1);
             connexion.executerUpdate(requete2);

@@ -5,6 +5,7 @@
  */
 package statsmorts.preferences;
 
+import constantes.TexteConstantesPreferences;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,7 +22,8 @@ import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import statsmorts.vue.FileChooser;
-import statsmorts.vue.TexteConstantes;
+import constantes.TexteConstantes;
+import constantes.TexteConstantesBDD;
 
 /**
  *
@@ -108,16 +110,16 @@ public class BDDOptions extends JPanel {
     }
     private void initPanels() {
         panelBaseDonnees = new JPanel(new GridBagLayout());
-        panelBaseDonnees.setBorder(new TitledBorder(TexteConstantes.BDD));
+        panelBaseDonnees.setBorder(new TitledBorder(TexteConstantesBDD.BDD));
         
         panelFichier = new JPanel(new BorderLayout(5,5));
         panelFichier.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.FICHIER));
         
         panelServeur = new JPanel(new GridLayout(1,3));
-        panelServeur.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.SERVEUR));
+        panelServeur.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),TexteConstantesBDD.SERVEUR));
         
         panelType = new JPanel(new GridLayout(3,1));
-        panelType.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TYPE));
+        panelType.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),TexteConstantesBDD.TYPE));
     }
     private void initFileChooser() {
         if(preferences.getBDDFichier() != null) {
@@ -127,7 +129,7 @@ public class BDDOptions extends JPanel {
             fileChooser = new FileChooser(TexteConstantes.EMPTY, TexteConstantes.EMPTY, JFileChooser.FILES_ONLY, JFileChooser.OPEN_DIALOG,true);
         }
         
-        fileChooser.setFilter(new FileNameExtensionFilter(TexteConstantes.BDD + " " + TexteConstantes.EXTENSIONS_BDD,"accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3"),"sqlite3");
+        fileChooser.setFilter(new FileNameExtensionFilter(TexteConstantesBDD.BDD + " " + TexteConstantesBDD.EXTENSIONS_BDD,"accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3"),"sqlite3");
     }
     private void initRadioButtons() {
         radioFichier = new JRadioButton(TexteConstantesPreferences.FICHIER);

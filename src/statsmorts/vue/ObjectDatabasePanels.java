@@ -5,6 +5,7 @@
  */
 package statsmorts.vue;
 
+import constantes.TexteConstantes;
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -12,7 +13,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import statsmorts.controler.StatsMortsControler;
 
 /**
@@ -63,12 +63,12 @@ public abstract class ObjectDatabasePanels {
     
     public void clearFields(boolean empty) {
         nomTextPane.setEditable(true);
-        nomTextPane.setText("");
+        nomTextPane.setText(TexteConstantes.EMPTY);
         if (idComboBox.getItemCount() > 0) {
             idComboBox.setSelectedIndex(0);
         }
         if (empty) {
-            nomTextPane.setText("");
+            nomTextPane.setText(TexteConstantes.EMPTY);
         }
         else {
             if (idComboBox.getItemCount() > 0) {
@@ -79,9 +79,9 @@ public abstract class ObjectDatabasePanels {
     
     private void init() {
         idPanel = new JPanel(new BorderLayout());
-        idPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),"ID"));
+        idPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ID));
         nomPanel = new JPanel(new BorderLayout());
-        nomPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),"Nom"));
+        nomPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.NOM));
         idComboBox = new JComboBox();
         idComboBox.addItemListener(new ChangeIDListener());
         nomTextPane = new JTextField();

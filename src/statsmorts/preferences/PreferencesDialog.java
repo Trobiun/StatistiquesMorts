@@ -5,6 +5,7 @@
  */
 package statsmorts.preferences;
 
+import constantes.TexteConstantesPreferences;
 import javax.swing.JDialog;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -18,10 +19,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import statsmorts.classes.TypeDatabase;
-import statsmorts.classes.TypeGroup;
 import statsmorts.controler.StatsMortsControler;
 import statsmorts.vue.Fenetre;
-import statsmorts.vue.TexteConstantes;
+import constantes.TexteConstantes;
+import constantes.TexteConstantesBDD;
 
 /**
  *
@@ -84,7 +85,7 @@ public class PreferencesDialog extends JDialog {
     }
     
     private void setComponents() {
-        tabbedPane.add(TexteConstantes.BDD, panelBDD);
+        tabbedPane.add(TexteConstantesBDD.BDD, panelBDD);
         tabbedPane.add(TexteConstantes.AFFICHAGE,panelAffichage);
         
         panelBoutons.add(valider);
@@ -127,15 +128,18 @@ public class PreferencesDialog extends JDialog {
         private void showServeurConnectionDialog() {
             ServeurOptions options = panelBDD.getServeurOptions();
             options.setPasswordFieldVisible(true);
-            Object[] boutons = {"Se connecter", "Quitter"};
+            Object[] boutons = {TexteConstantes.CONNEECTER, TexteConstantes.QUITTER};
             int res;
-            res = JOptionPane.showOptionDialog(null, options, "Se connecter à une base de données", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, boutons, null);
-            if (res == JOptionPane.YES_OPTION && !options.getType().equals("Fichier")) {
+            res = JOptionPane.showOptionDialog(null, options, TexteConstantesPreferences.TITRE_SERVEUR_OPTIONS, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, boutons, null);
+            //connexion à un serveur
+            if (res == JOptionPane.YES_OPTION && !options.getType().equals(TexteConstantesPreferences.FICHIER)) {
                 controler.connecterServeur(TypeDatabase.valueOf(options.getType()), options.getAdresse(), options.getPort(), options.getBaseDonnees(), options.getUtilisateur(), options.getMotDePasse());
             }
-            if (res == JOptionPane.YES_OPTION && options.getType().equals("Fichier")) {
+            //connexion à un fichier
+            if (res == JOptionPane.YES_OPTION && options.getType().equals(TexteConstantesPreferences.FICHIER)) {
                 controler.ouvrirBDD(preferences.getBDDFichier());
             }
+            //pas de connexion
             if (res == JOptionPane.NO_OPTION) {
                 
             }
@@ -204,7 +208,6 @@ public class PreferencesDialog extends JDialog {
                     typeBDD = panelBDD.getType();
                     if (typeBDD.equals(TypeServeurFichier.FICHIER)) {
                         if (controler != null) {
-//                            File fileBDD = new File(pathBDD);
                             if (fileBDD.isFile()) {
                                 controler.ouvrirBDD(pathBDD);
                             }
