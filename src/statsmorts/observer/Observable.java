@@ -21,22 +21,31 @@ import statsmorts.classes.TypeGroup;
  */
 public interface Observable {
     
-    public void setObserver(Observer observer);
-    public void setGroup(TypeGroup type);
-    public void notifyAddPlateforme(Plateforme plateforme);
-    public void notifyAddGenre(Genre genre);
-    public void notifyAddStudio(Studio studio);
-    public void notifyAddJeu(Jeu jeu);
-    public void notifyAddRun(Run run);
-    public void notifyAddLive(Live live);
-    public void notifyRemovePlateforme(long idPlateforme);
-    public void notifyRemoveGenre(long idGenre);
-    public void notifyRemoveStudio(long idStudio);
-    public void notifyRemoveJeu(long idJeu);
-    public void notifyRemoveRun(long idRun);
-    public void notifyRemoveLive(long idLive);
-    public void notifyDataset(String titre, DefaultCategoryDataset dataset);
-    public void notifyFillPlateforme(long idPlateforme);
-    public void notifyFillGenre(long idGenre);
+    void setObserver(Observer observer);
+    void setGroup(TypeGroup type);
+    
+    //notifications de la base de données
+    void notifyAddPlateforme(Plateforme plateforme);
+    void notifyAddGenre(Genre genre);
+    void notifyAddStudio(Studio studio);
+    void notifyAddJeu(Jeu jeu);
+    void notifyAddRun(Run run);
+    void notifyAddLive(Live live);
+    void notifyRemovePlateforme(long idPlateforme);
+    void notifyRemoveGenre(long idGenre);
+    void notifyRemoveStudio(long idStudio);
+    void notifyRemoveJeu(long idJeu);
+    void notifyRemoveRun(long idRun);
+    void notifyRemoveLive(long idLive);
+    
+    void notifyDataset(String titre, DefaultCategoryDataset dataset);
+    
+    //notifications pour remplir les panels d'entrées utilisateur
+    void notifyFillPlateforme(long idPlateforme);
+    void notifyFillGenre(long idGenre);
+    void notifyFillStudio(long idStudio);
+    void notifyFillJeu(long idJeu);
+    void notifyFillRun(long idRun);
+    void notifyFillLive(long idLive);
     
 }
