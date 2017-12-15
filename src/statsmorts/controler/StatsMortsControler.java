@@ -11,6 +11,7 @@ import statsmorts.classes.FillDataset;
 import statsmorts.classes.TypeDatabase;
 import statsmorts.classes.TypeGroup;
 import statsmorts.modele.StatsMortsModele;
+import statsmorts.classes.TypeBasicInputs;
 
 /**
  *
@@ -32,6 +33,7 @@ public class StatsMortsControler {
     
     
     //MUTATEURS
+    //MÉTHODES AYANT UN IMPACT SEULEMENT SUR LA VUE
     public void actualiser() {
         modele.actualiser();
     }
@@ -49,13 +51,30 @@ public class StatsMortsControler {
     }
     
     public void fillPlateformePanel(long idPlateforme) {
-        modele.fillPlateformePanel(idPlateforme);
+        if (idPlateforme >= 0) {
+            modele.fillPlateformePanel(idPlateforme);
+        }
     }
     
     public void fillGenrePanel(long idGenre) {
-        
+        if (idGenre >= 0) {
+            modele.fillGenrePanel(idGenre);
+        }
     }
     
+    public void fillStudioPanel(long idStudio) {
+        if (idStudio >= 0) {
+            modele.fillStudiPanel(idStudio);
+        }
+    }
+    
+    public void fillJeuPanel(long idJeu) {
+        if (idJeu >= 0) {
+            
+        }
+    }
+    
+    //MÉTHODES AYANT UN IMPACT SUR LE MODÈLE
     public void creerBDD(String pathBDD) {
         String lowerCase = pathBDD.toLowerCase();
         if (lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb")
@@ -86,80 +105,110 @@ public class StatsMortsControler {
         modele.connecter(typeBDD, nomBDD, nomBDD, password);
     }
     
-    public void ajouterPlateforme(String nomPlateforme) {
-        if (!nomPlateforme.isEmpty()) {
-            modele.ajouterPlateforme(nomPlateforme);
+    public void ajouterBasicInputs(TypeBasicInputs typeInputs, String nom ) {
+        if (null != typeInputs && null != nom && !nom.isEmpty()) {
+            modele.ajouterBasicInputs(typeInputs, nom);
         }
     }
     
-    public void modifierPlateforme(long idPlateforme, String nomPlateforme) {
-        if (!nomPlateforme.isEmpty()) {
-            modele.modifierPlateforme(idPlateforme, nomPlateforme);
+    public void modifierBasicInputs(TypeBasicInputs typeInputs, long id, String nom) {
+        if (null != typeInputs && id >= 0 && null != nom && !nom.isEmpty()) {
+            modele.modifierBasicInputs(typeInputs, id, nom);
         }
     }
     
-    public void supprimerPlateforme(long idPlateforme) {
-        modele.supprimerPlateforme(idPlateforme);
-    }
-    
-    public void ajouterGenre(String nomGenre) {
-        if (!nomGenre.isEmpty()) {
-            
+    public void supprimerBasicInputs(TypeBasicInputs typeInputs, long id) {
+        if (null != typeInputs & id >= 0) {
+            modele.supprimerBasicInputs(typeInputs, id);
         }
     }
+//    
+//    public void ajouterPlateforme(String nomPlateforme) {
+//        if (null != nomPlateforme && !nomPlateforme.isEmpty()) {
+//            modele.ajouterPlateforme(nomPlateforme);
+//        }
+//    }
     
-    public void modifierGenre(long idGenre, String nomGenre) {
-        if (!nomGenre.isEmpty()) {
-            
-        }
-    }
+//    public void modifierPlateforme(long idPlateforme, String nomPlateforme) {
+//        if (idPlateforme >= 0 && null != nomPlateforme && !nomPlateforme.isEmpty()) {
+//            modele.modifierPlateforme(idPlateforme, nomPlateforme);
+//        }
+//    }
+//    
+//    public void supprimerPlateforme(long idPlateforme) {
+//        if(idPlateforme >= 0) {
+//            modele.supprimerPlateforme(idPlateforme);
+//        }
+//    }
     
-    public void supprimerGenre(long idGenre) {
-        
-    }
+//    public void ajouterGenre(String nomGenre) {
+//        if (null != nomGenre && !nomGenre.isEmpty()) {
+//            
+//        }
+//    }
+//    
+//    public void modifierGenre(long idGenre, String nomGenre) {
+//        if (idGenre >= 0 && !nomGenre.isEmpty()) {
+//            
+//        }
+//    }
+//    
+//    public void supprimerGenre(long idGenre) {
+//        if (idGenre >= 0) {
+//            
+//        }
+//    }
     
-    public void ajouterStudio(String nomStudio) {
-        
-    }
-    
-    public void modifierStudio(long idStudio, String nomStudio) {
-        if (!nomStudio.isEmpty()) {
-            
-        }
-    }
-    
-    public void supprimerStudio(long idStudio) {
-        
-    }
+//    public void ajouterStudio(String nomStudio) {
+//        
+//    }
+//    
+//    public void modifierStudio(long idStudio, String nomStudio) {
+//        if (idStudio >= 0 && null != nomStudio && !nomStudio.isEmpty()) {
+//            
+//        }
+//    }
+//    
+//    public void supprimerStudio(long idStudio) {
+//        if (idStudio >= 0) {
+//            
+//        }
+//    }
     
     public void ajouterJeu(String titreJeu) {
-        if (!titreJeu.isEmpty()) {
+        if (null != titreJeu && !titreJeu.isEmpty()) {
             
         }
     }
     
     public void modifierJeu(long idJeu) {
-        
+        if (idJeu >= 0) {
+            
+        }
     }
     
     public void supprimerJeu(long idJeu) {
-        
+        if (idJeu >= 0) {
+            
+        }
     }
     
     public void ajouterRun(long idRun, String titreRun, long idJeu) {
-        if (!titreRun.isEmpty()) {
+        if (idRun >= 0 && idJeu >= 0 && null != titreRun && !titreRun.isEmpty()) {
             
         }
     }
     
     public void modifierRun(long idRun, String titreRun) {
-        if (!titreRun.isEmpty()) {
+        if (idRun >= 0 && null != titreRun && !titreRun.isEmpty()) {
             
         }
     }
     
     public void supprimerRun(long idRun) {
-        
+        if (idRun >= 0) {
+            
+        }
     }
     
     public void ajouterLive() {
@@ -167,11 +216,15 @@ public class StatsMortsControler {
     }
     
     public void modifierLive(long idLive) {
-        
+        if (idLive >= 0) {
+            
+        }
     }
     
     public void supprimerLive(long idLive) {
-        
+        if (idLive >= 0) {
+            
+        }
     }
     
     public void deconnecter() {
