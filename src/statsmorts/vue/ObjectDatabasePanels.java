@@ -7,6 +7,8 @@ package statsmorts.vue;
 
 import constantes.TexteConstantes;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
@@ -19,7 +21,7 @@ import statsmorts.controler.StatsMortsControler;
  *
  * @author Robin
  */
-public abstract class ObjectDatabasePanels {
+public abstract class ObjectDatabasePanels extends JPanel {
     
     //ATTRIBUTS
     protected JPanel idPanel;
@@ -31,10 +33,14 @@ public abstract class ObjectDatabasePanels {
     
     
     //CONSTRUCTEURS
-    public ObjectDatabasePanels(StatsMortsControler controler) {
+    public ObjectDatabasePanels(LayoutManager layout, StatsMortsControler controler) {
+        super(layout);
         this.init();
         this.setComponenents();
         this.controler = controler;
+    }
+    public ObjectDatabasePanels(StatsMortsControler controler) {
+        this(new GridLayout(0,1),controler);
     }
     
     
@@ -55,14 +61,48 @@ public abstract class ObjectDatabasePanels {
         return nomTextPane;
     }
     
-    //MUTATEURS
-    public void setComponenents() {
-        idPanel.add(idComboBox);
-        nomPanel.add(nomTextPane);
+    public int getNbItems() {
+        return idComboBox.getItemCount();
     }
     
-    public void clearFields(boolean empty) {
-        nomTextPane.setEditable(true);
+    public long getSelectedID() {
+        return (long)idComboBox.getSelectedItem();
+    }
+    
+    public String getNom() {
+        return nomTextPane.getText();
+    }
+    
+    
+    //MUTATEURS
+    private void init() {
+        idPanel = new JPanel(new BorderLayout());
+        idPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ID));
+        nomPanel = new JPanel(new BorderLayout());
+        nomPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.NOM));
+        idComboBox = new JComboBox();
+        idComboBox.addItemListener(new ChangeIDListener());
+        nomTextPane = new JTextField();
+    }
+    
+    private void setComponenents() {
+        idPanel.add(idComboBox);
+        nomPanel.add(nomTextPane);
+        this.add(idPanel);
+        this.add(nomPanel);
+    }
+    
+    public void setIDPanelVisible(boolean visible) {
+        if (visible) {
+            this.add(idPanel, 0);
+        }
+        else {
+            this.remove(idPanel);
+        }
+    }
+    
+    public void clearFields(boolean editable,boolean empty) {
+        nomTextPane.setEditable(editable);
         nomTextPane.setText(TexteConstantes.EMPTY);
         if (idComboBox.getItemCount() > 0) {
             idComboBox.setSelectedIndex(0);
@@ -77,16 +117,6 @@ public abstract class ObjectDatabasePanels {
         }
     }
     
-    private void init() {
-        idPanel = new JPanel(new BorderLayout());
-        idPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ID));
-        nomPanel = new JPanel(new BorderLayout());
-        nomPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.NOM));
-        idComboBox = new JComboBox();
-        idComboBox.addItemListener(new ChangeIDListener());
-        nomTextPane = new JTextField();
-    }
-    
     public void removeAllItems() {
         idComboBox.removeAllItems();
     }
@@ -95,7 +125,7 @@ public abstract class ObjectDatabasePanels {
         idComboBox.addItem(idItem);
     }
     
-    public void remvoeItem(long idItem) {
+    public void removeItem(long idItem) {
         idComboBox.removeItem(idItem);
     }
     
@@ -105,6 +135,8 @@ public abstract class ObjectDatabasePanels {
     
     abstract public void fillItem(long idItem);
     
+    
+    //LISTENER
     class ChangeIDListener implements ItemListener {
         
         @Override
