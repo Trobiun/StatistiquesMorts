@@ -21,7 +21,7 @@ public class Studio implements FillDataset, Comparable {
     
     //ATTRIBUTS
     private final long id;
-    private final String nom;
+    private String nom;
     private final Map<Long,Jeu> jeux;
     
     //CONSTRUCTEURS
@@ -46,6 +46,10 @@ public class Studio implements FillDataset, Comparable {
     //MUTATEURS
     public void putJeu(Jeu jeu) {
         jeux.putIfAbsent(jeu.getID(),jeu);
+    }
+    
+    public void rename(String nouveauNom) {
+        this.nom = nouveauNom;
     }
     
     
