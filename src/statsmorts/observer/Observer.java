@@ -20,21 +20,28 @@ import statsmorts.classes.TypeGroup;
  */
 public interface Observer {
     
-    public void clear(TypeGroup type);
-    public void addPlateforme(Plateforme plateforme);
-    public void addGenre(Genre genre);
-    public void addStudio(Studio studio);
-    public void addJeu(Jeu jeu);
-    public void addRun(long idJeu, Run run);
-    public void addLive(long idRun, Live live);
-    public void removePlateforme(long idPlateforme);
-    public void removeGenre(long idGenre);
-    public void removeStudio(long idStudio);
-    public void removeJeu(long idJeu);
-    public void removeRun(long idRun);
-    public void removeLive(long idLive);
-    public void updateDataset(String titre, DefaultCategoryDataset dataset);
-    public void fillPlateforme(long idPlateforme, String nomPlateforme);
-    public void fillGenre(long idGenre, String nom);
+    //méthodes pour mettre à jour la vue en fonction du modèle
+    void clear(TypeGroup type);
+    void addPlateforme(Plateforme plateforme);
+    void addGenre(Genre genre);
+    void addStudio(Studio studio);
+    void addJeu(Jeu jeu);
+    void addRun(long idJeu, Run run);
+    void addLive(long idRun, Live live);
+    void removePlateforme(long idPlateforme);
+    void removeGenre(long idGenre);
+    void removeStudio(long idStudio);
+    void removeJeu(long idJeu);
+    void removeRun(long idRun);
+    void removeLive(long idLive);
+    void updateDataset(String titre, DefaultCategoryDataset dataset);
+    
+    //méthodes pour remplir les champs de saisie pour les entrées utilisateur
+    void fillPlateforme(long idPlateforme, String nomPlateforme);
+    void fillGenre(long idGenre, String nomGenre);
+    void fillStudio(long idStudio, String nomStudio);
+    void fillJeu(long idJeu, String titreJeu, int anneeSortie);
+    void fillRun(long idRun);
+    void fillLive(long idLive);
     
 }
