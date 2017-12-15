@@ -67,7 +67,7 @@ public class TexteConstantesSQL {
     public static final String AUTOINCREMENT = "AUTOINCREMENT";
     public static final String REFERENCES = "REFERENCES";
     public static final String NOT_NULL = "NOT NULL";
-    public static final String CREATE_VUE_GLOBALE = CREATE_VIEW + TexteConstantes.SPACE + VUE_GLOBALE + " AS "
+    public static final String CREATE_VUE_GLOBALE = CREATE_VIEW + " " + VUE_GLOBALE + " AS "
                                                    + TexteConstantesSQL.SELECT_VUE_GLOBALE_SQL;
     //REQUETES SELECT
     public static final String SELECT_PLATEFORMES = "SELECT * FROM Plateformes";
@@ -82,5 +82,12 @@ public class TexteConstantesSQL {
                                                          + "(" + TABLE_RUNS +" LEFT OUTER JOIN " + TABLE_LIVES + " ON "
                                                          + TABLE_RUNS_ID + " = " + TABLE_LIVES_RUN + ") ON "
                                                             + TABLE_RUNS_ID_JEU + " = " + TABLE_JEUX_ID;
+    //GESTION DE BASE DE DONNÉES (INSERT, UPDATE, DELETE)
+    public static final String INSERT = "INSERT INTO";
+    public static final String UPDATE = "UPDATE";
+    public static final String DELETE = "DELETE FROM";
+    public static final String VALUES = "VALUES";
+    public static final String SET = "SET";
+    public static final String WHERE = "WHERE";
     
 }
