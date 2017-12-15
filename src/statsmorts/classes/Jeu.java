@@ -47,6 +47,10 @@ public class Jeu implements FillDataset, Comparable {
         return id;
     }
     
+    public int getAnneeSortie() {
+        return anneeSortie;
+    }
+    
     public Studio getStudio() {
         return studio;
     }
