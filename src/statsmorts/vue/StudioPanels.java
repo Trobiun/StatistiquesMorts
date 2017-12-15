@@ -28,7 +28,7 @@ public class StudioPanels extends ObjectDatabasePanels {
     //MUTATEURS
     @Override
     public void fillItem(long idItem) {
-        
+        controler.fillStudioPanel(idItem);
     }
    
     
