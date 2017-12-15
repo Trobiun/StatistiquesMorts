@@ -5,11 +5,11 @@
  */
 package statsmorts.vue;
 
+import statsmorts.classes.TypeBasicInputs;
 import constantes.TexteConstantes;
 import constantes.TexteConstantesBDD;
 import constantes.TexteConstantesChart;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -37,7 +36,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -140,10 +138,6 @@ public class Fenetre extends JFrame implements Observer {
     private JRadioButtonMenuItem genresAffichageRacineMenuItem;
     private JRadioButtonMenuItem jeuxAffichageRacineMenuItem;
     private ButtonGroup racineAffichageGroup;
-//    private JMenu affichageTreeNodesSousMenu;
-//    private JCheckBoxMenuItem jeuxAffichageTreeNodesMenuItem;
-//    private JCheckBoxMenuItem runsAffichageTreeNodesMenuItem;
-//    private JCheckBoxMenuItem livesAffichageTreeNodesMenuItem;
     private JMenu affichageTempsSousMenu;
     private JRadioButtonMenuItem heuresAffichageTempsMenuItem;
     private JRadioButtonMenuItem minutesAffichageTempsMenuItem;
@@ -180,8 +174,11 @@ public class Fenetre extends JFrame implements Observer {
     private TypeGroup typeGroup;
     
     //CLASSES PERSO
+    //ENSEMBLE DE PANELS POUR LES ENTRÉES UTILISATEUR
     private final PlateformePanels plateformePanels;
     private final GenrePanels genrePanels;
+    private final StudioPanels studioPanels;
+    
     private final Preferences preferences;
     private final PreferencesDialog prefsDialog;
     private final StatsMortsControler controler;
@@ -191,7 +188,7 @@ public class Fenetre extends JFrame implements Observer {
     public Fenetre(String titre, StatsMortsControler controler, Preferences preferences) {
         super(titre);
         java.net.URL iconURL = Fenetre.class.getResource("res/icon.jpg");
-        if (iconURL != null) {
+        if (null != iconURL) {
             super.setIconImage(new ImageIcon(iconURL).getImage());
         }
         super.setLayout(new BorderLayout());
@@ -214,8 +211,10 @@ public class Fenetre extends JFrame implements Observer {
         this.controler = controler;
         this.preferences = preferences;
         this.prefsDialog = new PreferencesDialog(this, TexteConstantes.PREFERENCES, false, this.controler, this.preferences);
+        
         this.plateformePanels = new PlateformePanels(this.controler);
         this.genrePanels = new GenrePanels(this.controler);
+        this.studioPanels = new StudioPanels(this.controler);
         
         initAll();
         setComponents();
@@ -293,11 +292,6 @@ public class Fenetre extends JFrame implements Observer {
         affichageRacineSousMenu.add(genresAffichageRacineMenuItem);
         affichageRacineSousMenu.add(studiosAffichageRacineMenuItem);
         affichageRacineSousMenu.add(jeuxAffichageRacineMenuItem);
-        
-        //AJOUT DES MENU ITEMS DE L'AFFICHAGE TREE NODES
-//        affichageTreeNodesSousMenu.add(jeuxAffichageTreeNodesMenuItem);
-//        affichageTreeNodesSousMenu.add(runsAffichageTreeNodesMenuItem);
-//        affichageTreeNodesSousMenu.add(livesAffichageTreeNodesMenuItem);
         
         //AJOUT DES MENU ITEMS DE L'AFFICHAGE TEMPS
         affichageTempsSousMenu.add(heuresAffichageTempsMenuItem);
@@ -493,22 +487,6 @@ public class Fenetre extends JFrame implements Observer {
                 jeuxAffichageRacineMenuItem.setSelected(true);
         }
         
-        //SOUS MENU AFFICHAGE TREENODES
-//        affichageTreeNodesSousMenu = new JMenu(AFFICHER);
-//        AffichageTreeNodesListener listenerTreeNodes = new AffichageTreeNodesListener();
-        //CHECKBOXES AFFICHAGE TREENODES
-//        jeuxAffichageTreeNodesMenuItem = new JCheckBoxMenuItem(JEUX);
-//        jeuxAffichageTreeNodesMenuItem.addItemListener(listenerTreeNodes);
-//        jeuxAffichageTreeNodesMenuItem.setSelected(preferences.getAffichageJeux());
-//        
-//        runsAffichageTreeNodesMenuItem = new JCheckBoxMenuItem(RUNS);
-//        runsAffichageTreeNodesMenuItem.setSelected(preferences.getAffichageRuns());
-//        runsAffichageTreeNodesMenuItem.addItemListener(listenerTreeNodes);
-//        
-//        livesAffichageTreeNodesMenuItem = new JCheckBoxMenuItem(LIVES);
-//        livesAffichageTreeNodesMenuItem.setSelected(preferences.getAffichageLives());
-//        livesAffichageTreeNodesMenuItem.addItemListener(listenerTreeNodes);
-        
         //SOUS MENU AFFICHAGE TEMPS
         affichageTempsSousMenu = new JMenu(TexteConstantes.TEMPS);
         AffichageTempsListener listenerTemps = new AffichageTempsListener();
@@ -638,7 +616,8 @@ public class Fenetre extends JFrame implements Observer {
         if (typeGroup.equals(TypeGroup.PLATEFORMES)) {
             rootTree.add(nodePlateforme);
             rootTree.sort();
-            treeJeux.updateUI();
+            ((DefaultTreeModel)treeJeux.getModel()).reload();
+            //treeJeux.updateUI();
         }
     }
     
@@ -650,6 +629,7 @@ public class Fenetre extends JFrame implements Observer {
         if (typeGroup.equals(TypeGroup.GENRES)) {
             rootTree.add(nodeGenre);
             rootTree.sort();
+            ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
     }
     
@@ -657,9 +637,11 @@ public class Fenetre extends JFrame implements Observer {
     public void addStudio(Studio studio) {
         SortableTreeNode nodeStudio = new SortableTreeNode(studio, true);
         mapStudios.put(studio.getID(), nodeStudio);
+        studioPanels.addItem(studio.getID());
         if (typeGroup.equals(TypeGroup.STUDIOS)) {
             rootTree.add(nodeStudio);
             rootTree.sort();
+            ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
     }
     
@@ -704,6 +686,7 @@ public class Fenetre extends JFrame implements Observer {
             mapJeux.get(jeu.getID()).add(nodeJeu);
             rootTree.add(nodeJeu);
             rootTree.sort();
+            ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
     }
     
@@ -747,17 +730,25 @@ public class Fenetre extends JFrame implements Observer {
             ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapPlateformes.get(idPlateforme));
         }
         mapPlateformes.remove(idPlateforme);
-        plateformePanels.remvoeItem(idPlateforme);
+        plateformePanels.removeItem(idPlateforme);
     }
     
     @Override
     public void removeGenre(long idGenre) {
-        
+        if (typeGroup.equals(TypeGroup.GENRES)) {
+            ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapGenres.get(idGenre));
+        }
+        mapPlateformes.remove(idGenre);
+        plateformePanels.removeItem(idGenre);
     }
     
     @Override
     public void removeStudio(long idStudio) {
-        
+        if (typeGroup.equals(TypeGroup.STUDIOS)) {
+            ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapStudios.get(idStudio));
+        }
+        mapStudios.remove(idStudio);
+        studioPanels.removeItem(idStudio);
     }
     
     @Override
@@ -777,9 +768,9 @@ public class Fenetre extends JFrame implements Observer {
     
     @Override
     public void updateDataset(String titre, DefaultCategoryDataset dataset) {
-        JFreeChart chart = ChartFactory.createLineChart(TexteConstantesChart.DEBUT_TITRE + TexteConstantes.SPACE + titre,TexteConstantesChart.DATE_LIVE, TexteConstantes.EMPTY, dataset, PlotOrientation.VERTICAL, true, true, false);
-        chart.addSubtitle(new TextTitle(TexteConstantes.TEMPS + TexteConstantes.SPACE + "en" + TexteConstantes.SPACE + temps.getNom()));
-        LineAndShapeRenderer renderer = (LineAndShapeRenderer) chart.getCategoryPlot().getRenderer();
+        JFreeChart chart = ChartFactory.createLineChart(TexteConstantesChart.DEBUT_TITRE + " " + titre,TexteConstantesChart.DATE_LIVE, TexteConstantes.EMPTY, dataset, PlotOrientation.VERTICAL, true, true, false);
+        chart.addSubtitle(new TextTitle(TexteConstantes.TEMPS + " en " + temps.getNom()));
+        LineAndShapeRenderer renderer = (LineAndShapeRenderer)chart.getCategoryPlot().getRenderer();
         renderer.setBaseShapesVisible(true);
         panelGraph.setChart(chart);
     }
@@ -794,110 +785,261 @@ public class Fenetre extends JFrame implements Observer {
         genrePanels.setNom(nomGenre);
     }
     
-    
-    //MÉTHODES GRAPHIQUES
-    private void ajouterPlateformeInputs() {
-        plateformePanels.clearFields(true);
-        JPanel inputs = new JPanel(new BorderLayout());
-        JPanel nomPanel = plateformePanels.getNomPanel();
-        inputs.add(nomPanel);
-        JTextField nomTextField = plateformePanels.getNomTextField();
-        String[] options = {TexteConstantes.AJOUTER, TexteConstantes.ANNULER};
-        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.AJOUTER + TexteConstantes.SPACE + TexteConstantes.PLATEFORME, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        if (res == JOptionPane.YES_OPTION) {
-            controler.ajouterPlateforme(nomTextField.getText());
-        }
+    @Override
+    public void fillStudio(long idStudio, String nomStudio) {
+        studioPanels.setNom(nomStudio);
     }
     
-    private void modifierPlateformeInputs() {
-        plateformePanels.clearFields(false);
-        JPanel inputs = new JPanel(new GridLayout(2, 1));
-        JPanel idPanel = plateformePanels.getIDPanel();
-        JPanel nomPanel = plateformePanels.getNomPanel();
+    @Override
+    public void fillJeu(long idJeu, String titreJeu, int anneeSortie) {
         
-        inputs.add(idPanel);
-        inputs.add(nomPanel);
-        JComboBox idComboBox = plateformePanels.getIDComboBox();
-        JTextField nomTextField = plateformePanels.getNomTextField();
-        String[] options = {TexteConstantes.MODIFIER, TexteConstantes.ANNULER};
-        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.MODIFIER + TexteConstantes.SPACE + TexteConstantes.PLATEFORME, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        if (res == JOptionPane.YES_OPTION) {
-            controler.modifierPlateforme((long)idComboBox.getSelectedItem(),nomTextField.getText());
-        }
     }
     
-    private void supprimerPlateformeInputs() {
-        plateformePanels.clearFields(false);
-        JPanel inputs = new JPanel(new GridLayout(2, 1));
-        JPanel idPanel = plateformePanels.getIDPanel();
-        JPanel nomPanel = plateformePanels.getNomPanel();
+    @Override
+    public void fillRun(long idRun) {
         
-        inputs.add(idPanel);
-        inputs.add(nomPanel);
+    }
+    
+    @Override
+    public void fillLive(long idLive) {
         
-        JComboBox idComboBox = plateformePanels.getIDComboBox();
-        JTextField nomTextField = plateformePanels.getNomTextField();
-        nomTextField.setEditable(false);
-        String[] options = {TexteConstantes.SUPPRIMER, TexteConstantes.ANNULER};
-        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.SUPPRIMER + TexteConstantes.SPACE + TexteConstantes.PLATEFORME, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        if (res == JOptionPane.YES_OPTION) {
-            controler.supprimerPlateforme((long)idComboBox.getSelectedItem());
-            if (treeJeux.isSelectionEmpty()) {
-                textPaneInfos.setText(TexteConstantes.EMPTY);
-                panelGraph.setChart(null);
+    }
+    
+    //MÉTHODES GRAPHIQUES DE SAISIE UTILISATEUR
+    private void gererBasicInputs(ModeGestion mode, TypeBasicInputs typeInputs) {
+        ObjectDatabasePanels inputs;
+        switch (typeInputs) {
+            case PLATEFORMES :
+                inputs = plateformePanels;
+                break;
+            case GENRES :
+                inputs = genrePanels;
+                break;
+            case STUDIOS :
+                inputs = studioPanels;
+                break;
+            default :
+                inputs = null;
+        }
+        if (null != inputs) {
+            if (mode.equals(ModeGestion.AJOUTER)) {
+                inputs.setIDPanelVisible(false);
+                inputs.clearFields(true,true);
+            }
+            else {
+                boolean editable = mode.equals(ModeGestion.MODIFIER);
+                inputs.setIDPanelVisible(true);
+                inputs.clearFields(editable,false);
+            }
+            
+            String[] options = { mode.getAction(), TexteConstantes.ANNULER };
+            int res = JOptionPane.showOptionDialog(this, inputs, mode.getAction() + " " + typeInputs.getNom(),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            if (res == JOptionPane.YES_OPTION) {
+                switch (mode) {
+                    case AJOUTER:
+                        controler.ajouterBasicInputs(typeInputs, inputs.getNom());
+                        break;
+                    case MODIFIER:
+                        controler.modifierBasicInputs(typeInputs, inputs.getSelectedID(), inputs.getNom());
+                        break;
+                    case SUPPRIMER:
+                        controler.supprimerBasicInputs(typeInputs, inputs.getSelectedID());
+                        break;
+                    default:
+                }
             }
         }
     }
-    
-    private void ajouterGenreInputs() {
-        genrePanels.clearFields(true);
-        JPanel inputs = new JPanel(new BorderLayout());
-        JPanel nomPanel = genrePanels.getNomPanel();
-        
-        inputs.add(nomPanel);
-        JTextField nomTextField = genrePanels.getNomTextField();
-        String[] options = { TexteConstantes.AJOUTER, TexteConstantes.ANNULER };
-        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.AJOUTER + TexteConstantes.SPACE + TexteConstantes.GENRE, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        if (res == JOptionPane.YES_OPTION) {
-            
-        }
-    }
-    
-    private void modifierGenreInputs() {
-        genrePanels.clearFields(false);
-        JPanel inputs = new JPanel(new GridLayout(2,1));
-        JPanel idPanel = genrePanels.getIDPanel();
-        JPanel nomPanel = genrePanels.getNomPanel();
-        
-        inputs.add(idPanel);
-        inputs.add(nomPanel);
-        
-        JTextField nomTextField = genrePanels.getNomTextField();
-        String[] options = { TexteConstantes.MODIFIER, TexteConstantes.ANNULER };
-        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.MODIFIER + TexteConstantes.SPACE + TexteConstantes.GENRE, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        if (res == JOptionPane.YES_OPTION) {
-            
-        }
-        
-    }
-    
-    private void supprimerGenreInputs() {
-        genrePanels.clearFields(false);
-        JPanel inputs = new JPanel(new GridLayout(2,1));
-        JPanel idPanel = genrePanels.getIDPanel();
-        JPanel nomPanel = genrePanels.getNomPanel();
-        
-        inputs.add(idPanel);
-        inputs.add(nomPanel);
-        
-        JTextField nomTextField = genrePanels.getNomTextField();
-        nomTextField.setEditable(false);
-        String[] options = { TexteConstantes.SUPPRIMER, TexteConstantes.ANNULER };
-        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.SUPPRIMER + TexteConstantes.SPACE + TexteConstantes.GENRE, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-        if (res == JOptionPane.YES_OPTION) {
-            
-        }
-    }
+//    
+//    private void gererPlateformeInputs(ModeGestion mode) {
+//        if (mode.equals(ModeGestion.AJOUTER)) {
+//            plateformePanels.setIDPanelVisible(false);
+//        }
+//        else {
+//            plateformePanels.setIDPanelVisible(true);
+//        }
+//        
+//        String[] options = { mode.getAction(), TexteConstantes.ANNULER };
+//        int res = JOptionPane.showOptionDialog(this, plateformePanels, mode.getAction() + " " + TexteConstantes.PLATEFORME,
+//                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (res == JOptionPane.YES_OPTION) {
+//            switch (mode) {
+//                case AJOUTER :
+//                    controler.ajouterPlateforme(plateformePanels.getNom());
+//                    break;
+//                case MODIFIER :
+//                    controler.modifierPlateforme(plateformePanels.getSelectedID(), plateformePanels.getNom());
+//                    break;
+//                case SUPPRIMER :
+//                    controler.supprimerPlateforme(plateformePanels.getSelectedID());
+//                    break;
+//                default :
+//                    
+//            }
+//        }
+//    }
+//    
+//    private void gererGenresInputs(ModeGestion mode) {
+//        if (mode.equals(ModeGestion.AJOUTER)) {
+//            genrePanels.setIDPanelVisible(false);
+//        }
+//        else {
+//            genrePanels.setIDPanelVisible(true);
+//        }
+//        
+//        String[] options = { mode.getAction(), TexteConstantes.ANNULER };
+//        int res = JOptionPane.showOptionDialog(this, genrePanels, mode.getAction() + " " + TexteConstantes.PLATEFORME,
+//                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (res == JOptionPane.YES_OPTION) {
+//            switch (mode) {
+//                case AJOUTER :
+//                    controler.ajouterGenre(genrePanels.getNom());
+//                    break;
+//                case MODIFIER :
+//                    controler.modifierGenre(genrePanels.getSelectedID(), genrePanels.getNom());
+//                    break;
+//                case SUPPRIMER :
+//                    controler.supprimerGenre(genrePanels.getSelectedID());
+//                    break;
+//                default :
+//                    
+//            }
+//        }
+//    }
+//    
+//    private void gererStudiosInputs(ModeGestion mode) {
+//        if (mode.equals(ModeGestion.AJOUTER)) {
+//            studioPanels.setIDPanelVisible(false);
+//        }
+//        else {
+//            studioPanels.setIDPanelVisible(true);
+//        }
+//        
+//        String[] options = { mode.getAction(), TexteConstantes.ANNULER };
+//        int res = JOptionPane.showOptionDialog(this, studioPanels, mode.getAction() + " " + TexteConstantes.PLATEFORME,
+//                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (res == JOptionPane.YES_OPTION) {
+//            switch (mode) {
+//                case AJOUTER :
+//                    controler.ajouterStudio(studioPanels.getNom());
+//                    break;
+//                case MODIFIER :
+//                    controler.modifierStudio(studioPanels.getSelectedID(), studioPanels.getNom());
+//                    break;
+//                case SUPPRIMER :
+//                    controler.supprimerStudio(studioPanels.getSelectedID());
+//                    break;
+//                default :
+//                    
+//            }
+//        }
+//    }
+//    
+//    
+//    private void ajouterPlateformeInputs() {
+//        plateformePanels.clearFields(true);
+//        JPanel inputs = new JPanel(new BorderLayout());
+//        JPanel nomPanel = plateformePanels.getNomPanel();
+//        inputs.add(nomPanel);
+//        JTextField nomTextField = plateformePanels.getNomTextField();
+//        String[] options = {TexteConstantes.AJOUTER, TexteConstantes.ANNULER};
+//        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.AJOUTER + " " + TexteConstantes.PLATEFORME,
+//                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (res == JOptionPane.YES_OPTION) {
+//            controler.ajouterPlateforme(nomTextField.getText());
+//        }
+//    }
+//    
+//    private void modifierPlateformeInputs() {
+//        plateformePanels.clearFields(false);
+//        JPanel inputs = new JPanel(new GridLayout(2, 1));
+//        JPanel idPanel = plateformePanels.getIDPanel();
+//        JPanel nomPanel = plateformePanels.getNomPanel();
+//        
+//        inputs.add(idPanel);
+//        inputs.add(nomPanel);
+//        JComboBox idComboBox = plateformePanels.getIDComboBox();
+//        JTextField nomTextField = plateformePanels.getNomTextField();
+//        String[] options = {TexteConstantes.MODIFIER, TexteConstantes.ANNULER};
+//        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.MODIFIER + " " + TexteConstantes.PLATEFORME, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (res == JOptionPane.YES_OPTION) {
+//            controler.modifierPlateforme((long)idComboBox.getSelectedItem(),nomTextField.getText());
+//        }
+//    }
+//    
+//    private void supprimerPlateformeInputs() {
+//        plateformePanels.clearFields(false);
+//        JPanel inputs = new JPanel(new GridLayout(2, 1));
+//        JPanel idPanel = plateformePanels.getIDPanel();
+//        JPanel nomPanel = plateformePanels.getNomPanel();
+//        
+//        inputs.add(idPanel);
+//        inputs.add(nomPanel);
+//        
+//        JComboBox idComboBox = plateformePanels.getIDComboBox();
+//        JTextField nomTextField = plateformePanels.getNomTextField();
+//        nomTextField.setEditable(false);
+//        String[] options = {TexteConstantes.SUPPRIMER, TexteConstantes.ANNULER};
+//        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.SUPPRIMER + " " + TexteConstantes.PLATEFORME, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (res == JOptionPane.YES_OPTION) {
+//            controler.supprimerPlateforme((long)idComboBox.getSelectedItem());
+//            if (treeJeux.isSelectionEmpty()) {
+//                textPaneInfos.setText(TexteConstantes.EMPTY);
+//                panelGraph.setChart(null);
+//            }
+//        }
+//    }
+//    
+//    private void ajouterGenreInputs() {
+//        genrePanels.clearFields(true);
+//        JPanel inputs = new JPanel(new BorderLayout());
+//        JPanel nomPanel = genrePanels.getNomPanel();
+//        
+//        inputs.add(nomPanel);
+//        JTextField nomTextField = genrePanels.getNomTextField();
+//        String[] options = { TexteConstantes.AJOUTER, TexteConstantes.ANNULER };
+//        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.AJOUTER + " " + TexteConstantes.GENRE, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (res == JOptionPane.YES_OPTION) {
+//            
+//        }
+//    }
+//    
+//    private void modifierGenreInputs() {
+//        genrePanels.clearFields(false);
+//        JPanel inputs = new JPanel(new GridLayout(2,1));
+//        JPanel idPanel = genrePanels.getIDPanel();
+//        JPanel nomPanel = genrePanels.getNomPanel();
+//        
+//        inputs.add(idPanel);
+//        inputs.add(nomPanel);
+//        
+//        JTextField nomTextField = genrePanels.getNomTextField();
+//        String[] options = { TexteConstantes.MODIFIER, TexteConstantes.ANNULER };
+//        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.MODIFIER + " " + TexteConstantes.GENRE, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (res == JOptionPane.YES_OPTION) {
+//            
+//        }
+//        
+//    }
+//    
+//    private void supprimerGenreInputs() {
+//        genrePanels.clearFields(false);
+//        JPanel inputs = new JPanel(new GridLayout(2,1));
+//        JPanel idPanel = genrePanels.getIDPanel();
+//        JPanel nomPanel = genrePanels.getNomPanel();
+//        
+//        inputs.add(idPanel);
+//        inputs.add(nomPanel);
+//        
+//        JTextField nomTextField = genrePanels.getNomTextField();
+//        nomTextField.setEditable(false);
+//        String[] options = { TexteConstantes.SUPPRIMER, TexteConstantes.ANNULER };
+//        int res = JOptionPane.showOptionDialog(this, inputs, TexteConstantes.SUPPRIMER + " " + TexteConstantes.GENRE, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//        if (res == JOptionPane.YES_OPTION) {
+//            
+//        }
+//    }
     
     //LISTENERS
     class MenuListener implements ActionListener {
@@ -919,7 +1061,7 @@ public class Fenetre extends JFrame implements Observer {
                 FileChooser fileBDD = new FileChooser(TexteConstantesBDD.BDD, TexteConstantes.EMPTY, JFileChooser.FILES_ONLY, dialogType,false);
                 FileNameExtensionFilter fileFilter;
                 if (src.equals(nouveauMenuItem)) {
-                    fileFilter = new FileNameExtensionFilter(TexteConstantesBDD.BDD + TexteConstantes.SPACE + TexteConstantesBDD.EXTENSIONS_BDD,
+                    fileFilter = new FileNameExtensionFilter(TexteConstantesBDD.BDD + " " + TexteConstantesBDD.EXTENSIONS_BDD,
                             TexteConstantesBDD.ACCDB, TexteConstantesBDD.MDB,
                             TexteConstantesBDD.DB, TexteConstantesBDD.SDB,
                             TexteConstantesBDD.SQLITE, TexteConstantesBDD.DB2,
@@ -929,7 +1071,7 @@ public class Fenetre extends JFrame implements Observer {
                             TexteConstantesBDD.SL3);
                 }
                 else {
-                    fileFilter = new FileNameExtensionFilter(TexteConstantesBDD.BDD + TexteConstantes.SPACE + TexteConstantesBDD.EXTENSIONS_BDD,
+                    fileFilter = new FileNameExtensionFilter(TexteConstantesBDD.BDD + " " + TexteConstantesBDD.EXTENSIONS_BDD,
                             TexteConstantesBDD.ACCDB, TexteConstantesBDD.MDB,
                             TexteConstantesBDD.KEXI, TexteConstantesBDD.DB,
                             TexteConstantesBDD.SDB, TexteConstantesBDD.SQLITE,
@@ -968,13 +1110,13 @@ public class Fenetre extends JFrame implements Observer {
             Object src = e.getSource();
             //GESTION AJOUTER
             if (src.equals(ajouterPlateformeMenuItem)) {
-                ajouterPlateformeInputs();
+                gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.PLATEFORMES);
             }
             if (src.equals(ajouterGenreMenuItem)) {
-                ajouterGenreInputs();
+                gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.GENRES);
             }
             if (src.equals(ajouterStudioMenuItem)) {
-                
+                gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.STUDIOS);
             }
             if (src.equals(ajouterJeuMenuItem)) {
                 
@@ -987,13 +1129,13 @@ public class Fenetre extends JFrame implements Observer {
             }
             //GESTION MODIFIER
             if (src.equals(modifierPlateformeMenuItem)) {
-                modifierPlateformeInputs();
+                gererBasicInputs(ModeGestion.MODIFIER, TypeBasicInputs.PLATEFORMES);
             }
             if (src.equals(modifierGenreMenuItem)) {
-                modifierGenreInputs();
+                gererBasicInputs(ModeGestion.MODIFIER, TypeBasicInputs.GENRES);
             }
             if (src.equals(modifierStudioMenuItem)) {
-                
+                gererBasicInputs(ModeGestion.MODIFIER, TypeBasicInputs.STUDIOS);
             }
             if (src.equals(modifierJeuMenuItem)) {
                 
@@ -1006,13 +1148,13 @@ public class Fenetre extends JFrame implements Observer {
             }
             //GESTION SUPPRIMER
             if (src.equals(supprimerPlateformeMenuItem)) {
-                supprimerPlateformeInputs();
+                gererBasicInputs(ModeGestion.SUPPRIMER, TypeBasicInputs.PLATEFORMES);
             }
             if (src.equals(supprimerGenreMenuItem)) {
-                supprimerGenreInputs();
+                gererBasicInputs(ModeGestion.SUPPRIMER, TypeBasicInputs.GENRES);
             }
             if (src.equals(supprimerStudioMenuItem)) {
-                
+                gererBasicInputs(ModeGestion.SUPPRIMER, TypeBasicInputs.STUDIOS);
             }
             if (src.equals(supprimerJeuMenuItem)) {
                 
@@ -1046,7 +1188,7 @@ public class Fenetre extends JFrame implements Observer {
             if (src.equals(treeJeux)) {
                 paths = treeJeux.getSelectionPaths();
             }
-            if (paths != null) {
+            if (null != paths) {
                 String informations = TexteConstantes.EMPTY;
                 ArrayList<FillDataset> nodes = new ArrayList();
                 String titreGraph = null;
@@ -1113,24 +1255,6 @@ public class Fenetre extends JFrame implements Observer {
         }
         
     }
-    
-//    class AffichageTreeNodesListener implements ItemListener {
-//        
-//        @Override
-//        public void itemStateChanged(ItemEvent e) {
-//            Object item = e.getItem();
-//            if (item.equals(jeuxAffichageTreeNodesMenuItem)) {
-//                affichageJeuxBool = e.getStateChange() == ItemEvent.SELECTED;
-//            }
-//            if (item.equals(runsAffichageTreeNodesMenuItem)) {
-//                affichageRunsBool = e.getStateChange() == ItemEvent.SELECTED;
-//            }
-//            if (item.equals(livesAffichageTreeNodesMenuItem)) {
-//                affichageLivesBool = e.getStateChange() == ItemEvent.SELECTED;
-//            }
-//        }
-//        
-//    }
     
     class AffichageTempsListener implements ItemListener {
         
