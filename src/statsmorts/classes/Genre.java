@@ -21,7 +21,7 @@ public class Genre implements FillDataset, Comparable {
     
     //ATTRIBUTS
     private final long id;
-    private final String nom;
+    private String nom;
     private final Map<Long,Jeu> jeux;
     
     
@@ -47,6 +47,10 @@ public class Genre implements FillDataset, Comparable {
     //MUTATEURS
     public void putJeu(Jeu jeu) {
         jeux.put(jeu.getID(),jeu);
+    }
+    
+    public void rename(String nouveauNom) {
+        this.nom = nouveauNom;
     }
     
     
