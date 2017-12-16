@@ -97,6 +97,10 @@ public class BDD {
         studios.put(studio.getID(), studio);
     }
     
+    public void ajouterJeu(Jeu jeu) {
+        jeux.put(jeu.getID(), jeu);
+    }
+    
     private Map initMap(Map map) {
         if (map == null) {
             map = new HashMap();
