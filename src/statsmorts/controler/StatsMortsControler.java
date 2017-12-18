@@ -6,6 +6,7 @@
 package statsmorts.controler;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import statsmorts.classes.FillDataset;
 import statsmorts.classes.TypeDatabase;
@@ -70,7 +71,7 @@ public class StatsMortsControler {
     
     public void fillJeuPanel(long idJeu) {
         if (idJeu >= 0) {
-            
+            modele.fillJeuPanel(idJeu);
         }
     }
     
@@ -175,14 +176,14 @@ public class StatsMortsControler {
 //        }
 //    }
     
-    public void ajouterJeu(String titreJeu) {
-        if (null != titreJeu && !titreJeu.isEmpty()) {
-            
+    public void ajouterJeu(String titreJeu, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
+        if (null != titreJeu && !titreJeu.isEmpty() && anneeSortie > 0 && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio >= 0) {
+            modele.ajouterJeu(titreJeu, anneeSortie, listPlateformes, listGenres, idStudio);
         }
     }
     
-    public void modifierJeu(long idJeu) {
-        if (idJeu >= 0) {
+    public void modifierJeu(long idJeu, String nouveauTitre, int anneeSortie) {
+        if (idJeu >= 0 && null != nouveauTitre && !nouveauTitre.isEmpty()) {
             
         }
     }
