@@ -9,6 +9,7 @@ import constantes.TexteConstantesSQL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -113,7 +114,7 @@ public class StatsMortsModele implements Observable {
         }
         if (null != table && null != table_nom) {
             final String requete = TexteConstantesSQL.INSERT + " " + table
-                    + "(" + table_nom + ")" + TexteConstantesSQL.VALUES + "(?)";
+                    + "(" + table_nom + ") " + TexteConstantesSQL.VALUES + " (?)";
             ResultSet result = connexion.executerPreparedUpdate(requete, nom);
             try {
                 ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
@@ -239,6 +240,45 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    public void ajouterJeu(String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
+        String requete = TexteConstantesSQL.INSERT + " " + TexteConstantesSQL.TABLE_JEUX
+                + "(" + TexteConstantesSQL.TABLE_JEUX_TITRE + "," + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE
+                + ") " + TexteConstantesSQL.VALUES + "(?,?)";
+        ResultSet result = connexion.executerPreparedUpdate(requete, titre, "(int)" + anneeSortie);
+        try {
+            ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
+            if (resultID.next()) {
+                long idJeu = resultID.getInt(1);
+                Jeu jeu = new Jeu(idJeu,titre,anneeSortie);
+                //ajout des plateformes au jeu et fait le lien dans la base de données
+                String requetePlateformes = TexteConstantesSQL.INSERT + " " + TexteConstantesSQL.TABLE_JEU_PLATEFORME
+                        + "(" + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME
+                        + ") " + TexteConstantesSQL.VALUES + "(?,?)";
+                for (Long idPlateforme : listPlateformes) {
+                    connexion.executerPreparedUpdate(requetePlateformes, "(long)" + idJeu, "(long)" + idPlateforme);
+                    jeu.putPlateforme(bdd.getPlateformes().get(idPlateforme));
+                }
+                //ajout des genres au jeu et fait le lien dans la base de données
+                String requeteGenres = TexteConstantesSQL.INSERT + " " + TexteConstantesSQL.TABLE_JEU_GENRE
+                        + "(" + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE
+                        + ") " + TexteConstantesSQL.VALUES + "(?,?)";
+                for (Long idGenre : listGenres) {
+                    connexion.executerPreparedUpdate(requeteGenres, "(long)" + idJeu, "(long)" + idGenre);
+                    jeu.putGenre(bdd.getGenres().get(idGenre));
+                }
+                //ajoute le studio au jeu et fait el lien dans la base de données
+                String requeteStudio = TexteConstantesSQL.INSERT + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
+                        + "(" + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
+                        + ")" + TexteConstantesSQL.VALUES + "(?,?)";
+                connexion.executerPreparedUpdate(requeteStudio, "(long)" + idJeu, "(long)" + idStudio);
+                jeu.setStudio(bdd.getStudios().get(idStudio));
+                bdd.ajouterJeu(jeu);
+                notifyAddJeu(jeu);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StatsMortsModele.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     public void setTimeUnit(TimeUnit unit) {
         if (!this.timeUnit.equals(unit)) {
@@ -302,6 +342,10 @@ public class StatsMortsModele implements Observable {
     
     public void fillStudiPanel(long idStudio) {
         notifyFillStudio(idStudio);
+    }
+    
+    public void fillJeuPanel(long idJeu) {
+        notifyFillJeu(idJeu);
     }
     
     public void createDataset(String titre, ArrayList<FillDataset> nodes) {
@@ -394,7 +438,7 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyAddLive(Live live) {
         if (hasObserver()) {
-            Run run = live.getRun();
+            final Run run = live.getRun();
             observer.addLive(run.getID(), live);
         }
     }
@@ -493,7 +537,7 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Run run = bdd.getRuns().get(idRun);
             if (null != run) {
-//                observer.
+                
             }
         }
     }
