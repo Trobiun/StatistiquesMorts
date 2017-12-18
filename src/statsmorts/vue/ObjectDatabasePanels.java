@@ -66,7 +66,11 @@ public abstract class ObjectDatabasePanels extends JPanel {
     }
     
     public long getSelectedID() {
-        return (long)idComboBox.getSelectedItem();
+        long res = -1;
+        if (idComboBox.getItemCount() > 0) {
+            res = (long)idComboBox.getSelectedItem();
+        }
+        return res;
     }
     
     public String getNom() {
@@ -78,10 +82,13 @@ public abstract class ObjectDatabasePanels extends JPanel {
     private void init() {
         idPanel = new JPanel(new BorderLayout());
         idPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ID));
+        
         nomPanel = new JPanel(new BorderLayout());
         nomPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.NOM));
+        
         idComboBox = new JComboBox();
         idComboBox.addItemListener(new ChangeIDListener());
+        
         nomTextPane = new JTextField();
     }
     
@@ -101,8 +108,8 @@ public abstract class ObjectDatabasePanels extends JPanel {
         }
     }
     
-    public void clearFields(boolean editable,boolean empty) {
-        nomTextPane.setEditable(editable);
+    public void clearFields(boolean editable, boolean empty) {
+        nomTextPane.setEnabled(editable);
         nomTextPane.setText(TexteConstantes.EMPTY);
         if (idComboBox.getItemCount() > 0) {
             idComboBox.setSelectedIndex(0);
