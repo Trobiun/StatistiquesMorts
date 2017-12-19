@@ -5,7 +5,7 @@
  */
 package statsmorts.vue;
 
-import constantes.TexteConstantes;
+import statsmorts.constantes.TexteConstantes;
 import javax.swing.tree.DefaultMutableTreeNode;
 import statsmorts.classes.FillDataset;
 
