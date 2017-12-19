@@ -5,13 +5,16 @@
  */
 package statsmorts.vue;
 
-import constantes.TexteConstantes;
+import statsmorts.constantes.TexteConstantes;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -28,6 +31,9 @@ public abstract class ObjectDatabasePanels extends JPanel {
     protected JPanel nomPanel;
     protected JComboBox idComboBox;
     protected JTextField nomTextPane;
+    
+    protected JPanel resetPanel;
+    protected JButton resetButton;
     
     protected final StatsMortsControler controler;
     
@@ -90,13 +96,21 @@ public abstract class ObjectDatabasePanels extends JPanel {
         idComboBox.addItemListener(new ChangeIDListener());
         
         nomTextPane = new JTextField();
+        
+        resetPanel = new JPanel(new BorderLayout());
+        resetPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.REINITIALISATION));
+        
+        resetButton = new JButton(TexteConstantes.REINITIALISER);
+        resetButton.addActionListener(new BoutonResetListener());
     }
     
     private void setComponenents() {
         idPanel.add(idComboBox);
         nomPanel.add(nomTextPane);
+        resetPanel.add(resetButton);
         this.add(idPanel);
         this.add(nomPanel);
+        this.add(resetPanel);
     }
     
     public void setIDPanelVisible(boolean visible) {
@@ -105,6 +119,15 @@ public abstract class ObjectDatabasePanels extends JPanel {
         }
         else {
             this.remove(idPanel);
+        }
+    }
+    
+    public void setResetButtonVisible(boolean visible) {
+        if (visible) {
+            this.add(resetPanel);
+        }
+        else {
+            this.remove(resetPanel);
         }
     }
     
@@ -149,6 +172,17 @@ public abstract class ObjectDatabasePanels extends JPanel {
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
+                fillItem((long)idComboBox.getSelectedItem());
+            }
+        }
+        
+    }
+    
+    class BoutonResetListener implements ActionListener {
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource().equals(resetButton)) {
                 fillItem((long)idComboBox.getSelectedItem());
             }
         }
