@@ -5,8 +5,8 @@
  */
 package statsmorts.classes;
 
-import constantes.TexteConstantes;
-import constantes.TexteConstantesSQL;
+import statsmorts.constantes.TexteConstantes;
+import statsmorts.constantes.TexteConstantesSQL;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -29,6 +29,10 @@ public class BDD {
     private static final String AUTOINCREMENT = TexteConstantesSQL.SQL_INTEGER + " "
             + TexteConstantesSQL.PRIMARY_KEY + " " + TexteConstantesSQL.AUTOINCREMENT;
     
+    private static final String CLES_ENTRAGERES_REACTIONS = TexteConstantesSQL.ON
+            + " " + TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.CASCADE + " "
+            + TexteConstantesSQL.ON + " " + TexteConstantesSQL.DELETE + " "
+            + TexteConstantesSQL.CASCADE + " " + TexteConstantesSQL.NOT_NULL;
     
     //ATTRIBUTS
     private Map<Long,Plateforme> plateformes;
@@ -267,61 +271,74 @@ public class BDD {
             file.delete();
             connexion.connecter(database);
             TypeDatabase type = connexion.getType();
+            String AUTOINCREMENT_ADAPTE;
+            if (type.equals(TypeDatabase.Access)) {
+                AUTOINCREMENT_ADAPTE = AUTOINCREMENT_ACCESS;
+            }
+            else {
+                AUTOINCREMENT_ADAPTE = AUTOINCREMENT;
+            }
             
             //table Plateformes
             String requete1 = TexteConstantesSQL.CREATE_TABLE + " "
-                    + TexteConstantesSQL.TABLE_PLATEFORMES + " " + "(";
-            //champ pla_id clé primaire
-            requete1 += TexteConstantesSQL.TABLE_PLATEFORMES_ID + " ";
-            requete1 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            //champ pla_Nom
-            requete1 += "," + TexteConstantesSQL.TABLE_PLATEFORMES_NOM + " "
-                    + TexteConstantesSQL.SQL_TEXT + ")";
+                    + TexteConstantesSQL.TABLE_PLATEFORMES + " ("
+                        //champ pla_id clé primaire
+                        + TexteConstantesSQL.TABLE_PLATEFORMES_ID + " "
+                            + AUTOINCREMENT_ADAPTE + ","
+                        //champ pla_Nom
+                        + TexteConstantesSQL.TABLE_PLATEFORMES_NOM + " "
+                            + TexteConstantesSQL.SQL_TEXT + " "
+                            + TexteConstantesSQL.NOT_NULL + ")";
             
             //table Genres
             String requete2 = TexteConstantesSQL.CREATE_TABLE + " "
-                    + TexteConstantesSQL.TABLE_GENRES + " " + "(";
-            //champ gen_id clé primaire
-            requete2 += TexteConstantesSQL.TABLE_GENRES_ID + " ";
-            requete2 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            //champ gen_Nom
-            requete2 += "," + TexteConstantesSQL.TABLE_GENRES_NOM + " "
-                    + TexteConstantesSQL.SQL_TEXT + ")";
+                    + TexteConstantesSQL.TABLE_GENRES + " " + "("
+                        //champ gen_id clé primaire
+                        + TexteConstantesSQL.TABLE_GENRES_ID + " "
+                            + AUTOINCREMENT_ADAPTE + ","
+                        //champ gen_Nom
+                        + TexteConstantesSQL.TABLE_GENRES_NOM + " "
+                            + TexteConstantesSQL.SQL_TEXT + " "
+                            + TexteConstantesSQL.NOT_NULL + ")";
             
             //table Studios
             String requete3 = TexteConstantesSQL.CREATE_TABLE + " "
-                    + TexteConstantesSQL.TABLE_STUDIOS + " (";
-            //champ stu_id clé primaire
-            requete3 += TexteConstantesSQL.TABLE_STUDIOS_ID + " ";
-            requete3 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            //champ stu_Nom
-            requete3 += "," + TexteConstantesSQL.TABLE_STUDIOS_NOM + " "
-                    + TexteConstantesSQL.SQL_TEXT + ")";
+                    + TexteConstantesSQL.TABLE_STUDIOS + " ("
+                        //champ stu_id clé primaire
+                        + TexteConstantesSQL.TABLE_STUDIOS_ID + " "
+                            + AUTOINCREMENT_ADAPTE + ","
+                        //champ stu_Nom
+                        + TexteConstantesSQL.TABLE_STUDIOS_NOM + " "
+                            + TexteConstantesSQL.SQL_TEXT + " "
+                            + TexteConstantesSQL.NOT_NULL + ")";
             
             //table Jeux
             String requete4 = TexteConstantesSQL.CREATE_TABLE + " "
-                    + TexteConstantesSQL.TABLE_JEUX + " " + "(";
-            //champ jeu_id clé primaire
-            requete4 += TexteConstantesSQL.TABLE_JEUX_ID + " ";
-            requete4 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            //champ jeu_Titre
-            requete4 += "," + TexteConstantesSQL.TABLE_JEUX_TITRE + " "
-                    + TexteConstantesSQL.SQL_TEXT;
-            //champ jeu_AnneeSortie
-            requete4 += "," + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + " "
-                    + TexteConstantesSQL.SQL_INTEGER + ")";
+                    + TexteConstantesSQL.TABLE_JEUX + " " + "("
+                        //champ jeu_id clé primaire
+                        + TexteConstantesSQL.TABLE_JEUX_ID + " "
+                        + AUTOINCREMENT_ADAPTE + ","
+                        //champ jeu_Titre
+                        + TexteConstantesSQL.TABLE_JEUX_TITRE + " "
+                            + TexteConstantesSQL.SQL_TEXT + " "
+                            + TexteConstantesSQL.NOT_NULL + ","
+                        //champ jeu_AnneeSortie
+                        + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + " "
+                            + TexteConstantesSQL.SQL_INTEGER + ")";
             
-            //table Plateformes
+            //table Jeulateforme
             String requete5 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_JEU_PLATEFORME + " " + "("
                         //champ idJeu
                         + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU + " "
                             + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
-                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID + "),"
+                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID + ") "
+                            + CLES_ENTRAGERES_REACTIONS + ","
                         //champ idPlateforme
                         + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME + " "
                             + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
-                            + TexteConstantesSQL.TABLE_PLATEFORMES + "(" + TexteConstantesSQL.TABLE_PLATEFORMES_ID + "),"
+                            + TexteConstantesSQL.TABLE_PLATEFORMES + "(" + TexteConstantesSQL.TABLE_PLATEFORMES_ID + ") "
+                            + CLES_ENTRAGERES_REACTIONS + ","
                         //clé primaire
                         + TexteConstantesSQL.PRIMARY_KEY + " " + "("
                             + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU + ","
@@ -333,11 +350,13 @@ public class BDD {
                         //champ idJeu
                         + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU  + " "
                             + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
-                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID +  "),"
+                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID +  ") "
+                            + CLES_ENTRAGERES_REACTIONS + ","
                         //champ idGenre
                         + TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE + " "
                             + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
-                            + TexteConstantesSQL.TABLE_GENRES + "(" + TexteConstantesSQL.TABLE_GENRES_ID + "),"
+                            + TexteConstantesSQL.TABLE_GENRES + "(" + TexteConstantesSQL.TABLE_GENRES_ID + ") "
+                            + CLES_ENTRAGERES_REACTIONS + ","
                         //clé primaire
                         + TexteConstantesSQL.PRIMARY_KEY + " " + "("
                             + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU + ","
@@ -349,11 +368,13 @@ public class BDD {
                         //champ js_idJeu
                         + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + " "
                             + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
-                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID + "),"
+                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID + ") "
+                            + CLES_ENTRAGERES_REACTIONS + ","
                         //champ js_idStudio
                         + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO + " "
                             + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
-                            + TexteConstantesSQL.TABLE_STUDIOS + "(" + TexteConstantesSQL.TABLE_STUDIOS_ID + "),"
+                            + TexteConstantesSQL.TABLE_STUDIOS + "(" + TexteConstantesSQL.TABLE_STUDIOS_ID + ") "
+                            + CLES_ENTRAGERES_REACTIONS + ","
                         //clé primaire
                         + TexteConstantesSQL.PRIMARY_KEY + " " + "("
                             + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + ","
@@ -361,49 +382,49 @@ public class BDD {
             
             //table Runs
             String requete8 = TexteConstantesSQL.CREATE_TABLE + " "
-                    + TexteConstantesSQL.TABLE_RUNS + "(";
-            //champ run_id clé primaire
-            requete8 += TexteConstantesSQL.TABLE_RUNS_ID + " ";
-            requete8 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            //champ run_idJeu
-            requete8 += "," + TexteConstantesSQL.TABLE_RUNS_ID_JEU + " "
-                    + TexteConstantesSQL.SQL_INTEGER + " "
-                    + TexteConstantesSQL.REFERENCES + " "
-                    + TexteConstantesSQL.TABLE_JEUX +"(" + TexteConstantesSQL.TABLE_JEUX_ID +")";
-            //champ run_Titre
-            requete8 += "," + TexteConstantesSQL.TABLE_RUNS_TITRE +TexteConstantesSQL.SQL_TEXT + ")";
+                    + TexteConstantesSQL.TABLE_RUNS + "("
+                        //champ run_id clé primaire
+                        + TexteConstantesSQL.TABLE_RUNS_ID + " "
+                            + AUTOINCREMENT_ADAPTE + ","
+                        //champ run_idJeu
+                        + TexteConstantesSQL.TABLE_RUNS_ID_JEU + " "
+                            + TexteConstantesSQL.SQL_INTEGER + " "
+                            + TexteConstantesSQL.REFERENCES + " "
+                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID +") "
+                            + CLES_ENTRAGERES_REACTIONS + ","
+                        //champ run_Titre
+                        + TexteConstantesSQL.TABLE_RUNS_TITRE + " "
+                        + TexteConstantesSQL.SQL_TEXT + " "
+                        + TexteConstantesSQL.NOT_NULL + ")";
             
             //table Lives
             String requete9 = TexteConstantesSQL.CREATE_TABLE + " "
-                    + TexteConstantesSQL.TABLE_LIVES + "(";
-            //champ liv_id clé primaire
-            requete9 += TexteConstantesSQL.TABLE_LIVES_ID + " ";
-            requete9 += type.equals(TypeDatabase.Access) ?  AUTOINCREMENT_ACCESS : AUTOINCREMENT;
-            //champ liv_DateDebut
-            requete9 += "," + TexteConstantesSQL.TABLE_LIVES_DATE_DEBUT + " "
-                    + TexteConstantesSQL.SQL_DATETIME + " "
-                    + TexteConstantesSQL.NOT_NULL;
-            //champ liv_DateFin
-            requete9 += "," + TexteConstantesSQL.TABLE_LIVES_DATE_FIN + " "
-                    + TexteConstantesSQL.SQL_DATETIME + " "
-                    + TexteConstantesSQL.NOT_NULL;
-            //champ liv_Run
-            requete9 += "," + TexteConstantesSQL.TABLE_LIVES_RUN + " "
-                    + TexteConstantesSQL.SQL_INTEGER + " "
-                    + TexteConstantesSQL.REFERENCES + " "
-                    + TexteConstantesSQL.TABLE_RUNS + "(" + TexteConstantesSQL.TABLE_RUNS_ID + ")";
-            //champ liv_Morts
-            requete9 += "," + TexteConstantesSQL.TABLE_LIVES_MORTS + " "
-                    + TexteConstantesSQL.SQL_INTEGER + ")";
+                    + TexteConstantesSQL.TABLE_LIVES + "("
+                        //champ liv_id clé primaire
+                        + TexteConstantesSQL.TABLE_LIVES_ID + " "
+                            + AUTOINCREMENT_ADAPTE + ","
+                        //champ liv_DateDebut
+                        + TexteConstantesSQL.TABLE_LIVES_DATE_DEBUT + " "
+                            + TexteConstantesSQL.SQL_DATETIME + " "
+                            + TexteConstantesSQL.NOT_NULL + ","
+                        //champ liv_DateFin
+                        + TexteConstantesSQL.TABLE_LIVES_DATE_FIN + " "
+                            + TexteConstantesSQL.SQL_DATETIME + " "
+                            + TexteConstantesSQL.NOT_NULL + ","
+                        //champ liv_Run
+                        + TexteConstantesSQL.TABLE_LIVES_RUN + " "
+                            + TexteConstantesSQL.SQL_INTEGER + " "
+                            + TexteConstantesSQL.REFERENCES + " "
+                            + TexteConstantesSQL.TABLE_RUNS + "(" + TexteConstantesSQL.TABLE_RUNS_ID + ") "
+                            + CLES_ENTRAGERES_REACTIONS + ","
+                        //champ liv_Morts
+                        + TexteConstantesSQL.TABLE_LIVES_MORTS + " "
+                            + TexteConstantesSQL.SQL_INTEGER + ")";
             
-            //vue VueGlobale
+            //vue VueGlobale seulement avec SQLite
             String requete10 = TexteConstantesSQL.CREATE_VIEW + " "
                     + TexteConstantesSQL.VUE_GLOBALE + " AS "
                         + TexteConstantesSQL.SELECT_VUE_GLOBALE_SQL;
-//                    CTexteConstantesSQL.CREATE_VIEW + "VueGlobale AS "
-//                                            + "SELECT * FROM( "
-//                                            + "Jeux LEFT OUTER JOIN "
-//                                            + "(Runs LEFT OUTER JOIN Lives ON run_id = liv_Run) ON run_idJeu = jeu_id)";
             
             connexion.executerUpdate(requete1);
             connexion.executerUpdate(requete2);
