@@ -82,12 +82,19 @@ public class TexteConstantesSQL {
                                                          + "(" + TABLE_RUNS +" LEFT OUTER JOIN " + TABLE_LIVES + " ON "
                                                          + TABLE_RUNS_ID + " = " + TABLE_LIVES_RUN + ") ON "
                                                             + TABLE_RUNS_ID_JEU + " = " + TABLE_JEUX_ID;
-    //GESTION DE BASE DE DONNÉES (INSERT, UPDATE, DELETE)
-    public static final String INSERT = "INSERT INTO";
+    
+    //GESTION DE BASE DE DONNÉES (INSERT_INTO, UPDATE, DELETE_FROM)
+    public static final String INSERT_INTO = "INSERT INTO";
     public static final String UPDATE = "UPDATE";
-    public static final String DELETE = "DELETE FROM";
+    public static final String DELETE = "DELETE";
+    public static final String DELETE_FROM = "DELETE FROM";
     public static final String VALUES = "VALUES";
     public static final String SET = "SET";
     public static final String WHERE = "WHERE";
+    public static final String ON = "ON";
+    public static final String NULL = "NULL";
+    public static final String DEFAULT = "DEFAULT";
+    public static final String CASCADE = "CASCADE";
+    public static final String RESTRICT = "RESTRICT";
     
 }
