@@ -6,7 +6,9 @@
 package statsmorts.vue;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -36,6 +38,14 @@ public class ScrollableJList extends JPanel {
         return list.getSelectedValuesList();
     }
     
+    public List<Long> getSelectionID() {
+        List<Long> listID = new ArrayList();
+        List<MyListElement> selection = getSelection();
+        for (MyListElement element : selection) {
+            listID.add(element.getID());
+        }
+        return listID;
+    }
     
     //MUTATEURS
     private void init() {
@@ -47,6 +57,21 @@ public class ScrollableJList extends JPanel {
     
     private void setComponents() {
         this.add(scrollPane);
+    }
+    
+    public void setSelection(Long[] selection) {
+        int[] indices = new int[selection.length];
+        Map<Long,Integer> map = listModel.getIDToIndices();
+        int i = 0;
+        for (Long id : selection) {
+            indices[i] = map.get(id);
+            i++;
+        }
+        list.setSelectedIndices(indices);
+    }
+    
+    public void setEditable(boolean editable) {
+        list.setEnabled(editable);
     }
     
     public void removeAllElements() {
