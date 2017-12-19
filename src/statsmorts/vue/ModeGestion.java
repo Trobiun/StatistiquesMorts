@@ -5,7 +5,7 @@
  */
 package statsmorts.vue;
 
-import constantes.TexteConstantes;
+import statsmorts.constantes.TexteConstantes;
 
 /**
  *
