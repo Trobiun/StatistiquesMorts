@@ -48,6 +48,10 @@ public class Studio implements FillDataset, Comparable {
         jeux.putIfAbsent(jeu.getID(),jeu);
     }
     
+    public void removeJeu(long idJeu) {
+        jeux.remove(idJeu);
+    }
+    
     public void rename(String nouveauNom) {
         this.nom = nouveauNom;
     }
