@@ -30,7 +30,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     protected JPanel idPanel;
     protected JPanel nomPanel;
     protected JComboBox idComboBox;
-    protected JTextField nomTextPane;
+    protected JTextField nomTextField;
     
     protected JPanel resetPanel;
     protected JButton resetButton;
@@ -64,7 +64,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     }
     
     public JTextField getNomTextField() {
-        return nomTextPane;
+        return nomTextField;
     }
     
     public int getNbItems() {
@@ -80,7 +80,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     }
     
     public String getNom() {
-        return nomTextPane.getText();
+        return nomTextField.getText();
     }
     
     
@@ -95,7 +95,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
         idComboBox = new JComboBox();
         idComboBox.addItemListener(new ChangeIDListener());
         
-        nomTextPane = new JTextField();
+        nomTextField = new JTextField();
         
         resetPanel = new JPanel(new BorderLayout());
         resetPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.REINITIALISATION));
@@ -106,7 +106,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     
     private void setComponenents() {
         idPanel.add(idComboBox);
-        nomPanel.add(nomTextPane);
+        nomPanel.add(nomTextField);
         resetPanel.add(resetButton);
         this.add(idPanel);
         this.add(nomPanel);
@@ -132,13 +132,13 @@ public abstract class ObjectDatabasePanels extends JPanel {
     }
     
     public void clearFields(boolean editable, boolean empty) {
-        nomTextPane.setEnabled(editable);
-        nomTextPane.setText(TexteConstantes.EMPTY);
+        nomTextField.setEnabled(editable);
+        nomTextField.setText(TexteConstantes.EMPTY);
         if (idComboBox.getItemCount() > 0) {
             idComboBox.setSelectedIndex(0);
         }
         if (empty) {
-            nomTextPane.setText(TexteConstantes.EMPTY);
+            nomTextField.setText(TexteConstantes.EMPTY);
         }
         else {
             if (idComboBox.getItemCount() > 0) {
@@ -160,7 +160,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     }
     
     public void setNom(String nom) {
-        nomTextPane.setText(nom);
+        nomTextField.setText(nom);
     }
     
     abstract public void fillItem(long idItem);
@@ -182,7 +182,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
         
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource().equals(resetButton)) {
+            if (e.getSource().equals(resetButton) && idComboBox.getItemCount() > 0) {
                 fillItem((long)idComboBox.getSelectedItem());
             }
         }
