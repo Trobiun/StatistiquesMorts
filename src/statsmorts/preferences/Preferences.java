@@ -167,11 +167,12 @@ public class Preferences {
         }
         JFrame framePrefs = new JFrame();
         framePrefs.setVisible(true);
+        framePrefs.setUndecorated(true);
         framePrefs.setLocationRelativeTo(null);
         PreferencesDialog prefsDialog = new PreferencesDialog(framePrefs, TexteConstantesPreferences.INITIALISATION_TEXTE, true, null, this);
         prefsDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         prefsDialog.showDialog();
-        framePrefs.setVisible(false);
+        framePrefs.dispose();
         try {
             ini.store();
         } catch (IOException ex) {
