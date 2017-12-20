@@ -66,7 +66,8 @@ public class Main {
             res = JOptionPane.showOptionDialog(null,options,TexteConstantesPreferences.TITRE_SERVEUR_OPTIONS,JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,boutons,null);
             //connexion à un serveur
             if (res == JOptionPane.YES_OPTION && !options.getType().equals(TexteConstantesPreferences.FICHIER)) {
-                modele.connecter(TypeDatabase.valueOf(options.getType()), options.getAdresse() + ":" + options.getPort() + "/" + options.getBaseDonnees(), options.getUtilisateur(),options.getMotDePasse());
+                String database = options.getAdresse() + ":" + options.getPort() + "/" + options.getBaseDonnees();
+                modele.connecter(TypeDatabase.valueOf(options.getType()), database, options.getUtilisateur(),options.getMotDePasse());
             }
             //connexion à un fichier
             if (res == JOptionPane.YES_OPTION  && options.getType().equals(TexteConstantesPreferences.FICHIER)) {
