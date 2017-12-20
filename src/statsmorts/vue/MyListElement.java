@@ -28,7 +28,11 @@ public class MyListElement {
     //ACCESSEURS
     @Override
     public String toString() {
-        return "" + id + " : " + objet.getTitre();
+        return id + " : " + objet.getTitre();
+    }
+    
+    public long getID() {
+        return id;
     }
     
     public String getTitre() {
