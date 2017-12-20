@@ -5,7 +5,7 @@
  */
 package statsmorts.preferences;
 
-import constantes.TexteConstantesPreferences;
+import statsmorts.constantes.TexteConstantesPreferences;
 import javax.swing.JDialog;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -21,8 +21,8 @@ import javax.swing.JTabbedPane;
 import statsmorts.classes.TypeDatabase;
 import statsmorts.controler.StatsMortsControler;
 import statsmorts.vue.Fenetre;
-import constantes.TexteConstantes;
-import constantes.TexteConstantesBDD;
+import statsmorts.constantes.TexteConstantes;
+import statsmorts.constantes.TexteConstantesBDD;
 
 /**
  *

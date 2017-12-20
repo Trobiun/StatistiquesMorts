@@ -5,7 +5,7 @@
  */
 package statsmorts.preferences;
 
-import constantes.TexteConstantesPreferences;
+import statsmorts.constantes.TexteConstantesPreferences;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;

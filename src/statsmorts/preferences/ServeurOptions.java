@@ -5,7 +5,7 @@
  */
 package statsmorts.preferences;
 
-import constantes.TexteConstantesPreferences;
+import statsmorts.constantes.TexteConstantesPreferences;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;

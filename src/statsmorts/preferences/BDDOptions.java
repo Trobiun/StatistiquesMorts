@@ -5,7 +5,7 @@
  */
 package statsmorts.preferences;
 
-import constantes.TexteConstantesPreferences;
+import statsmorts.constantes.TexteConstantesPreferences;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -22,8 +22,8 @@ import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import statsmorts.vue.FileChooser;
-import constantes.TexteConstantes;
-import constantes.TexteConstantesBDD;
+import statsmorts.constantes.TexteConstantes;
+import statsmorts.constantes.TexteConstantesBDD;
 
 /**
  *
