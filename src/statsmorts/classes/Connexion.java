@@ -11,7 +11,9 @@ package statsmorts.classes;
  */
 
 import java.sql.*;
+import java.util.Properties;
 import java.util.logging.*;
+import org.sqlite.SQLiteConfig;
 
 public class Connexion {
     
@@ -50,7 +52,7 @@ public class Connexion {
         database = db;
     }
     
-    private void setConnection(String user, String password) {
+    private void setConnection(Properties properties) {
         try {
             Class.forName(type.getDriver());
         } catch (ClassNotFoundException ex) {
@@ -58,7 +60,7 @@ public class Connexion {
         }
         
         try {
-            connexion = DriverManager.getConnection(database,user,password);
+            connexion = DriverManager.getConnection(database,properties);
             statement = connexion.createStatement();
         } catch (SQLException ex) {
             Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
@@ -78,11 +80,18 @@ public class Connexion {
         if (isAccess) {
             setType(TypeDatabase.Access);
         }
+        SQLiteConfig config = null;
         if (isSQLite) {
             setType(TypeDatabase.SQLite);
+            config = new SQLiteConfig();
+            config.enforceForeignKeys(true);
         }
+        
         setDatabase(type.getPrefixe() + path + type.getSuffixe());
-        setConnection(System.getProperty("user.name"),"");
+        Properties properties = (null != config) ? config.toProperties() : new Properties();
+        properties.setProperty("user", System.getProperty("user.name"));
+        properties.setProperty("password", "");
+        setConnection(properties);
         
         try {
             statement.setQueryTimeout(30);
@@ -94,7 +103,10 @@ public class Connexion {
     public void connecter(TypeDatabase type, String serveur, String user, char[] password) {
         setType(type);
         setDatabase(type.getPrefixe() + serveur + type.getSuffixe());
-        setConnection(user,new String(password));
+        Properties properties = new Properties();
+        properties.setProperty("user", user);
+        properties.setProperty("password", new String(password));
+        setConnection(properties);
         try {
             statement.setQueryTimeout(30);
         } catch (SQLException ex) {
@@ -134,9 +146,9 @@ public class Connexion {
         return null;
     }
     
-    public ResultSet executerPreparedUpdate(String requete, String  ... args) {
+    public int executerPreparedUpdate(String requete, String  ... args) {
         String upperCase = requete.substring(0,7).toUpperCase();
-        ResultSet res = null;
+        int res = -1;
         if (upperCase.startsWith("UPDATE") || upperCase.startsWith("INSERT") || upperCase.startsWith("DELETE")) {
             try {
                 preparedStatement = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -160,7 +172,7 @@ public class Connexion {
                     }
                 }
                 
-                preparedStatement.executeUpdate();
+                res = preparedStatement.executeUpdate();
 //                preparedStatement.close();
             } catch (SQLException ex) {
                 Logger.getLogger(Connexion.class.getName()).log(Level.SEVERE, null, ex);
