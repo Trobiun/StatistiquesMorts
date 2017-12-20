@@ -47,6 +47,7 @@ public class ScrollableJList extends JPanel {
         return listID;
     }
     
+    
     //MUTATEURS
     private void init() {
         listModel = new MyListModel();
