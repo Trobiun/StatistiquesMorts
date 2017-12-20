@@ -7,6 +7,8 @@ package statsmorts.vue;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.AbstractListModel;
 
 /**
@@ -17,6 +19,7 @@ public class MyListModel extends AbstractListModel {
     
     //ATTRIBUTS
     private final ArrayList<MyListElement> list;
+    private final HashMap<Long,Integer> idToIndex;
     private final MyListElementComparator comparator;
     
     
@@ -24,6 +27,7 @@ public class MyListModel extends AbstractListModel {
     public MyListModel() {
         super();
         list = new ArrayList();
+        idToIndex = new HashMap();
         comparator = new MyListElementComparator();
     }
     
@@ -43,6 +47,7 @@ public class MyListModel extends AbstractListModel {
     //MUTATEURS
     public void removeAllElements() {
         list.clear();
+        idToIndex.clear();
         fireContentsChanged(this, 0, 0);
     }
     
@@ -55,9 +60,18 @@ public class MyListModel extends AbstractListModel {
         list.remove(element);
     }
     
+    public Map<Long,Integer> getIDToIndices() {
+        return idToIndex;
+    }
+    
     public void sort() {
         Collections.sort(list,comparator);
-        fireContentsChanged(this, 0, list.size());
+        idToIndex.clear();
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            idToIndex.put(list.get(i).getID(), i);
+        }
+        fireContentsChanged(this, 0, size);
     }
     
 }
