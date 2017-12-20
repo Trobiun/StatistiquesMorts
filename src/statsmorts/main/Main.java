@@ -8,6 +8,7 @@ package statsmorts.main;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -63,7 +64,12 @@ public class Main {
             ServeurOptions options = new ServeurOptions(preferences,true);
             Object[] boutons = {TexteConstantes.CONNEECTER,TexteConstantes.QUITTER};
             int res;
-            res = JOptionPane.showOptionDialog(null,options,TexteConstantesPreferences.TITRE_SERVEUR_OPTIONS,JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,boutons,null);
+            JFrame frame = new JFrame("Connexion au serveur");
+            frame.setLocationRelativeTo(null);
+            frame.setUndecorated(true);
+            frame.setVisible(true);
+            res = JOptionPane.showOptionDialog(frame,options,TexteConstantesPreferences.TITRE_SERVEUR_OPTIONS,JOptionPane.YES_NO_OPTION,JOptionPane.PLAIN_MESSAGE,null,boutons,null);
+            frame.dispose();
             //connexion à un serveur
             if (res == JOptionPane.YES_OPTION && !options.getType().equals(TexteConstantesPreferences.FICHIER)) {
                 String database = options.getAdresse() + ":" + options.getPort() + "/" + options.getBaseDonnees();
