@@ -5,7 +5,7 @@
  */
 package statsmorts.modele;
 
-import constantes.TexteConstantesSQL;
+import statsmorts.constantes.TexteConstantesSQL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -84,11 +84,17 @@ public class StatsMortsModele implements Observable {
     public void connecter(String database) {
         deconnecter();
         bdd = new BDD(connexion,database);
+        actualiser();
     }
     
     public void connecter(TypeDatabase type, String serveur, String user, char[] password) {
         deconnecter();
         bdd = new BDD(connexion, type, serveur, user, password);
+        actualiser();
+    }
+    
+    public void deconnecter() {
+        connexion.deconnecter();
     }
     
     
@@ -113,9 +119,9 @@ public class StatsMortsModele implements Observable {
             default:
         }
         if (null != table && null != table_nom) {
-            final String requete = TexteConstantesSQL.INSERT + " " + table
+            final String requete = TexteConstantesSQL.INSERT_INTO + " " + table
                     + "(" + table_nom + ") " + TexteConstantesSQL.VALUES + " (?)";
-            ResultSet result = connexion.executerPreparedUpdate(requete, nom);
+            int rows = connexion.executerPreparedUpdate(requete, nom);
             try {
                 ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
                 if (resultID.next()) {
@@ -170,25 +176,20 @@ public class StatsMortsModele implements Observable {
             final String requete = TexteConstantesSQL.UPDATE + " "
                 + table + " " + TexteConstantesSQL.SET + " " + table_nom
                 + " = ? " + TexteConstantesSQL.WHERE + " " + table_id + " = ?";
-            ResultSet result = connexion.executerPreparedUpdate(requete, nom, "(long)" + id);
-            try {
-                ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
-                if (resultID.next()) {
-                    switch (typeBasicInputs) {
-                        case PLATEFORMES:
-                             bdd.getPlateformes().get(id).rename(nom);
-                            break;
-                        case GENRES:
-                            bdd.getGenres().get(id).rename(nom);
-                            break;
-                        case STUDIOS:
-                            bdd.getStudios().get(id).rename(nom);
-                            break;
-                        default:
-                    }
+            int rows = connexion.executerPreparedUpdate(requete, nom, "(long)" + id);
+            if (rows > 0) {
+                switch (typeBasicInputs) {
+                    case PLATEFORMES:
+                        bdd.getPlateformes().get(id).rename(nom);
+                        break;
+                    case GENRES:
+                        bdd.getGenres().get(id).rename(nom);
+                        break;
+                    case STUDIOS:
+                        bdd.getStudios().get(id).rename(nom);
+                        break;
+                    default:
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StatsMortsModele.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -212,72 +213,164 @@ public class StatsMortsModele implements Observable {
             default:
         }
         if (null != table) {
-            final String requete = TexteConstantesSQL.DELETE + " " + table
+            final String requete = TexteConstantesSQL.DELETE_FROM + " " + table
                 + " " + TexteConstantesSQL.WHERE + " " + table_id + " = ?";
-            ResultSet result = connexion.executerPreparedUpdate(requete,"(long)" + id);
-            try {
-                ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
-                if (resultID.next()) {
-                    switch (typeBasicInputs) {
-                        case PLATEFORMES:
-                             bdd.getPlateformes().remove(id);
-                            notifyRemovePlateforme(id);
-                            break;
-                        case GENRES:
-                            bdd.getGenres().remove(id);
-                            notifyRemoveGenre(id);
-                            break;
-                        case STUDIOS:
-                            bdd.getStudios().remove(id);
-                            notifyRemoveStudio(id);
-                            break;
-                        default:
-                    }
+            int rows = connexion.executerPreparedUpdate(requete, "(long)" + id);
+            if (rows > 0) {
+                switch (typeBasicInputs) {
+                    case PLATEFORMES:
+                        bdd.getPlateformes().remove(id);
+                        notifyRemovePlateforme(id);
+                        break;
+                    case GENRES:
+                        bdd.getGenres().remove(id);
+                        notifyRemoveGenre(id);
+                        break;
+                    case STUDIOS:
+                        bdd.getStudios().remove(id);
+                        notifyRemoveStudio(id);
+                        break;
+                    default:
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(StatsMortsModele.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
     
     public void ajouterJeu(String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
-        String requete = TexteConstantesSQL.INSERT + " " + TexteConstantesSQL.TABLE_JEUX
+        String requete = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEUX
                 + "(" + TexteConstantesSQL.TABLE_JEUX_TITRE + "," + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE
                 + ") " + TexteConstantesSQL.VALUES + "(?,?)";
-        ResultSet result = connexion.executerPreparedUpdate(requete, titre, "(int)" + anneeSortie);
+        int rowsInserted = connexion.executerPreparedUpdate(requete, titre, "(int)" + anneeSortie);
         try {
             ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
             if (resultID.next()) {
                 long idJeu = resultID.getInt(1);
                 Jeu jeu = new Jeu(idJeu,titre,anneeSortie);
+                int rows;
                 //ajout des plateformes au jeu et fait le lien dans la base de données
-                String requetePlateformes = TexteConstantesSQL.INSERT + " " + TexteConstantesSQL.TABLE_JEU_PLATEFORME
-                        + "(" + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME
+                String requetePlateformes = TexteConstantesSQL.INSERT_INTO + " "
+                        + TexteConstantesSQL.TABLE_JEU_PLATEFORME
+                        + "(" + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU
+                        + "," + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME
                         + ") " + TexteConstantesSQL.VALUES + "(?,?)";
                 for (Long idPlateforme : listPlateformes) {
-                    connexion.executerPreparedUpdate(requetePlateformes, "(long)" + idJeu, "(long)" + idPlateforme);
-                    jeu.putPlateforme(bdd.getPlateformes().get(idPlateforme));
+                    rows = connexion.executerPreparedUpdate(requetePlateformes, "(long)" + idJeu, "(long)" + idPlateforme);
+                    if (rows > 0) {
+                        jeu.putPlateforme(bdd.getPlateformes().get(idPlateforme));
+                    }
                 }
                 //ajout des genres au jeu et fait le lien dans la base de données
-                String requeteGenres = TexteConstantesSQL.INSERT + " " + TexteConstantesSQL.TABLE_JEU_GENRE
+                String requeteGenres = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEU_GENRE
                         + "(" + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE
                         + ") " + TexteConstantesSQL.VALUES + "(?,?)";
                 for (Long idGenre : listGenres) {
-                    connexion.executerPreparedUpdate(requeteGenres, "(long)" + idJeu, "(long)" + idGenre);
-                    jeu.putGenre(bdd.getGenres().get(idGenre));
+                    rows = connexion.executerPreparedUpdate(requeteGenres, "(long)" + idJeu, "(long)" + idGenre);
+                    if (rows > 0) {
+                        jeu.putGenre(bdd.getGenres().get(idGenre));
+                    }
                 }
                 //ajoute le studio au jeu et fait el lien dans la base de données
-                String requeteStudio = TexteConstantesSQL.INSERT + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
+                String requeteStudio = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
                         + "(" + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
                         + ")" + TexteConstantesSQL.VALUES + "(?,?)";
-                connexion.executerPreparedUpdate(requeteStudio, "(long)" + idJeu, "(long)" + idStudio);
-                jeu.setStudio(bdd.getStudios().get(idStudio));
-                bdd.ajouterJeu(jeu);
-                notifyAddJeu(jeu);
+                rows = connexion.executerPreparedUpdate(requeteStudio, "(long)" + idJeu, "(long)" + idStudio);
+                if (rows > 0) {
+                    jeu.setStudio(bdd.getStudios().get(idStudio));
+                }
+                if (rowsInserted > 0) {
+                    bdd.ajouterJeu(jeu);
+                    notifyAddJeu(jeu);
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(StatsMortsModele.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private String getClearRequete(String table, String champID) {
+        return TexteConstantesSQL.DELETE_FROM + " " + table + " "
+                + TexteConstantesSQL.WHERE + " " + champID + " = ?";
+    }
+    public void modifierJeu(long idJeu, String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
+        Jeu jeu = bdd.getJeu(idJeu);
+        String idJeuRequete = "(long)" + idJeu;
+        //modifie les champs directs du jeu
+        String requete = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_JEUX
+                + " " + TexteConstantesSQL.SET + " " + TexteConstantesSQL.TABLE_JEUX_TITRE
+                + " = ? , " + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + " = ? "
+                + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEUX_ID + " = ?";
+        int rows = connexion.executerPreparedUpdate(requete, titre, "(int)" + anneeSortie, idJeuRequete);
+        if (rows > 0) {
+            jeu.rename(titre);
+            jeu.setAnneeSortie(anneeSortie);
+        }
+        //suppression de toutes les occurences du jeu dans JeuPlateforme
+        String requeteClearJeuPlateforme = getClearRequete(TexteConstantesSQL.TABLE_JEU_PLATEFORME, TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU);
+        rows = connexion.executerPreparedUpdate(requeteClearJeuPlateforme, idJeuRequete);
+        if (rows > 0) {
+            jeu.clearPlateformes();
+        }
+        //rajoute toutes les nouvelles plateformes associées au jeu dans JeuPlateforme
+        String requeteAddJeuPlateforme = TexteConstantesSQL.INSERT_INTO + " "
+                + TexteConstantesSQL.TABLE_JEU_PLATEFORME
+                + "(" + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU + ","
+                + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME
+                + ") " + TexteConstantesSQL.VALUES + "(?,?)";
+        for (Long idPlateforme : listPlateformes) {
+            rows = connexion.executerPreparedUpdate(requeteAddJeuPlateforme, idJeuRequete, "(long)" + idPlateforme);
+            if (rows > 0) {
+                jeu.putPlateforme(bdd.getPlateformes().get(idPlateforme));
+            }
+        }
+        //suppression de toutes les occurences du jeu dans JeuGenre
+        String requeteClearJeuGenre = getClearRequete(TexteConstantesSQL.TABLE_JEU_GENRE, TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU);
+        rows = connexion.executerPreparedUpdate(requeteClearJeuGenre, idJeuRequete);
+        if(rows > 0) {
+            jeu.clearGenres();
+        }
+        //rajoute tous les nouveaux genres associés au jeu dans JeuGenre
+        String requeteAddJeuGenre = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEU_GENRE
+                + "(" + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE
+                + ") " + TexteConstantesSQL.VALUES + "(?,?)";
+        for (Long idGenre : listGenres) {
+            rows = connexion.executerPreparedUpdate(requeteAddJeuGenre, idJeuRequete, "(long)" + idGenre);
+            if (rows > 0) {
+                jeu.putGenre(bdd.getGenres().get(idGenre));
+            }
+        }
+        //changement du studio dans la table JeuStudio
+        String requeteChangeStudio = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
+                + " " + TexteConstantesSQL.SET + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
+                + " = ? " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU
+                + " = ?";
+        rows = connexion.executerPreparedUpdate(requeteChangeStudio, "(long)" + idStudio, idJeuRequete);
+        if (rows > 0) {
+            jeu.setStudio(bdd.getStudio(idStudio));
+        }
+    }
+    
+    public void supprimerJeu(long idJeu) {
+        String requete = TexteConstantesSQL.DELETE_FROM + " " + TexteConstantesSQL.TABLE_JEUX
+                + " " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEUX_ID
+                + " = ?";
+        int rows = connexion.executerPreparedUpdate(requete,"(long)" + idJeu);
+        if (rows > 0) {
+            bdd.getJeu(idJeu).getStudio().removeJeu(idJeu);
+            bdd.getJeux().remove(idJeu);
+            notifyRemoveJeu(idJeu);
+        }
+    }
+    
+    public void ajouterRun(long idRun, String titreRun, long idJeu) {
+        
+    }
+    
+    public void modifierRun(long idRun, String titreRun, long idJeu) {
+        
+    }
+    
+    public void supprimerRun(long idRun) {
+        
     }
     
     public void setTimeUnit(TimeUnit unit) {
@@ -348,6 +441,15 @@ public class StatsMortsModele implements Observable {
         notifyFillJeu(idJeu);
     }
     
+    public void fillRunPanel(long idRun) {
+        notifyFillRun(idRun);
+    }
+    
+    public void fillRunPanelJeu(long idJeu) {
+        notifyFillRunJeu(idJeu);
+    }
+    
+    
     public void createDataset(String titre, ArrayList<FillDataset> nodes) {
         livesForDataset = new TreeSet();
         for (FillDataset node : nodes) {
@@ -381,10 +483,6 @@ public class StatsMortsModele implements Observable {
             dataset.addValue(moyenne, "Moyenne des durées de vie", "Total");
         }
         notifyDataset(titreForDataset, dataset);
-    }
-    
-    public void deconnecter() {
-        connexion.deconnecter();
     }
     
     
@@ -527,7 +625,7 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Jeu jeu = bdd.getJeux().get(idJeu);
             if (null != jeu) {
-                observer.fillJeu(idJeu, jeu.getTitre(),jeu.getAnneeSortie());
+                observer.fillJeu(idJeu, jeu.getTitre(),jeu.getAnneeSortie(),jeu.getPlateformesID(),jeu.getGenresID(),jeu.getStudio().getID());
             }
         }
     }
@@ -535,9 +633,20 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyFillRun(long idRun) {
         if (hasObserver()) {
-            final Run run = bdd.getRuns().get(idRun);
+            final Run run = bdd.getRun(idRun);
             if (null != run) {
-                
+                final Jeu jeu = run.getJeu();
+                observer.fillRun(idRun,run.getTitre(),jeu.getID(),jeu.getTitre());
+            }
+        }
+    }
+    
+    @Override
+    public void notifyFillRunJeu(long idJeu) {
+        if (hasObserver()) {
+            final Jeu jeu = bdd.getJeu(idJeu);
+            if (null != jeu) {
+                observer.fillRunJeu(idJeu, jeu.getTitre());
             }
         }
     }
