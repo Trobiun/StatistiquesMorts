@@ -23,8 +23,8 @@ public class Jeu implements FillDataset, Comparable {
     
     //ATTRIBUTS
     private final long id;
-    private final String titre;
-    private final int anneeSortie;
+    private String titre;
+    private int anneeSortie;
     private Studio studio;
     private final HashMap<Long,Plateforme> plateformes;
     private final HashMap<Long,Genre> genres;
@@ -59,12 +59,30 @@ public class Jeu implements FillDataset, Comparable {
         return plateformes;
     }
     
+    public Long[] getPlateformesID() {
+        Long[] res = new Long[plateformes.keySet().size()];
+        plateformes.keySet().toArray(res);
+        return res;
+    }
+    
     public HashMap<Long,Genre> getGenres() {
         return genres;
     }
     
+    public Long[] getGenresID() {
+        Long[] res = new Long[genres.keySet().size()];
+        genres.keySet().toArray(res);
+        return res;
+    }
+    
     public HashMap<Long,Run> getRuns() {
         return runs;
+    }
+    
+    public Long[] getRunsID() {
+        Long[] res = new Long[runs.keySet().size()];
+        runs.keySet().toArray(res);
+        return res;
     }
     
     public float getTotalDuration(TimeUnit unit) {
@@ -166,6 +184,22 @@ public class Jeu implements FillDataset, Comparable {
     }
     
     //MUTATEURS
+    public void rename(String nouveauTitre) {
+        this.titre = nouveauTitre;
+    }
+    
+    public void setAnneeSortie(int anneeSortie) {
+        this.anneeSortie = anneeSortie;
+    }
+    
+    public void clearPlateformes() {
+        plateformes.clear();
+    }
+    
+    public void clearGenres() {
+        genres.clear();
+    }
+    
     public void setStudio(Studio studio) {
         this.studio = studio;
     }
