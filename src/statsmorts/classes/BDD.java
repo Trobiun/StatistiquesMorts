@@ -57,24 +57,48 @@ public class BDD {
         return plateformes;
     }
     
+    public Plateforme getPlateforme(long idPlateforme) {
+        return plateformes.get(idPlateforme);
+    }
+    
     public Map<Long,Genre> getGenres() {
         return genres;
+    }
+    
+    public Genre getGenre(long idGenre) {
+        return genres.get(idGenre);
     }
     
     public Map<Long,Studio> getStudios() {
         return studios;
     }
     
+    public Studio getStudio(long idStudio) {
+        return studios.get(idStudio);
+    }
+    
     public Map<Long,Jeu> getJeux() {
         return jeux;
+    }
+    
+    public Jeu getJeu(long idJeu) {
+        return jeux.get(idJeu);
     }
     
     public Map<Long,Run> getRuns() {
         return runs;
     }
     
+    public Run getRun(long idRun) {
+        return runs.get(idRun);
+    }
+    
     public Map<Long,Live> getLives() {
         return lives;
+    }
+    
+    public Live getLive(long idLive) {
+        return lives.get(idLive);
     }
     
     @Override
