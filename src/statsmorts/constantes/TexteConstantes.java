@@ -61,6 +61,7 @@ public class TexteConstantes {
     
     //OBJECT_DATABASE_PANELS
     public static final String ID = "Identifiant";
+    public static final String TITRE = "Titre";
     public static final String NOM = "Nom";
     public static final String ANNEE_SORTIE = "Année de sortie";
     public static final String REINITIALISATION = "Réinitialisation";
