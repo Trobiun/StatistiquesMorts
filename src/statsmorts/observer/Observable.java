@@ -46,6 +46,7 @@ public interface Observable {
     void notifyFillStudio(long idStudio);
     void notifyFillJeu(long idJeu);
     void notifyFillRun(long idRun);
+    void notifyFillRunJeu(long idJeu);
     void notifyFillLive(long idLive);
     
 }
