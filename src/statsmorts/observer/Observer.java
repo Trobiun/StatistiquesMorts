@@ -41,7 +41,8 @@ public interface Observer {
     void fillGenre(long idGenre, String nomGenre);
     void fillStudio(long idStudio, String nomStudio);
     void fillJeu(long idJeu, String titreJeu, int anneeSortie, Long[] listPlateformes, Long[] listGenres, long idStudio);
-    void fillRun(long idRun);
+    void fillRun(long idRun, String titreRun, long idJeu, String titreJeu);
+    void fillRunJeu(long idJeu, String titreJeu);
     void fillLive(long idLive);
     
 }
