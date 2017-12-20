@@ -52,28 +52,41 @@ public class StatsMortsControler {
     }
     
     public void fillPlateformePanel(long idPlateforme) {
-        if (idPlateforme >= 0) {
+        if (idPlateforme > 0) {
             modele.fillPlateformePanel(idPlateforme);
         }
     }
     
     public void fillGenrePanel(long idGenre) {
-        if (idGenre >= 0) {
+        if (idGenre > 0) {
             modele.fillGenrePanel(idGenre);
         }
     }
     
     public void fillStudioPanel(long idStudio) {
-        if (idStudio >= 0) {
+        if (idStudio > 0) {
             modele.fillStudiPanel(idStudio);
         }
     }
     
     public void fillJeuPanel(long idJeu) {
-        if (idJeu >= 0) {
+        if (idJeu > 0) {
             modele.fillJeuPanel(idJeu);
         }
     }
+    
+    public void fillRunPanel(long idRun) {
+        if (idRun > 0) {
+            modele.fillRunPanel(idRun);
+        }
+    }
+    
+    public void fillRunPanelJeu(long idJeu) {
+        if (idJeu > 0) {
+            modele.fillRunPanelJeu(idJeu);
+        }
+    }
+    
     
     //MÉTHODES AYANT UN IMPACT SUR LE MODÈLE
     public void creerBDD(String pathBDD) {
@@ -103,7 +116,10 @@ public class StatsMortsControler {
     }
     
     public void connecterServeur(TypeDatabase typeBDD, String adresseServeur, int port, String nomBDD, String utilisateur, char[] password) {
-        modele.connecter(typeBDD, nomBDD, nomBDD, password);
+        if(null != typeBDD && null != adresseServeur && !adresseServeur.isEmpty() && port > 0 
+                && null != nomBDD && !nomBDD.isEmpty() && null != utilisateur && !utilisateur.isEmpty()) {
+            modele.connecter(typeBDD, adresseServeur + ":" + port + "/" + nomBDD, utilisateur, password);
+        }
     }
     
     public void ajouterBasicInputs(TypeBasicInputs typeInputs, String nom ) {
@@ -113,13 +129,13 @@ public class StatsMortsControler {
     }
     
     public void modifierBasicInputs(TypeBasicInputs typeInputs, long id, String nom) {
-        if (null != typeInputs && id >= 0 && null != nom && !nom.isEmpty()) {
+        if (null != typeInputs && id > 0 && null != nom && !nom.isEmpty()) {
             modele.modifierBasicInputs(typeInputs, id, nom);
         }
     }
     
     public void supprimerBasicInputs(TypeBasicInputs typeInputs, long id) {
-        if (null != typeInputs & id >= 0) {
+        if (null != typeInputs & id > 0) {
             modele.supprimerBasicInputs(typeInputs, id);
         }
     }
@@ -131,13 +147,13 @@ public class StatsMortsControler {
 //    }
     
 //    public void modifierPlateforme(long idPlateforme, String nomPlateforme) {
-//        if (idPlateforme >= 0 && null != nomPlateforme && !nomPlateforme.isEmpty()) {
+//        if (idPlateforme > 0 && null != nomPlateforme && !nomPlateforme.isEmpty()) {
 //            modele.modifierPlateforme(idPlateforme, nomPlateforme);
 //        }
 //    }
 //    
 //    public void supprimerPlateforme(long idPlateforme) {
-//        if(idPlateforme >= 0) {
+//        if(idPlateforme > 0) {
 //            modele.supprimerPlateforme(idPlateforme);
 //        }
 //    }
@@ -149,13 +165,13 @@ public class StatsMortsControler {
 //    }
 //    
 //    public void modifierGenre(long idGenre, String nomGenre) {
-//        if (idGenre >= 0 && !nomGenre.isEmpty()) {
+//        if (idGenre > 0 && !nomGenre.isEmpty()) {
 //            
 //        }
 //    }
 //    
 //    public void supprimerGenre(long idGenre) {
-//        if (idGenre >= 0) {
+//        if (idGenre > 0) {
 //            
 //        }
 //    }
@@ -165,49 +181,49 @@ public class StatsMortsControler {
 //    }
 //    
 //    public void modifierStudio(long idStudio, String nomStudio) {
-//        if (idStudio >= 0 && null != nomStudio && !nomStudio.isEmpty()) {
+//        if (idStudio > 0 && null != nomStudio && !nomStudio.isEmpty()) {
 //            
 //        }
 //    }
 //    
 //    public void supprimerStudio(long idStudio) {
-//        if (idStudio >= 0) {
+//        if (idStudio > 0) {
 //            
 //        }
 //    }
     
     public void ajouterJeu(String titreJeu, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
-        if (null != titreJeu && !titreJeu.isEmpty() && anneeSortie > 0 && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio >= 0) {
+        if (null != titreJeu && !titreJeu.isEmpty() && anneeSortie > 0 && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
             modele.ajouterJeu(titreJeu, anneeSortie, listPlateformes, listGenres, idStudio);
         }
     }
     
-    public void modifierJeu(long idJeu, String nouveauTitre, int anneeSortie) {
-        if (idJeu >= 0 && null != nouveauTitre && !nouveauTitre.isEmpty()) {
-            
+    public void modifierJeu(long idJeu, String nouveauTitre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
+        if (idJeu > 0 && null != nouveauTitre && !nouveauTitre.isEmpty() && anneeSortie > 0 && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
+            modele.modifierJeu(idJeu, nouveauTitre, anneeSortie, listPlateformes, listGenres, idStudio);
         }
     }
     
     public void supprimerJeu(long idJeu) {
-        if (idJeu >= 0) {
-            
+        if (idJeu > 0) {
+            modele.supprimerJeu(idJeu);
         }
     }
     
     public void ajouterRun(long idRun, String titreRun, long idJeu) {
-        if (idRun >= 0 && idJeu >= 0 && null != titreRun && !titreRun.isEmpty()) {
-            
+        if (idRun > 0 && null != titreRun && !titreRun.isEmpty() && idJeu > 0) {
+            modele.ajouterRun(idRun, titreRun, idJeu);
         }
     }
     
-    public void modifierRun(long idRun, String titreRun) {
-        if (idRun >= 0 && null != titreRun && !titreRun.isEmpty()) {
+    public void modifierRun(long idRun, String titreRun, long idJeu) {
+        if (idRun > 0 && null != titreRun && !titreRun.isEmpty() && idJeu > 0) {
             
         }
     }
     
     public void supprimerRun(long idRun) {
-        if (idRun >= 0) {
+        if (idRun > 0) {
             
         }
     }
@@ -217,13 +233,13 @@ public class StatsMortsControler {
     }
     
     public void modifierLive(long idLive) {
-        if (idLive >= 0) {
+        if (idLive > 0) {
             
         }
     }
     
     public void supprimerLive(long idLive) {
-        if (idLive >= 0) {
+        if (idLive > 0) {
             
         }
     }
