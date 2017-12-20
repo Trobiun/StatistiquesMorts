@@ -5,11 +5,10 @@
  */
 package statsmorts.vue;
 
-import constantes.TexteConstantes;
+import statsmorts.constantes.TexteConstantes;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,10 +32,12 @@ import statsmorts.controler.StatsMortsControler;
 public class JeuPanels extends ObjectDatabasePanels {
     
     //ATTRIBUTS
+    //JPANElS
     private JPanel plateformesPanel;
     private JPanel genresPanel;
     private JPanel studioPanel;
     private JPanel anneeSortiePanel;
+    //ENTREES UTILISATEUR
     private ScrollableJList listPlateformes;
     private ScrollableJList listGenres;
     private ScrollableJList listStudios;
@@ -49,7 +50,7 @@ public class JeuPanels extends ObjectDatabasePanels {
     public JeuPanels(StatsMortsControler controler) {
         super(new GridBagLayout(),controler);
         init();
-        this.removeAll();
+//        this.removeAll();
         setComponents();
     }
     
@@ -59,12 +60,19 @@ public class JeuPanels extends ObjectDatabasePanels {
         return Integer.parseInt(dateFormat.format(anneeSortieSpinner.getValue()));
     }
     
+    public List<Long> getPlateformes() {
+        return listPlateformes.getSelectionID();
+    }
     
-    public String getStudio() {
-        List<MyListElement> selectionList = listStudios.getSelection();
-        String res = null;
+    public List<Long> getGenres() {
+        return listGenres.getSelectionID();
+    }
+    
+    public long getStudioID() {
+        List<Long> selectionList = listStudios.getSelectionID();
+        long res = -1;
         if (selectionList.size() > 0) {
-            res = listStudios.getSelection().get(0).getTitre();
+            res = selectionList.get(0);
         }
         return res;
     }
@@ -116,7 +124,6 @@ public class JeuPanels extends ObjectDatabasePanels {
         this.add(idPanel,gbc);
         
         gbc.gridy = 1;
-        gbc.gridheight = 1;
         this.add(nomPanel,gbc);
         
         gbc.gridy = 2;
@@ -130,7 +137,6 @@ public class JeuPanels extends ObjectDatabasePanels {
         this.add(genresPanel,gbc);
         
         gbc.gridy = 11;
-        gbc.gridheight = GridBagConstraints.REMAINDER;
         this.add(studioPanel,gbc);
     }
     
@@ -150,7 +156,24 @@ public class JeuPanels extends ObjectDatabasePanels {
         }
     }
     
-    public void removeAllElements() {
+    @Override
+    public void setResetButtonVisible(boolean visible) {
+        if (visible){
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.anchor  = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.gridx = 0;
+            gbc.gridy = 15;
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.gridheight = 1;
+            this.add(resetPanel,gbc);
+        }
+        else {
+            this.remove(resetPanel);
+        }
+    }
+    
+    public void clearLists() {
         listPlateformes.removeAllElements();
         listGenres.removeAllElements();
         listStudios.removeAllElements();
@@ -185,13 +208,16 @@ public class JeuPanels extends ObjectDatabasePanels {
         super.clearFields(editable, empty);
         if (editable) {
             if (empty) {
-                anneeSortieSpinner.setValue(new Date(System.currentTimeMillis()));
                 listPlateformes.clearSelection();
                 listGenres.clearSelection();
                 listStudios.clearSelection();
+                anneeSortieSpinner.setValue(new Date(System.currentTimeMillis()));
             }
         }
         anneeSortieSpinner.setEnabled(editable);
+        listPlateformes.setEditable(editable);
+        listGenres.setEditable(editable);
+        listStudios.setEditable(editable);
     }
     
     public void setAnneeSortie(int anneeSortie) {
@@ -200,6 +226,19 @@ public class JeuPanels extends ObjectDatabasePanels {
         } catch (ParseException ex) {
             Logger.getLogger(JeuPanels.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void setPlateformesSelection(Long[] plateformesID) {
+        listPlateformes.setSelection(plateformesID);
+    }
+    
+    public void setGenresSelection(Long[] genreID) {
+        listGenres.setSelection(genreID);
+    }
+    
+    public void setStudioSelection(long idStudio) {
+        Long[] studios = { idStudio };
+        listStudios.setSelection(studios);
     }
     
     @Override
