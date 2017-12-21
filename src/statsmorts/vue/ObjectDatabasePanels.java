@@ -26,6 +26,9 @@ import statsmorts.controler.StatsMortsControler;
  */
 public abstract class ObjectDatabasePanels extends JPanel {
     
+    //ATTRIBUTS STATIC
+    private static final int ROWS = 0;
+    private static final int COLS = 1;
     //ATTRIBUTS
     protected JPanel idPanel;
     protected JPanel nomPanel;
@@ -46,7 +49,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
         this.controler = controler;
     }
     public ObjectDatabasePanels(StatsMortsControler controler) {
-        this(new GridLayout(0,1),controler);
+        this(new GridLayout(ROWS,COLS),controler);
     }
     
     
