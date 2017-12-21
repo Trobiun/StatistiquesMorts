@@ -30,6 +30,9 @@ import statsmorts.constantes.TexteConstantesBDD;
  */
 public class PreferencesDialog extends JDialog {
     
+    //ATTRIBUTS STATIC
+    private static final int HGAP = 10;
+    private static final int VGAP = 5;
     //ATTRIBUTS
     private final Preferences preferences;
     private final StatsMortsControler controler;
@@ -49,10 +52,6 @@ public class PreferencesDialog extends JDialog {
     
     
     //CONSTRUCTEUR
-    public PreferencesDialog(Fenetre parent, String title, boolean modal, StatsMortsControler controler, Preferences prefs) {
-        this((JFrame)parent, title, modal, controler, prefs);
-        this.fenetreParent = parent;
-    }
     public PreferencesDialog(JFrame parent, String title, boolean modal, StatsMortsControler controler, Preferences prefs) {
         super(parent,title,modal);
         this.controler = controler;
@@ -62,7 +61,7 @@ public class PreferencesDialog extends JDialog {
         typeServeur = preferences.getTypeServeur();
         typeBDD = preferences.getType();
         
-        setLayout(new BorderLayout(10,5));
+        setLayout(new BorderLayout(HGAP,VGAP));
         
         initAll();
         setComponents();
@@ -73,6 +72,10 @@ public class PreferencesDialog extends JDialog {
         pack();
         setLocationRelativeTo(parent);
         setResizable(false);
+    }
+    public PreferencesDialog(Fenetre parent, String title, boolean modal, StatsMortsControler controler, Preferences prefs) {
+        this((JFrame)parent, title, modal, controler, prefs);
+        this.fenetreParent = parent;
     }
     
     
@@ -179,7 +182,7 @@ public class PreferencesDialog extends JDialog {
             boolean utilisateurChanged = !preferences.getUtilisateur().equals(panelBDD.getUtilisateur());
             boolean affichageGroupChanged = !preferences.getAffichageGroup().equals(panelAffichage.getAffichageGroup());
             boolean affichageTempsChanged = !preferences.getAffichageTemps().equals(panelAffichage.getAffichageTemps());
-//            boolean bddChanged = !pathBDD.equals(preferences.getBDDFichier());
+            
              boolean stateChanged = bddFichierChanged || 
                     typeBDDChanged || 
                     typeServeurChanged || 
