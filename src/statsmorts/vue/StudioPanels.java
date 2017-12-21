@@ -5,6 +5,7 @@
  */
 package statsmorts.vue;
 
+import statsmorts.constantes.TexteConstantes;
 import statsmorts.controler.StatsMortsControler;
 
 /**
@@ -18,7 +19,7 @@ public class StudioPanels extends ObjectDatabasePanels {
     
     //CONSTRUCTEURS
      public StudioPanels(StatsMortsControler controler) {
-        super(controler);
+        super(controler,TexteConstantes.STUDIO);
     }
     
     

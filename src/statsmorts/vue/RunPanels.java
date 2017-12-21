@@ -7,7 +7,6 @@ package statsmorts.vue;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -29,7 +28,6 @@ public class RunPanels extends ObjectDatabasePanels {
     private JPanel jeuPanel;
     private JPanel idJeuPanel;
     private JPanel nomJeuPanel;
-    private JPanel runPanel;
     //ENTREES UTILISATEUR
     private JComboBox idJeuComboBox;
     private JTextField nomJeuField;
@@ -37,10 +35,9 @@ public class RunPanels extends ObjectDatabasePanels {
     
     //CONSTRUCTEURS
     public RunPanels(StatsMortsControler controler) {
-        super(new GridBagLayout(),controler);
-        this.removeAll();
-        init();
-        setComponents();
+        super(controler,TexteConstantes.RUN);
+        this.init();
+        this.setComponents();
     }
     
     
@@ -64,12 +61,9 @@ public class RunPanels extends ObjectDatabasePanels {
         idJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ID));
         
         nomJeuPanel = new JPanel(new BorderLayout());
-        nomJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.NOM));
+        nomJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TITRE));
         
-        runPanel = new JPanel(new GridLayout(0,1));
-        runPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.RUN));
-        
-        //création des champs d'entrées utilisateur
+        //création des champs de saisie utilisateur
         idJeuComboBox = new JComboBox();
         idJeuComboBox.addItemListener(new JeuChangeListener());
         nomJeuField = new JTextField();
@@ -77,39 +71,24 @@ public class RunPanels extends ObjectDatabasePanels {
     }
     
     private void setComponents() {
+        //ajout des champs de saisie dans leur panel spécifique
         idJeuPanel.add(idJeuComboBox);
         nomJeuPanel.add(nomJeuField);
         
         jeuPanel.add(idJeuPanel);
         jeuPanel.add(nomJeuPanel);
         
-        runPanel.add(idPanel);
-        runPanel.add(nomPanel);
-        
+        //ajout du panel de jeu à saisiePanels
+        //utilisation de GridBagLayout car la classe mère l'utilise
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.weightx = 1;
-        gbc.weighty = 5;
-        
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridheight = 2;
-        this.add(runPanel,gbc);
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         
         gbc.gridy = 2;
-        this.add(jeuPanel,gbc);
-    }
-    
-    @Override
-    public void setIDPanelVisible(boolean visible) {
-        if (visible) {
-            runPanel.add(idPanel, 0);
-        }
-        else {
-           runPanel.remove(idPanel);
-        }
+        saisiesPanel.add(jeuPanel,gbc);
     }
     
     @Override

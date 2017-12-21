@@ -23,6 +23,7 @@ import javax.swing.SpinnerDateModel;
 import statsmorts.classes.Genre;
 import statsmorts.classes.Plateforme;
 import statsmorts.classes.Studio;
+import statsmorts.constantes.TexteConstantesFormatDate;
 import statsmorts.controler.StatsMortsControler;
 
 /**
@@ -48,10 +49,9 @@ public class JeuPanels extends ObjectDatabasePanels {
     
     //CONSTRUCTEURS
     public JeuPanels(StatsMortsControler controler) {
-        super(new GridBagLayout(),controler);
-        init();
-//        this.removeAll();
-        setComponents();
+        super(controler,TexteConstantes.JEU);
+        this.init();
+        this.setComponents();
     }
     
     
@@ -80,7 +80,21 @@ public class JeuPanels extends ObjectDatabasePanels {
     
     //MUTATEURS
     private void init() {
-        dateFormat = new SimpleDateFormat("yyyy");
+        initPanels();
+        initFields();
+    }
+    private void initPanels() {
+        plateformesPanel = new JPanel(new BorderLayout());
+        plateformesPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.PLATEFORMES));
+        
+        genresPanel = new JPanel(new BorderLayout());
+        genresPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.GENRES));
+        
+        studioPanel = new JPanel(new BorderLayout());
+        studioPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.STUDIO));
+    }
+    private void initFields() {
+        dateFormat = new SimpleDateFormat(TexteConstantesFormatDate.YEAR_ONLY);
         SpinnerDateModel model = new SpinnerDateModel();
         anneeSortieSpinner = new JSpinner(model);
         anneeSortieSpinner.setEditor(new JSpinner.DateEditor(anneeSortieSpinner,dateFormat.toPattern()));
@@ -93,67 +107,37 @@ public class JeuPanels extends ObjectDatabasePanels {
         listGenres.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         listStudios = new ScrollableJList();
         listStudios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        plateformesPanel = new JPanel(new BorderLayout());
-        plateformesPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.PLATEFORMES));
-        
-        genresPanel = new JPanel(new BorderLayout());
-        genresPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.GENRES));
-        
-        studioPanel = new JPanel(new BorderLayout());
-        studioPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.STUDIO));
     }
     
     private void setComponents() {
+        //ajout des champs de saisie dans leur panel respectif
         anneeSortiePanel.add(anneeSortieSpinner);
         plateformesPanel.add(listPlateformes);
         genresPanel.add(listGenres);
         studioPanel.add(listStudios);
         
         GridBagConstraints gbc = new GridBagConstraints();
-        //pour tous les éléments
+        //contraintes pour tous les éléments
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridwidth =GridBagConstraints.REMAINDER;
-        gbc.weightx = 1;
-        gbc.weighty = 14;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 2 ;
         gbc.gridheight = 1;
-        this.add(idPanel,gbc);
-        
-        gbc.gridy = 1;
-        this.add(nomPanel,gbc);
-        
-        gbc.gridy = 2;
-        this.add(anneeSortiePanel,gbc);
+        saisiesPanel.add(anneeSortiePanel,gbc);
         
         gbc.gridy = 3;
         gbc.gridheight = 4;
-        this.add(plateformesPanel,gbc);
+        saisiesPanel.add(plateformesPanel,gbc);
         
         gbc.gridy = 7;
-        this.add(genresPanel,gbc);
+        saisiesPanel.add(genresPanel,gbc);
         
         gbc.gridy = 11;
-        this.add(studioPanel,gbc);
-    }
-    
-    @Override
-    public void setIDPanelVisible(boolean visible) {
-        if (visible) {
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor = GridBagConstraints.CENTER;
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.gridwidth =GridBagConstraints.REMAINDER;
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            this.add(idPanel,gbc);
-        }
-        else {
-            this.remove(idPanel);
-        }
+        saisiesPanel.add(studioPanel,gbc);
     }
     
     @Override

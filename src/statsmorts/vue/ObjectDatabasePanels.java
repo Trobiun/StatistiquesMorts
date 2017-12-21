@@ -7,7 +7,8 @@ package statsmorts.vue;
 
 import statsmorts.constantes.TexteConstantes;
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,30 +27,31 @@ import statsmorts.controler.StatsMortsControler;
  */
 public abstract class ObjectDatabasePanels extends JPanel {
     
-    //ATTRIBUTS STATIC
-    private static final int ROWS = 0;
-    private static final int COLS = 1;
     //ATTRIBUTS
+    //PANELS
+    protected JPanel saisiesPanel;
     protected JPanel idPanel;
     protected JPanel nomPanel;
+    protected JPanel resetPanel;
+    //ENTREES UTILISATEUR
     protected JComboBox idComboBox;
     protected JTextField nomTextField;
-    
-    protected JPanel resetPanel;
+    //RESET
     protected JButton resetButton;
     
     protected final StatsMortsControler controler;
     
     
     //CONSTRUCTEURS
-    public ObjectDatabasePanels(LayoutManager layout, StatsMortsControler controler) {
+    public ObjectDatabasePanels(LayoutManager layout, StatsMortsControler controler, String titleBorder) {
         super(layout);
         this.init();
         this.setComponenents();
         this.controler = controler;
+        saisiesPanel.setBorder(BorderFactory.createTitledBorder(titleBorder));
     }
-    public ObjectDatabasePanels(StatsMortsControler controler) {
-        this(new GridLayout(ROWS,COLS),controler);
+    public ObjectDatabasePanels(StatsMortsControler controler, String titleBorder) {
+        this(new GridBagLayout(),controler,titleBorder);
     }
     
     
@@ -89,45 +91,88 @@ public abstract class ObjectDatabasePanels extends JPanel {
     
     //MUTATEURS
     private void init() {
+        initPanels();
+        initFields();
+    }
+    private void initPanels() {
         idPanel = new JPanel(new BorderLayout());
         idPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ID));
         
         nomPanel = new JPanel(new BorderLayout());
         nomPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.NOM));
         
+        saisiesPanel = new JPanel(new GridBagLayout());
+        
+        resetPanel = new JPanel(new BorderLayout());
+        resetPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.REINITIALISATION));
+    }
+    private void initFields() {
         idComboBox = new JComboBox();
         idComboBox.addItemListener(new ChangeIDListener());
         
         nomTextField = new JTextField();
-        
-        resetPanel = new JPanel(new BorderLayout());
-        resetPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.REINITIALISATION));
         
         resetButton = new JButton(TexteConstantes.REINITIALISER);
         resetButton.addActionListener(new BoutonResetListener());
     }
     
     private void setComponenents() {
+        //ajout des champs de saisie dans leur panel respectif
         idPanel.add(idComboBox);
         nomPanel.add(nomTextField);
         resetPanel.add(resetButton);
-        this.add(idPanel);
-        this.add(nomPanel);
-        this.add(resetPanel);
+        
+        //ajout des panels dans saisiesPanel
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridheight = 1;
+        saisiesPanel.add(idPanel,gbc);
+        
+        gbc.gridy = 1;
+        saisiesPanel.add(nomPanel,gbc);
+        
+        //met en place saisiesPanel dans cet objet
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.anchor = GridBagConstraints.CENTER;
+        gbc2.fill = GridBagConstraints.BOTH;
+        gbc2.weightx = 1.0;
+        gbc2.weighty = 1.0;
+        gbc2.gridwidth = GridBagConstraints.REMAINDER;
+        
+        gbc2.gridheight = 2;
+        gbc2.gridx = 0;
+        gbc2.gridy = 0;
+        this.add(saisiesPanel,gbc2);
     }
     
     public void setIDPanelVisible(boolean visible) {
         if (visible) {
-            this.add(idPanel, 0);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.BOTH;
+            saisiesPanel.add(idPanel,gbc,0);
         }
         else {
-            this.remove(idPanel);
+            saisiesPanel.remove(idPanel);
         }
     }
     
     public void setResetButtonVisible(boolean visible) {
         if (visible) {
-            this.add(resetPanel);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.gridheight = GridBagConstraints.REMAINDER;
+            gbc.gridy = 2;
+            this.add(resetPanel,gbc);
         }
         else {
             this.remove(resetPanel);
