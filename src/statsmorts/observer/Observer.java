@@ -5,6 +5,7 @@
  */
 package statsmorts.observer;
 
+import java.util.Date;
 import org.jfree.data.category.DefaultCategoryDataset;
 import statsmorts.classes.Genre;
 import statsmorts.classes.Jeu;
@@ -37,12 +38,13 @@ public interface Observer {
     void updateDataset(String titre, DefaultCategoryDataset dataset);
     
     //méthodes pour remplir les champs de saisie pour les entrées utilisateur
-    void fillPlateforme(long idPlateforme, String nomPlateforme);
-    void fillGenre(long idGenre, String nomGenre);
-    void fillStudio(long idStudio, String nomStudio);
-    void fillJeu(long idJeu, String titreJeu, int anneeSortie, Long[] listPlateformes, Long[] listGenres, long idStudio);
-    void fillRun(long idRun, String titreRun, long idJeu, String titreJeu);
-    void fillRunJeu(long idJeu, String titreJeu);
-    void fillLive(long idLive);
+    void fillPlateforme(String nomPlateforme);
+    void fillGenre(String nomGenre);
+    void fillStudio(String nomStudio);
+    void fillJeu(String titreJeu, int anneeSortie, Long[] listPlateformes, Long[] listGenres, long idStudio);
+    void fillRun(String titreRun, long idJeu);
+    void fillRunJeu(String titreJeu);
+    void fillLive(Date dateDebut, Date dateFin, int morts);
+    void fillLiveRun(long idRun, String titreRun);
     
 }

@@ -595,7 +595,7 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Plateforme plateforme = bdd.getPlateformes().get(idPlateforme);
             if (null != plateforme) {
-                observer.fillPlateforme(idPlateforme,plateforme.getTitre());
+                observer.fillPlateforme(plateforme.getTitre());
             }
         }
     }
@@ -605,7 +605,7 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Genre genre = bdd.getGenres().get(idGenre);
             if (null != genre) {
-                observer.fillGenre(idGenre,genre.getTitre());
+                observer.fillGenre(genre.getTitre());
             }
         }
     }
@@ -615,7 +615,7 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Studio studio = bdd.getStudios().get(idStudio);
             if (null != studio) { 
-                observer.fillStudio(idStudio,studio.getTitre());
+                observer.fillStudio(studio.getTitre());
             }
         }
     }
@@ -625,7 +625,7 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Jeu jeu = bdd.getJeux().get(idJeu);
             if (null != jeu) {
-                observer.fillJeu(idJeu, jeu.getTitre(),jeu.getAnneeSortie(),jeu.getPlateformesID(),jeu.getGenresID(),jeu.getStudio().getID());
+                observer.fillJeu(jeu.getTitre(),jeu.getAnneeSortie(),jeu.getPlateformesID(),jeu.getGenresID(),jeu.getStudio().getID());
             }
         }
     }
@@ -636,7 +636,7 @@ public class StatsMortsModele implements Observable {
             final Run run = bdd.getRun(idRun);
             if (null != run) {
                 final Jeu jeu = run.getJeu();
-                observer.fillRun(idRun,run.getTitre(),jeu.getID(),jeu.getTitre());
+                observer.fillRun(run.getTitre(),jeu.getID());
             }
         }
     }
@@ -646,7 +646,7 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Jeu jeu = bdd.getJeu(idJeu);
             if (null != jeu) {
-                observer.fillRunJeu(idJeu, jeu.getTitre());
+                observer.fillRunJeu(jeu.getTitre());
             }
         }
     }

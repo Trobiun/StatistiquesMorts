@@ -17,11 +17,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -796,22 +796,22 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void fillPlateforme(long idPlateforme, String nomPlateforme) {
+    public void fillPlateforme(String nomPlateforme) {
         plateformePanels.setNom(nomPlateforme);
     }
     
     @Override
-    public void fillGenre(long idGenre, String nomGenre) {
+    public void fillGenre(String nomGenre) {
         genrePanels.setNom(nomGenre);
     }
     
     @Override
-    public void fillStudio(long idStudio, String nomStudio) {
+    public void fillStudio(String nomStudio) {
         studioPanels.setNom(nomStudio);
     }
     
     @Override
-    public void fillJeu(long idJeu, String titreJeu, int anneeSortie, Long[] listPlateformesID, Long[] listGenresID, long idStudio) {
+    public void fillJeu(String titreJeu, int anneeSortie, Long[] listPlateformesID, Long[] listGenresID, long idStudio) {
         jeuPanels.setNom(titreJeu);
         jeuPanels.setAnneeSortie(anneeSortie);
         jeuPanels.setPlateformesSelection(listPlateformesID);
@@ -820,18 +820,23 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void fillRun(long idRun, String titreRun, long idJeu, String titreJeu) {
+    public void fillRun(String titreRun, long idJeu) {
         runPanels.setNom(titreRun);
         runPanels.setIDJeu(idJeu);
     }
     
     @Override
-    public void fillRunJeu(long idJeu, String titreJeu) {
+    public void fillRunJeu(String titreJeu) {
         runPanels.setTitreJeu(titreJeu);
     }
     
     @Override
-    public void fillLive(long idLive) {
+    public void fillLive(Date dateDebut, Date dateFin, int morts) {
+        
+    }
+    
+    @Override
+    public void fillLiveRun(long idRun, String titreRun) {
         
     }
     
