@@ -19,6 +19,13 @@ import statsmorts.constantes.TexteConstantes;
  */
 public class AffichageOptions extends JPanel {
     
+    //ATTRIBUTS STATIC
+    private static final int ROWS_GENERAL = 2;
+    private static final int COLS_GENERAL = 1;
+    private static final int ROWS_GROUP = 1;
+    private static final int COLS_GROUP = 4;
+    private static final int ROWS_TEMPS = 1;
+    private static final int COLS_TEMPS = 2;
     //ATTRIBUTS
     private JPanel panelAffichageGroup;
     private JPanel panelAffichageTemps;
@@ -37,7 +44,7 @@ public class AffichageOptions extends JPanel {
     
     //CONSTRUCTEUR
     public AffichageOptions(Preferences preferences) {
-        super(new GridLayout(2,1));
+        super(new GridLayout(ROWS_GENERAL,COLS_GENERAL));
         
         this.preferences = preferences;
         
@@ -65,9 +72,9 @@ public class AffichageOptions extends JPanel {
         initButtons();
     }
     private void initPanels() {
-        panelAffichageGroup = new JPanel(new GridLayout(1,4));
+        panelAffichageGroup = new JPanel(new GridLayout(ROWS_GROUP,COLS_GROUP));
         panelAffichageGroup.setBorder(new TitledBorder(TexteConstantes.GROUPER_PAR));
-        panelAffichageTemps = new JPanel(new GridLayout(1,2));
+        panelAffichageTemps = new JPanel(new GridLayout(ROWS_TEMPS,COLS_TEMPS));
         panelAffichageTemps.setBorder(new TitledBorder(TexteConstantes.AFFICHAGE_TEMPS));
     }
     private void initButtons() {
