@@ -64,6 +64,10 @@ public class TexteConstantes {
     public static final String TITRE = "Titre";
     public static final String NOM = "Nom";
     public static final String ANNEE_SORTIE = "Année de sortie";
+    public static final String DATES = "Dates";
+    public static final String DATE_DEBUT = "Date de début";
+    public static final String DATE_FIN = "Date de fin";
+    public static final String INSERER_MAINTENANT = "Maintenant";
     public static final String REINITIALISATION = "Réinitialisation";
     public static final String REINITIALISER = "Réinitialiser";
     
