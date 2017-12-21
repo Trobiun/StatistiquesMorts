@@ -26,6 +26,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class FileChooser extends JPanel{
     
+    //ATTRIBUTS STATIC
+    private static final int ROWS = 1;
+    private static final int COLS = 2;
+    private static final int HGAP = 5;
+    private static final int VGAP = 5;
     //ATTRIBUTS
     private JPanel panelButtons;
     private JFileChooser fileChooser;
@@ -53,7 +58,7 @@ public class FileChooser extends JPanel{
     }
     
     private void init(String text, int mode) {
-        panelButtons = new JPanel(new GridLayout(1,2,5,5));
+        panelButtons = new JPanel(new GridLayout(ROWS,COLS,HGAP,VGAP));
         
         this.text = text;
         textField = new JTextField(text);
@@ -94,19 +99,19 @@ public class FileChooser extends JPanel{
             setText(file.getAbsolutePath());
             return text;
         }
-        else {
-            /*String message = "";
-            if (!correctFile) {
-                message = "Il faut un dossier";
-            }
-            if (!correctDir) {
-                message = "Il faut un fichier";
-            }*/
-            /*JOptionPane optionPane = new JOptionPane();
-            JOptionPane.showMessageDialog(optionPane, message, "Erreur", JOptionPane.ERROR_MESSAGE);
-            */
-            //System.out.println(message);
-        }
+//        else {
+//            String message = "";
+//            if (!correctFile) {
+//                message = "Il faut un dossier";
+//            }
+//            if (!correctDir) {
+//                message = "Il faut un fichier";
+//            }
+//            JOptionPane optionPane = new JOptionPane();
+//            JOptionPane.showMessageDialog(optionPane, message, "Erreur", JOptionPane.ERROR_MESSAGE);
+//            
+//            System.out.println(message);
+//        }
         return text;
     }
     
@@ -140,39 +145,34 @@ public class FileChooser extends JPanel{
                 }
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                    /*boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory());
-                    boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile());
-                    if (correctDir || correctFile) {*/
+//                    boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory());
+//                    boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile());
+//                    if (correctDir || correctFile) {
                     if (fileChooser.getFileFilter().accept(file)) {
                         setText(file.getAbsolutePath());
-//                        textField.setText(file.getAbsolutePath());
                     }
                     else {
                         setText(file.getAbsolutePath() + TexteConstantes.DOT + defaultExtension);
-//                        textField.setText();
                     }
-                    //}
+//                    }
                 }
             }
             if (e.getSource().equals(buttonCreer)) {
                 fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
-                typeDialog = JFileChooser.SAVE_DIALOG;
                 fileChooser.setCurrentDirectory(new File(textField.getText()).getParentFile());
                 
                 int returnVal = fileChooser.showSaveDialog(buttonCreer.getParent());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                    /*boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory());
-                    boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile());
-                    if (correctDir || correctFile) {*/
+//                    boolean correctDir = (fileChooser.getFileSelectionMode() == JFileChooser.DIRECTORIES_ONLY && file.isDirectory());
+//                    boolean correctFile = (fileChooser.getFileSelectionMode() == JFileChooser.FILES_ONLY && file.isFile());
+//                    if (correctDir || correctFile) {
 //                        textField.setText(file.getAbsolutePath());
-                    //}
+//                    }
                     if (fileChooser.getFileFilter().accept(file)) {
-//                        textField.setText(file.getAbsolutePath());
                         setText(file.getAbsolutePath());
                     }
                     else {
-//                        textField.setText(file.getAbsolutePath() + "." + defaultExtension);
                         setText(file.getAbsolutePath() + TexteConstantes.DOT + defaultExtension);
                     }
                 }
