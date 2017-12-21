@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jfree.data.category.DefaultCategoryDataset;
+import statsmorts.constantes.TexteConstantesFormatDate;
 
 /**
  *
@@ -21,9 +22,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class Live implements FillDataset, Comparable {
     
     //ATTRIBUTS STATIC
-    public static final SimpleDateFormat DATE_FORMAT_SQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-    public static final SimpleDateFormat DATE_FORMAT_SHORT = new SimpleDateFormat("dd/MM/yyyy");
-    public static final SimpleDateFormat DATE_FORMAT_LONG = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    public static final SimpleDateFormat DATE_FORMAT_SQL = new SimpleDateFormat(TexteConstantesFormatDate.SQL);
+    public static final SimpleDateFormat DATE_FORMAT_SHORT = new SimpleDateFormat(TexteConstantesFormatDate.SHORT);
+    public static final SimpleDateFormat DATE_FORMAT_LONG = new SimpleDateFormat(TexteConstantesFormatDate.LONG);
     
     //ATTRIBUTS
     private final long id;
