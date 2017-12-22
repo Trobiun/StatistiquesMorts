@@ -5,7 +5,6 @@
  */
 package statsmorts.classes;
 
-import statsmorts.constantes.TexteConstantes;
 import statsmorts.constantes.TexteConstantesSQL;
 import java.io.File;
 import java.io.IOException;
@@ -103,7 +102,6 @@ public class BDD {
     
     @Override
     public String toString() {
-        String res = TexteConstantes.EMPTY;
         return jeux.toString();
 //        Set<Entry<Long,Jeu>> setJeux = jeux.entrySet();
 //        for (Entry<Long,Jeu> entry : setJeux) {
@@ -117,17 +115,53 @@ public class BDD {
         plateformes.put(plateforme.getID(), plateforme);
     }
     
+    public void supprimerPlateforme(long idPlateforme) {
+        plateformes.remove(idPlateforme);
+    }
+    
     public void ajouterGenre(Genre genre) {
         genres.put(genre.getID(), genre);
+    }
+    
+    public void supprimerGenre(long idGenre) {
+        genres.remove(idGenre);
     }
     
     public void ajouterStudio(Studio studio) {
         studios.put(studio.getID(), studio);
     }
     
+    public void supprimerStudio(long idStudio) {
+        studios.remove(idStudio);
+    }
+    
     public void ajouterJeu(Jeu jeu) {
         jeux.put(jeu.getID(), jeu);
     }
+    
+    public void supprimerJeu(long idJeu) {
+        jeux.get(idJeu).supprimerJeu();
+        jeux.remove(idJeu);
+    }
+    
+    public void ajouterRun(Run run) {
+        runs.put(run.getID(), run);
+    }
+    
+    public void supprimerRun(long idRun) {
+        runs.get(idRun).supprimerRun();
+        runs.remove(idRun);
+    }
+    
+    public void ajouterLive(Live live) {
+        lives.put(live.getID(), live);
+    }
+    
+    public void supprimerLive(long idLive) {
+        lives.get(idLive).supprimerLive();
+        lives.remove(idLive);
+    }
+    
     
     private Map initMap(Map map) {
         if (map == null) {
@@ -177,7 +211,8 @@ public class BDD {
             idPlateforme = resultsPlateformes.getLong(TexteConstantesSQL.TABLE_PLATEFORMES_ID);
             nomPlateforme = resultsPlateformes.getString(TexteConstantesSQL.TABLE_PLATEFORMES_NOM);
             plateforme = new Plateforme(idPlateforme,nomPlateforme);
-            plateformes.put(idPlateforme,plateforme);
+            this.ajouterPlateforme(plateforme);
+//            plateformes.put(idPlateforme,plateforme);
         }
         
         long idGenre;
@@ -188,7 +223,8 @@ public class BDD {
             idGenre = resultsGenres.getLong(TexteConstantesSQL.TABLE_GENRES_ID);
             nomGenre = resultsGenres.getString(TexteConstantesSQL.TABLE_GENRES_NOM);
             genre = new Genre(idGenre,nomGenre);
-            genres.put(idGenre,genre);
+            this.ajouterGenre(genre);
+//            genres.put(idGenre,genre);
         }
         
         long idStudio;
@@ -199,7 +235,8 @@ public class BDD {
             idStudio = resultsStudios.getLong(TexteConstantesSQL.TABLE_STUDIOS_ID);
             nomStudio = resultsStudios.getString(TexteConstantesSQL.TABLE_STUDIOS_NOM);
             studio = new Studio(idStudio,nomStudio);
-            studios.put(idStudio, studio);
+            this.ajouterStudio(studio);
+//            studios.put(idStudio, studio);
         }
         
         String titreJeu, titreRun, dateDebut, dateFin;
@@ -215,7 +252,8 @@ public class BDD {
             anneeSortieJeu = resultsVueGlobale.getInt(TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE);
             if (!jeux.containsKey(idJeu) && idJeu > 0) {
                 jeu = new Jeu(idJeu,titreJeu,anneeSortieJeu);
-                jeux.put(idJeu,jeu);
+                this.ajouterJeu(jeu);
+//                jeux.put(idJeu,jeu);
             }
             else {
                 jeu = jeux.get(idJeu);
@@ -225,8 +263,9 @@ public class BDD {
             titreRun = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_RUNS_TITRE);
             if (!runs.containsKey(idRun) && idRun > 0) {
                 run = new Run(idRun,titreRun);
-                runs.put(idRun,run);
-                jeu.putRun(run);
+                this.ajouterRun(run);
+//                runs.put(idRun,run);
+                jeu.ajouterRun(run);
                 run.setJeu(jeu);
             }
             else {
@@ -239,8 +278,9 @@ public class BDD {
             morts = resultsVueGlobale.getInt(TexteConstantesSQL.TABLE_LIVES_MORTS);
             if (!lives.containsKey(idLive) && idLive > 0) {
                 live = new Live(idLive,dateDebut,dateFin,morts);
-                lives.put(idLive,live);
-                run.putLive(live);
+                this.ajouterLive(live);
+//                lives.put(idLive,live);
+                run.ajouterLive(live);
                 live.setRun(run);
             }
             else {
@@ -254,8 +294,8 @@ public class BDD {
             idJeu = resultsJeuPlateforme.getLong(TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU);
             plateforme = plateformes.get(idPlateforme);
             jeu = jeux.get(idJeu);
-            plateforme.putJeu(jeu);
-            jeu.putPlateforme(plateforme);
+            plateforme.ajouterJeu(jeu);
+            jeu.ajouterPlateforme(plateforme);
         }
         
         ResultSet resultsJeuGenre = connexion.executerRequete(requeteJeuGenre);
@@ -264,8 +304,8 @@ public class BDD {
             idJeu = resultsJeuGenre.getLong(TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU);
             genre = genres.get(idGenre);
             jeu = jeux.get(idJeu);
-            genre.putJeu(jeu);
-            jeu.putGenre(genre);
+            genre.ajouterJeu(jeu);
+            jeu.ajouterGenre(genre);
         }
         
         ResultSet resultsJeuStudio = connexion.executerRequete(requeteJeuStudio);
@@ -274,7 +314,7 @@ public class BDD {
             idJeu = resultsJeuStudio.getLong(TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU);
             studio = studios.get(idStudio);
             jeu = jeux.get(idJeu);
-            studio.putJeu(jeu);
+            studio.ajouterJeu(jeu);
             jeu.setStudio(studio);
         }
     }
