@@ -6,21 +6,43 @@
 package statsmorts.classes;
 
 /**
- *
+ * Une numération qui permet de déterminer comment se connecter à la base de données.
  * @author robin
  */
 public enum TypeDatabase {
     
     //ENUMERATION
+    /**
+     * Type Access pour les bases de données Microsoft Access. (fichier)
+     */
     Access("net.ucanaccess.jdbc.UcanaccessDriver","jdbc:ucanaccess://",";newdatabaseversion=V2010"),
-    SQLite("org.sqlite.JDBC","jdbc:sqlite:"),
+    /**
+     * Type SQLite pour les bases de données SQLite. (fichier)
+     */
+    SQLite("org.sqlite.JDBC","jdbc:sqlite://"),
+    /**
+     * Type MysQL pour les bases de données MySQL. (serveur)
+     */
     MySQL("com.mysql.jdbc.Driver","jdbc:mysql://"),
+    /**
+     * Type PostgreSQL pour les bases de données PostgreSQL. (serveur)
+     */
     PostgreSQL("org.postgresql.Driver","jdbc:postgresql://");
     
     
     //ATTRIBUTS
+    /**
+     * Le driver utilisé avec Class.forName(driver).
+     */
     private final String driver;
+    /**
+     * Le préfixe de l'URL/chemin vers la base de données.
+     */
     private final String prefixe;
+    /**
+     * Le suffixe de l'URL/chemin vers la base de données.
+     * (utilisé surtout pour le type Access pour créer la base de données)
+     */
     private String suffixe;
     
     
@@ -36,14 +58,26 @@ public enum TypeDatabase {
     
     
     //ACCESSEURS
+    /**
+     * Retourne le driver du type de base de données.
+     * @return le driver à utiliser.
+     */
     public String getDriver() {
         return driver;
     }
     
+    /**
+     * Retourne le préfixe pour se connecter à la base de données.
+     * @return le préfixe utilisé pour préfixer le chemin de la base de données.
+     */
     public String getPrefixe() {
         return prefixe;
     }
     
+    /**
+     * Retourne le suffixe à pour se connecter à la base de données.
+     * @return le préfixe utilisé pour suffixer le chemin de la base de données.
+     */
     public String getSuffixe() {
         return suffixe;
     }
