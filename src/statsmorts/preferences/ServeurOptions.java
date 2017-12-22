@@ -51,7 +51,9 @@ public class ServeurOptions extends JPanel {
     //CONSTRUCTEUR
     public ServeurOptions(Preferences preferences, boolean acceptFile) {
         super(new GridBagLayout());
-        //this.setPreferredSize(new Dimension(400,250));
+        if (System.getProperty("os.name").startsWith("Linux")) {
+            this.setPreferredSize(new Dimension(400,250));
+        }
         this.preferences = preferences;
         this.acceptFile = acceptFile;
         
