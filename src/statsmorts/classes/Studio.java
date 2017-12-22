@@ -44,16 +44,27 @@ public class Studio implements FillDataset, Comparable {
     
     
     //MUTATEURS
-    public void putJeu(Jeu jeu) {
+    public void ajouterJeu(Jeu jeu) {
         jeux.putIfAbsent(jeu.getID(),jeu);
     }
     
-    public void removeJeu(long idJeu) {
+    public void supprimerJeu(long idJeu) {
         jeux.remove(idJeu);
     }
     
-    public void rename(String nouveauNom) {
+    public void renommer(String nouveauNom) {
         this.nom = nouveauNom;
+    }
+    
+    /**
+     * Supprime tous les jeux de ce studio, car un Jeu ne possède
+     * qu'un studio de développement.
+     */
+    public void supprimerStudio() {
+        Set<Entry<Long,Jeu>> setJeux = jeux.entrySet();
+        for (Entry<Long,Jeu> entry : setJeux) {
+            entry.getValue().supprimerJeu();
+        }
     }
     
     

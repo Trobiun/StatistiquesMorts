@@ -121,15 +121,34 @@ public class Run implements FillDataset, Comparable {
     
     
     //MUTATEURS
+    public void clearLives() {
+        Set<Entry<Long, Live>> setLives = lives.entrySet();
+        for (Entry<Long, Live> entry : setLives) {
+            entry.getValue().setRun(null);
+        }
+        lives.clear();
+    }
     public void setJeu(Jeu jeu) {
         this.jeu = jeu;
     }
     
-    public void putLive(Live live) {
+    public void ajouterLive(Live live) {
         lives.put(live.getID(),live);
         live.setRun(this);
     }
     
+    public void supprimerLive(long idLive) {
+        lives.remove(idLive);
+    }
+    
+    /**
+     * Supprime tous les lives liés à cette run
+     * et l'occurence de cette run dans le jeu lié à cette run.
+     */
+    public void supprimerRun() {
+        clearLives();
+        jeu.supprimerRun(id);
+    }
     
     //INTERFACE FILLDATASET
     @Override

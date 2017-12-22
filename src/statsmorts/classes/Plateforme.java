@@ -45,12 +45,27 @@ public class Plateforme implements FillDataset, Comparable {
     
     
     //MUTATEURS
-    public void putJeu(Jeu jeu) {
+    public void ajouterJeu(Jeu jeu) {
         jeux.put(jeu.getID(),jeu);
     }
     
-    public void rename(String nouveauNom) {
+    public void supprimerJeu(long idJeu) {
+        jeux.remove(idJeu);
+    }
+    
+    public void renommer(String nouveauNom) {
         this.nom = nouveauNom;
+    }
+    
+    /**
+     * Supprime la plateforme dans les occurences des jeux auxquels la plateforme
+     * est liée.
+     */
+    public void supprimerPlateforme() {
+        Set<Entry<Long,Jeu>> setJeux = jeux.entrySet();
+        for (Entry<Long,Jeu> entry : setJeux) {
+            entry.getValue().supprimerPlateforme(id);
+        }
     }
     
     //INTERFACE FILLDATASET

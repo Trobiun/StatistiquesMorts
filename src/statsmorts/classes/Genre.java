@@ -45,14 +45,27 @@ public class Genre implements FillDataset, Comparable {
     
     
     //MUTATEURS
-    public void putJeu(Jeu jeu) {
+    public void ajouterJeu(Jeu jeu) {
         jeux.put(jeu.getID(),jeu);
     }
     
-    public void rename(String nouveauNom) {
+    public void supprimerJeu(long idJeu) {
+        jeux.remove(idJeu);
+    }
+    
+    public void renommer(String nouveauNom) {
         this.nom = nouveauNom;
     }
     
+    /**
+     * Supprime le genre dans les occurences des jeux auxquels le genre est lié.
+     */
+    public void supprimerGenre() {
+        Set<Entry<Long, Jeu>> setJeux = jeux.entrySet();
+        for (Entry<Long, Jeu> entry : setJeux) {
+            entry.getValue().supprimerGenre(id);
+        }
+    }
     
     //INTERFACE FILLDATASET
     @Override

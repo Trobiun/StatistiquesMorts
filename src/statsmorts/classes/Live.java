@@ -112,6 +112,12 @@ public class Live implements FillDataset, Comparable {
         this.run = run;
     }
     
+    /**
+     * Supprime l'occurence de ce live dans le jeu lié à ce live.
+     */
+    public void supprimerLive() {
+        this.run.supprimerLive(id);
+    }
     
     //INTERFACE FILLDATASET
     @Override

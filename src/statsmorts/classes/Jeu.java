@@ -184,7 +184,7 @@ public class Jeu implements FillDataset, Comparable {
     }
     
     //MUTATEURS
-    public void rename(String nouveauTitre) {
+    public void renommer(String nouveauTitre) {
         this.titre = nouveauTitre;
     }
     
@@ -193,27 +193,60 @@ public class Jeu implements FillDataset, Comparable {
     }
     
     public void clearPlateformes() {
+        Set<Entry<Long, Plateforme>> setPlateformes = plateformes.entrySet();
+        for (Entry<Long, Plateforme> entry : setPlateformes) {
+            entry.getValue().supprimerJeu(id);
+        }
         plateformes.clear();
     }
     
     public void clearGenres() {
+        Set<Entry<Long, Genre>> setGenres = genres.entrySet();
+        for (Entry<Long, Genre> entry : setGenres) {
+            entry.getValue().supprimerJeu(id);
+        }
         genres.clear();
     }
     
     public void setStudio(Studio studio) {
+        if(null != this.studio) {
+            this.studio.supprimerJeu(id);
+        }
         this.studio = studio;
     }
     
-    public void putPlateforme(Plateforme plateforme) {
+    public void ajouterPlateforme(Plateforme plateforme) {
         plateformes.put(plateforme.getID(),plateforme);
     }
     
-    public void putGenre(Genre genre) {
+    public void supprimerPlateforme(long idPlateforme) {
+        plateformes.remove(idPlateforme);
+    }
+    
+    public void ajouterGenre(Genre genre) {
         genres.put(genre.getID(),genre);
     }
     
-    public void putRun(Run run) {
+    public void supprimerGenre(long idGenre) {
+        genres.remove(idGenre);
+    }
+    
+    public void ajouterRun(Run run) {
         runs.put(run.getID(),run);
+    }
+    
+    public void supprimerRun(long idRun) {
+        runs.remove(idRun);
+    }
+    
+    /**
+     * Supprime toutes les occurences de ce jeu dans tous les plateformes, genres
+     * et et studio lié à ce jeu.
+     */
+    public void supprimerJeu() {
+        clearPlateformes();
+        clearGenres();
+        studio.supprimerJeu(id);
     }
     
     
