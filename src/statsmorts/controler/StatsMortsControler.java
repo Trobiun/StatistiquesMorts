@@ -6,6 +6,7 @@
 package statsmorts.controler;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import statsmorts.classes.FillDataset;
@@ -84,6 +85,18 @@ public class StatsMortsControler {
     public void fillRunPanelJeu(long idJeu) {
         if (idJeu > 0) {
             modele.fillRunPanelJeu(idJeu);
+        }
+    }
+    
+    public void fillLivePanel(long idLive) {
+        if (idLive > 0) {
+            modele.fillLivePanel(idLive);
+        }
+    }
+    
+    public void fillLivePanelRun(long idRun) {
+        if (idRun > 0) {
+            modele.fillLivePanelRun(idRun);
         }
     }
     
@@ -210,30 +223,32 @@ public class StatsMortsControler {
         }
     }
     
-    public void ajouterRun(long idRun, String titreRun, long idJeu) {
-        if (idRun > 0 && null != titreRun && !titreRun.isEmpty() && idJeu > 0) {
-            modele.ajouterRun(idRun, titreRun, idJeu);
+    public void ajouterRun(String titreRun, long idJeu) {
+        if (null != titreRun && !titreRun.isEmpty() && idJeu > 0) {
+            modele.ajouterRun(titreRun, idJeu);
         }
     }
     
     public void modifierRun(long idRun, String titreRun, long idJeu) {
         if (idRun > 0 && null != titreRun && !titreRun.isEmpty() && idJeu > 0) {
-            
+            modele.modifierRun(idRun, titreRun, idJeu);
         }
     }
     
     public void supprimerRun(long idRun) {
         if (idRun > 0) {
+            modele.supprimerRun(idRun);
+        }
+    }
+    
+    public void ajouterLive(Date dateDebut, Date dateFin, int morts, long idRun) {
+        if (null != dateDebut && null != dateFin && idRun > 0) {
             
         }
     }
     
-    public void ajouterLive() {
-        
-    }
-    
-    public void modifierLive(long idLive) {
-        if (idLive > 0) {
+    public void modifierLive(long idLive, Date dateDebut, Date dateFin, int morts, long idRun) {
+        if (idLive > 0 && null != dateDebut && null != dateFin && idRun > 0) {
             
         }
     }
