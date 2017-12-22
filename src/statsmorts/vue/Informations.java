@@ -8,12 +8,20 @@ package statsmorts.vue;
 import statsmorts.classes.FillDataset;
 
 /**
- *
+ * Une interface pour obtenir des informations des nœuds de l'arbre.
  * @author Robin
  */
 public interface Informations {
-    
-    public String getInformations();
-    public FillDataset getObjectFillDataset();
+    /**
+     * Retourne des informations du nœud concerné.
+     * @return une chaîne de caractères qui représente l'objet qui implémente
+     *         cette interface.
+     */
+    String getInformations();
+    /**
+     * Retourne l'objet qui implémente l'interface FillDataset.
+     * @return un objet FillDataset pour remplir le dataset.
+     */
+    FillDataset getObjectFillDataset();
     
 }
