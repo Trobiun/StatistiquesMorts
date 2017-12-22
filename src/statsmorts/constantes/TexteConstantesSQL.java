@@ -6,10 +6,11 @@
 package statsmorts.constantes;
 
 /**
- *
+ * Une classe de constantes de textes SQL (les tables, champs et éléments de
+ * requête SQL).
  * @author Robin
  */
-public class TexteConstantesSQL {
+public final class TexteConstantesSQL {
     
     //TABLES ET CHAMPS
     public static final String TABLE_PLATEFORMES = "Plateformes";
@@ -96,5 +97,9 @@ public class TexteConstantesSQL {
     public static final String DEFAULT = "DEFAULT";
     public static final String CASCADE = "CASCADE";
     public static final String RESTRICT = "RESTRICT";
+    
+    
+    //CONSTRUCTEUR
+    public TexteConstantesSQL() { }
     
 }

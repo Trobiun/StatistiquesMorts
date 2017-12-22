@@ -6,10 +6,11 @@
 package statsmorts.constantes;
 
 /**
- *
+ * Une classe pour les constantes de texte par rapport aux fichiers de base de
+ * données et serveur.
  * @author Robin
  */
-public class TexteConstantesBDD {
+public final class TexteConstantesBDD {
     
     public static final String BDD = "Base de données";
     public static final String SERVEUR = "Serveur";
@@ -30,5 +31,9 @@ public class TexteConstantesBDD {
     public static final String S3DB = "s3db";
     public static final String SQLITE3 = "sqlite3";
     public static final String SL3 = "sl3";
+    
+    
+    //CONSTRUCTEUR
+    private TexteConstantesBDD() { }
     
 }

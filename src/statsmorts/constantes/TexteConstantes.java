@@ -6,10 +6,10 @@
 package statsmorts.constantes;
 
 /**
- *
+ * Une classe pour les constantes de texte générales.
  * @author Robin
  */
-public class TexteConstantes {
+public final class TexteConstantes {
     
     //GENERAL
     public static final String EMPTY = "";
@@ -68,8 +68,13 @@ public class TexteConstantes {
     public static final String DATE_DEBUT = "Date de début";
     public static final String DATE_FIN = "Date de fin";
     public static final String INSERER_MAINTENANT = "Maintenant";
+    public static final String MORTS = "Morts";
+    public static final String INCREMENTER = "Incrémenter";
     public static final String REINITIALISATION = "Réinitialisation";
     public static final String REINITIALISER = "Réinitialiser";
     
+    
+    //CONSTRUCTEUR
+    private TexteConstantes() { }
     
 }

@@ -6,10 +6,11 @@
 package statsmorts.constantes;
 
 /**
- *
+ * Une classe pour les constantes de texte par rapport aux préférences et le
+ * dialog de préférences.
  * @author Robin
  */
-public class TexteConstantesPreferences {
+public final class TexteConstantesPreferences {
     
     //CONSTANTES PREREFERENCES
     public static final String INITIALISATION_TEXTE = "Initialisation des préférences";
@@ -39,4 +40,8 @@ public class TexteConstantesPreferences {
     public static final String MYSQL = "MySQL";
     public static final String POSTGRESQL = "PostgreSQL";
     public static final String CONFIGURER = "Configurer";
+    
+    
+    //CONSTRUCTEUR
+    private TexteConstantesPreferences() { }
 }

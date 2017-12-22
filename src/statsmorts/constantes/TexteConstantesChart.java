@@ -6,13 +6,17 @@
 package statsmorts.constantes;
 
 /**
- *
+ * Une classe pour les constantes de texte par rapport au graphique.
  * @author Robin
  */
-public class TexteConstantesChart {
+public final class TexteConstantesChart {
     
     public static final String DEBUT_TITRE = "Mort lives";
     public static final String DATE_LIVE = "Date live";
     public static final String SELECTION_MULTIPLE = "sélection multiple";
+    
+    
+    //CONSTRUCTEUR
+    private TexteConstantesChart() { }
     
 }
