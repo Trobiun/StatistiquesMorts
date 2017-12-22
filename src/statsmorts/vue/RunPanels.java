@@ -92,6 +92,14 @@ public class RunPanels extends ObjectDatabasePanels {
     }
     
     @Override
+    public void clearFields(boolean editable, boolean empty) {
+        super.clearFields(editable, empty);
+        if (idJeuComboBox.getItemCount() == 0) {
+            nomJeuField.setText(TexteConstantes.EMPTY);
+        }
+    }
+    
+    @Override
     public void setResetButtonVisible(boolean visible) {
         if (visible){
             GridBagConstraints gbc = new GridBagConstraints();
@@ -108,12 +116,16 @@ public class RunPanels extends ObjectDatabasePanels {
         }
     }
     
-    public void removeAllJeux() {
+    public void ajouterJeu(long idJeu) {
+        idJeuComboBox.addItem(idJeu);
+    }
+    
+    public void supprimerTousJeux() {
         idJeuComboBox.removeAllItems();
     }
     
-    public void addJeu(long idJeu) {
-        idJeuComboBox.addItem(idJeu);
+    public void supprimerJeu(long idJeu) {
+        idJeuComboBox.removeItem(idJeu);
     }
     
     public void setIDJeu(long idJeu) {
@@ -133,6 +145,8 @@ public class RunPanels extends ObjectDatabasePanels {
         controler.fillRunPanelJeu(idJeu);
     }
     
+    
+    //LISTENER
     class JeuChangeListener implements ItemListener {
         
         @Override
