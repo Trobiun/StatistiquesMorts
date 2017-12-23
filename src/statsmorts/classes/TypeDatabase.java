@@ -7,6 +7,7 @@ package statsmorts.classes;
 
 /**
  * Une numération qui permet de déterminer comment se connecter à la base de données.
+ * Valeurs possiblees : Access, SQLIte, MySQL, PostgreSQL.
  * @author robin
  */
 public enum TypeDatabase {
@@ -43,7 +44,7 @@ public enum TypeDatabase {
      * Le suffixe de l'URL/chemin vers la base de données.
      * (utilisé surtout pour le type Access pour créer la base de données)
      */
-    private String suffixe;
+    private final String suffixe;
     
     
     //CONSTRUCTEUR

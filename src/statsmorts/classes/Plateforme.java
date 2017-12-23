@@ -14,18 +14,33 @@ import java.util.concurrent.TimeUnit;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
- *
+ * Une classe pour représenter une plateforme de jeux.
  * @author Robin
  */
-public class Plateforme implements FillDataset, Comparable {
+public class Plateforme implements FillDataset, Comparable<Plateforme> {
     
     //ATTRIBUTS
+    /**
+     * L'identifiant unique de la plateforme dans la base de données, utilisé
+     * pour les maps.
+     */
     private final long id;
+    /**
+     * Le nom de la plateforme.
+     */
     private String nom;
+    /**
+     * La collection des jeux sortis sur cette plateforme.
+     */
     private final Map<Long,Jeu> jeux;
     
     
-    //CONSTRUCTEURS  
+    //CONSTRUCTEURS
+    /**
+     * Crée une plateforme.
+     * @param id l'identifiant de la plateforme
+     * @param nom le nom de la plateforme
+     */
     public Plateforme(long id, String nom) {
         this.id = id;
         this.nom = nom;
@@ -34,10 +49,19 @@ public class Plateforme implements FillDataset, Comparable {
     
     
     //ACCESSEURS
+    /**
+     * Retourne l'identifiant de la plateforme.
+     * @return l'identifiant de la plateforme
+     */
     public long getID() {
         return id;
     }
     
+    /**
+     * Retourne une chaîne de caractères représentant la plateforme.
+     * Utilisé pour l'affichage
+     * @return le nom de la plateforme
+     */
     @Override
     public String toString() {
         return nom;
@@ -45,15 +69,28 @@ public class Plateforme implements FillDataset, Comparable {
     
     
     //MUTATEURS
-    public void ajouterJeu(Jeu jeu) {
+    /**
+     * Ajoute un jeu à la collection des jeux de la plateforme.
+     * @param jeu le jeu à ajouter
+     */
+    public void ajouterJeu(final Jeu jeu) {
         jeux.put(jeu.getID(),jeu);
     }
     
-    public void supprimerJeu(long idJeu) {
+   /**
+    * Supprime un jeu à la collection des jeux de la platforme dont l'identifiant
+    * est 'idJeu'.
+    * @param idJeu l'identifiant du jeu à supprimer
+    */
+    public void supprimerJeu(final long idJeu) {
         jeux.remove(idJeu);
     }
     
-    public void renommer(String nouveauNom) {
+    /**
+     * Renomme la plateforme.
+     * @param nouveauNom le nouveau nom de la plateforme
+     */
+    public void renommer(final String nouveauNom) {
         this.nom = nouveauNom;
     }
     
@@ -69,16 +106,27 @@ public class Plateforme implements FillDataset, Comparable {
     }
     
     //INTERFACE FILLDATASET
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTitre() {
         return nom;
     }
     
+    //INTERFACE FILLDATASET
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTitreDataset() {
         return nom;
     }
     
+    //INTERFACE FILLDATASET
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ArrayList<Live> getLivesList() {
         ArrayList<Live> lives = new ArrayList();
@@ -89,6 +137,10 @@ public class Plateforme implements FillDataset, Comparable {
         return lives;
     }
 
+    //INTERFACE FILLDATASET
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
         
@@ -96,14 +148,12 @@ public class Plateforme implements FillDataset, Comparable {
     
     
     //INTERFACE COMPARABLE
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int compareTo(Object o) {
-        if (o instanceof Plateforme) {
-            return this.nom.compareTo(((Plateforme)o).nom);
-        }
-        else {
-            return this.nom.compareTo(o.toString());
-        }
+    public int compareTo(Plateforme o) {
+        return this.nom.compareTo(((Plateforme)o).nom);
     }
     
 }

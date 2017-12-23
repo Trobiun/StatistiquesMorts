@@ -13,13 +13,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jfree.data.category.DefaultCategoryDataset;
+import statsmorts.constantes.TexteConstantes;
 import statsmorts.constantes.TexteConstantesFormatDate;
 
 /**
- *
+ * Une classe pour représenter un live.
  * @author Robin
  */
-public class Live implements FillDataset, Comparable {
+public class Live implements FillDataset, Comparable<Live> {
     
     //ATTRIBUTS STATIC
     public static final SimpleDateFormat DATE_FORMAT_SQL = new SimpleDateFormat(TexteConstantesFormatDate.SQL);
@@ -27,15 +28,37 @@ public class Live implements FillDataset, Comparable {
     public static final SimpleDateFormat DATE_FORMAT_LONG = new SimpleDateFormat(TexteConstantesFormatDate.LONG);
     
     //ATTRIBUTS
+    /**
+     * L'identifiant unique du live dans la base de données, utilisé pour les maps.
+     */
     private final long id;
+    /**
+     * La date (date + heure) de début du live.
+     */
     private Date dateDebut;
+    /**
+     * La date (date + heure) de fin du live.
+     */
     private Date dateFin;
+    /**
+     * La run/partie durant laquelle a été fait ce live (ou partie du live).
+     */
     private Run run;
+    /**
+     * Le nombre de morts durant ce live (ou partie du live).
+     */
     private final int morts;
     
     
     //CONSTRUCTEURS
-    public Live(long id, String dateDebutString, String dateFinString, int morts) {
+    /**
+     * Crée un live.
+     * @param id l'idenfiant du live dans la base de données
+     * @param dateDebutString la date de début (en String) du live
+     * @param dateFinString la date de fin (en String) du live
+     * @param morts le nombre de morts
+     */
+    public Live(final long id, final String dateDebutString, final String dateFinString, final int morts) {
         this.id = id;
         try {
             this.dateDebut = DATE_FORMAT_SQL.parse(dateDebutString);
@@ -50,30 +73,61 @@ public class Live implements FillDataset, Comparable {
     
     
     //ACCESSEURS
+    /**
+     * Retourne l'identifiant du live.
+     * @return l'identifiant du live
+     */
     public long getID() {
         return id;
     }
     
+    /**
+     * Retourne la run durant laquelle est fait le live.
+     * @return la run durant laquelle est fait le live
+     */
     public Run getRun() {
         return run;
     }
     
+    /**
+     * Retourne le nombre de morts durant ce live.
+     * @return le nombre de morts durant ce live
+     */
     public int getMorts() {
         return morts;
     }
     
+    /**
+     * Retourne la date de début du live.
+     * @return la date de début du live
+     */
     public Date getDateDebut() {
         return dateDebut;
     }
     
+    /**
+     * Retourne la date de fin du live.
+     * @return la date de fin du live
+     */
     public Date getDateFin() {
         return dateFin;
     }
     
-    public long getDurationLong(TimeUnit unit) {
+    /**
+     * Retourne la durée du live en long en unité de temps 'unit'.
+     * @param unit l'unité de temps dans laquelle convertir la duée du live
+     * @return la durée du live en long converti en unité de temps 'unit'
+     */
+    private long getDurationLong(TimeUnit unit) {
         return unit.convert(dateFin.getTime() - dateDebut.getTime(),TimeUnit.MILLISECONDS);
     }
     
+    /**
+     * Retourne la durée de temps en float en unité de temps 'unit'.
+     * @param unit l'unité de temps dans laquelle calculer la durée (heures ou minutes)
+     * @return la durée de temps en float (pour heures) en unité de temps 'unit'
+     * 
+     */
     public float getDuration(TimeUnit unit) {
         float res;
         long heures = getDurationLong(TimeUnit.HOURS);
@@ -87,50 +141,77 @@ public class Live implements FillDataset, Comparable {
         return res;
     }
     
+    /**
+     * Retourne la durée de vie moyenne de ce live ( = (temps / (morts + 1)) en unité de temps
+     * 'unit'
+     * @param unit l'unité de temps dans laquelle calculer la durée de vie moyenne
+     * @return la durée de vie moyenne de ce live
+     * @see getDuration(TimeUnit unit)
+     */
     public float getDureeVieMoyenne(TimeUnit unit) {
         return (float)this.getDuration(unit) / (float)(morts + 1);
     }
     
+    /**
+     * Retourne une chaîne de caractères représentant le live, avec ses attributs
+     * et des variables calculées (les durées et durées de vie moyennes).
+     * Utilisée par la méthode getInformations de l'interface Informations.
+     * @return une chaîne de caractères représentant le live
+     * @see statsmorts.vue.Informations#getInformations()
+     */
     @Override
     public String toString() {
         float heures = this.getDuration(TimeUnit.HOURS);
         float minutes = this.getDuration(TimeUnit.MINUTES);
-        String res = "Date début : " + dateDebut.toString() + "\n"
-                + "Date fin : " + dateFin.toString() + "\n"
-                + "Durée : " + heures + " heures\n"
-                + "Durée : " + (int)(heures) + "h" + (int)(minutes % 60) + "m\n"
-                + "Durée : " + minutes + " minutes\n\n"
-                + "Morts  : " + morts + "\n\n"
-                + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.HOURS) + " heures\n"
-                + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.MINUTES) + " minutes\n";
+        String res = "Date début : " + dateDebut.toString() + TexteConstantes.NEW_LINE
+                + "Date fin : " + dateFin.toString() + TexteConstantes.NEW_LINE
+                + "Durée : " + heures + " heures" +TexteConstantes.NEW_LINE
+                + "Durée : " + (int)(heures) + "h" + (int)(minutes % 60) + "m" +TexteConstantes.NEW_LINE
+                + "Durée : " + minutes + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Morts  : " + morts + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.HOURS) + " heures" + TexteConstantes.NEW_LINE
+                + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.MINUTES) + " minutes" + TexteConstantes.NEW_LINE;
         return res;
     }
     
     
     //MUTATEURS
+    /**
+     * Change la run/partie actuelle par 'run'.
+     * @param run la run du live
+     */
     public void setRun(Run run) {
         this.run = run;
     }
     
     /**
-     * Supprime l'occurence de ce live dans le jeu lié à ce live.
+     * Supprime l'occurence de ce live dans la run liée à ce live.
      */
     public void supprimerLive() {
         this.run.supprimerLive(id);
     }
     
     //INTERFACE FILLDATASET
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTitre() {
         return DATE_FORMAT_LONG.format(dateDebut) + " - " + DATE_FORMAT_LONG.format(dateFin);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTitreDataset() {
         String date = DATE_FORMAT_SHORT.format(dateDebut);
         return this.run.getTitreDataset() + " le " + date;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ArrayList<Live> getLivesList() {
         ArrayList<Live> lives = new ArrayList();
@@ -138,6 +219,9 @@ public class Live implements FillDataset, Comparable {
         return lives;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
         float temps  = this.getDuration(unit);
@@ -149,14 +233,12 @@ public class Live implements FillDataset, Comparable {
     
     
     //INTERFACE COMPARABLE
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int compareTo(Object o) {
-         if (o instanceof Live) {
-            return this.dateDebut.compareTo(((Live)o).dateDebut);
-        }
-        else {
-            return this.toString().compareTo(o.toString());
-        }
+    public int compareTo(Live o) {
+        return this.dateDebut.compareTo(((Live)o).dateDebut);
     }
     
 }

@@ -16,19 +16,37 @@ import java.util.concurrent.TimeUnit;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
- *
+ * Une classe pour représenter une run/partie d'un jeu.
  * @author Robin
  */
-public class Run implements FillDataset, Comparable {
+public class Run implements FillDataset, Comparable<Run> {
     
     //ATTRIBUTS
+    /**
+     * L'identifiant unique de la run dans la base de données, utilisé pour les
+     * maps.
+     */
     private final long id;
-    private final String titre;
+    /**
+     * Le titre de la run dans la base de données, utilisé pour l'affichage.
+     */
+    private String titre;
+    /**
+     * Le jeu sur lequel la run est jouée.
+     */
     private Jeu jeu;
+    /**
+     * La collection des lives de la run.
+     */
     private final Map<Long,Live> lives;
     
     
     //CONSTRUCTEURS
+    /**
+     * Crée une run sans live.
+     * @param id l'identifiant de la run
+     * @param titre le titre de la run
+     */
     public Run(long id, String titre) {
         this.id = id;
         this.titre = titre;
@@ -38,22 +56,45 @@ public class Run implements FillDataset, Comparable {
     
     
     //ACCESSEURS
+    /**
+     * Retourne l'identifiant de la run.
+     * @return l'identifiant de la run
+     */
     public long getID() {
         return id;
     }
     
+    /**
+     * Retourne le jeu sur lequel a été fait la run.
+     * @return le jeu sur lequel a été fait la run
+     */
     public Jeu getJeu() {
         return jeu;
     }
     
+    /**
+     * Retourne la map des lives de la run.
+     * @return la map des lives de la run
+     */
     public Map getLives() {
         return lives;
     }
     
+    /**
+     * Retourne le nombre total de lives.
+     * @return le nombre total de lives
+     */
     public int getNombreLives() {
         return lives.size();
     }
     
+    /**
+     * Retourne la durée totale de la run en float (fais la somme des durées de
+     * tous les lives) en unité de temps 'unit'
+     * @param unit l'unité de temps dans laquelle calculer la durée totale
+     * @return la durée totale de la run
+     * @see statsmorts.classes.Live#getDuration(TimeUnit) 
+     */
     public float getTotalDuration(TimeUnit unit) {
         float res = 0;
         Set<Entry<Long,Live>> livesSet = lives.entrySet();
@@ -63,6 +104,12 @@ public class Run implements FillDataset, Comparable {
         return res;
     }
     
+    /**
+     * Retourne le nombre total de morts sur cette run (fais la somme des morts
+     * de tous les lives).
+     * @return le nombre total de morts sur cette run
+     * @see statsmorts.classes.Live#morts
+     */
     public int getTotalMorts() {
         int res = 0;
         Set<Entry<Long,Live>> livesSet = lives.entrySet();
@@ -72,35 +119,49 @@ public class Run implements FillDataset, Comparable {
         return res;
     }
     
-    public float getDureeVieMoyenne(float temps, int morts) {
+    /**
+     * Retourne une durée de vie moyenne ( = temps / (morts + 1)).
+     * @param temps le temps passé
+     * @param morts le nombre de morts
+     * @return une durée de vie moyenne en float
+     */
+    private float getDureeVieMoyenne(float temps, int morts) {
         return (temps) / (float)(morts + 1);
     }
     
+    /**
+     * Retourne la moyenne des durées de vie sur cette run en unité de temps 'unit'.
+     * @param unit l'unité de temps dans laquelle calculer la moyenne
+     * @return la moyenne des durées de vie sur cette run
+     * @see statsmorts.classes.Live#getDureeVieMoyenne(TimeUnit) 
+     */
     public float getMoyenneDureesVie(TimeUnit unit) {
         float moyenneDesMoyennes = 0, sommeDureeVie = 0, moyenne, sommeMoyennes = 0;
         int count = 0;
+        //utilisation de TreeSet pour trier dans l'ordre chronologique les lives
+        //sans ce tri, des erreurs de moyenne se font
         TreeSet<Live> livesTreeSet = new TreeSet();
         Set<Entry<Long,Live>> livesSet = lives.entrySet();
         for (Entry<Long,Live> liveEntry : livesSet) {
             livesTreeSet.add(liveEntry.getValue());
         }
         for (Live live : livesTreeSet) {
-//            Live live = liveEntry.getValue();
             count++;
             sommeDureeVie += live.getDureeVieMoyenne(unit);
             moyenne = sommeDureeVie / (float)count;
             sommeMoyennes += moyenne;
-//            System.out.println("DureeVie : " + live.getDureeVieMoyenne(unit));
-//            System.out.println("sommeMoyennes = " + sommeDureeVie);
-//            System.out.println("moyenneDureeVie = " + moyenne);
-//            System.out.println("Count = " + count);
-//            System.out.println();
         }
         moyenneDesMoyennes = sommeMoyennes / (float)count;
-//        System.out.println("Moyenne des moyennes : " + moyenneDesMoyennes);
         return moyenneDesMoyennes;
     }
     
+    /**
+     * Retourne une chaîne de caractères représentant la run, avec ses attributs
+     * et des variables calculées (les durées, durées de vie moyennes, morts etc).
+     * Utilisée par la méthode getInformations de l'interface Informations.
+     * @return une chaîne de caractères représentant la run
+     * @see statsmorts.vue.Informations#getInformations()
+     */
     @Override
     public String toString() {
         int mortsTotales = getTotalMorts();
@@ -121,6 +182,9 @@ public class Run implements FillDataset, Comparable {
     
     
     //MUTATEURS
+    /**
+     * Vide la map des lives tout en enlevant supprimant la run dans les lives.
+     */
     public void clearLives() {
         Set<Entry<Long, Live>> setLives = lives.entrySet();
         for (Entry<Long, Live> entry : setLives) {
@@ -128,15 +192,30 @@ public class Run implements FillDataset, Comparable {
         }
         lives.clear();
     }
+    
+    /**
+     * Modifie le jeu de la run par 'jeu'
+     * @param jeu le jeu sur lequel a été faite la run
+     */
     public void setJeu(Jeu jeu) {
         this.jeu = jeu;
     }
     
+    /**
+     * Ajoute un live à la map des lives de la run, et ajoute la run au jeu ajouté
+     * avec la méthode setRun.
+     * @param live le live à ajouter
+     * @see statsmorts.classes.Live#setRun(Run) 
+     */
     public void ajouterLive(Live live) {
         lives.put(live.getID(),live);
         live.setRun(this);
     }
     
+    /**
+     * Supprime le live qui a pour identifiant 'id' de la map des lives de la run.
+     * @param idLive l'identifiant du live à supprimer
+     */
     public void supprimerLive(long idLive) {
         lives.remove(idLive);
     }
@@ -151,16 +230,25 @@ public class Run implements FillDataset, Comparable {
     }
     
     //INTERFACE FILLDATASET
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTitre() {
         return titre;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTitreDataset() {
         return titre;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ArrayList<Live> getLivesList() {
         ArrayList<Live> livesList = new ArrayList();
@@ -172,8 +260,11 @@ public class Run implements FillDataset, Comparable {
         return livesList;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
+    public void fillDataset(final DefaultCategoryDataset dataset, final TimeUnit unit, final boolean total) {
         ArrayList<Live> livesList = this.getLivesList();
         Collections.sort(livesList);
         
@@ -204,14 +295,12 @@ public class Run implements FillDataset, Comparable {
     
     
     //INTERFACE COMPARABLE
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int compareTo(Object o) {
-        if (o instanceof Run) {
-            return this.titre.compareTo(((Run)o).titre);
-        }
-        else {
-            return this.titre.compareTo(o.toString());
-        }
+    public int compareTo(Run o) {
+        return this.titre.compareTo(((Run)o).titre);
     }
     
 }

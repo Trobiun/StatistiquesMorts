@@ -14,19 +14,33 @@ import java.util.concurrent.TimeUnit;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
- *
+ * Une classe pour représenter un genre de jeux (action, RPG etc).
  * @author Robin
  */
 public class Genre implements FillDataset, Comparable {
     
     //ATTRIBUTS
+    /**
+     * L'identifiant unique du genre dans la base de données, utilisé pour les maps.
+     */
     private final long id;
+    /**
+     * Le nom du genre dans la base de données, utilisé pour l'affichage.
+     */
     private String nom;
+    /**
+     * La collection des jeux qui ont pour genre(s) au moins l'objet courant.
+     */
     private final Map<Long,Jeu> jeux;
     
     
     //CONSTRUCTEURS
-    public Genre(long id, String nom) {
+    /**
+     * Crée un genre sans jeu.
+     * @param id l'identifiant du genre
+     * @param nom le nom du genre
+     */
+    public Genre(final long id, final String nom) {
         this.id = id;
         this.nom = nom;
         this.jeux = new HashMap();
@@ -34,10 +48,19 @@ public class Genre implements FillDataset, Comparable {
     
     
     //ACCESSEURS
+    /**
+     * Retourne l'identifiant du genre dans la base de données.
+     * @return l'identifiant du genre dans la base de données
+     */
     public long getID() {
         return id;
     }
     
+    /**
+     * Retourne une chaîne de caractères représentant l'objet (le nom du genre
+     * pour l'affichage)
+     * @return le nom du genre
+     */
     @Override
     public String toString() {
         return nom;
@@ -45,15 +68,27 @@ public class Genre implements FillDataset, Comparable {
     
     
     //MUTATEURS
-    public void ajouterJeu(Jeu jeu) {
+    /**
+     * Ajoute un jeu à la collection du genre.
+     * @param jeu le jeu à ajouter au genre
+     */
+    public void ajouterJeu(final Jeu jeu) {
         jeux.put(jeu.getID(),jeu);
     }
     
-    public void supprimerJeu(long idJeu) {
+    /**
+     * Supprime un jeu de la collecion du genre.
+     * @param idJeu le jeu à supprimer du genre
+     */
+    public void supprimerJeu(final long idJeu) {
         jeux.remove(idJeu);
     }
     
-    public void renommer(String nouveauNom) {
+    /**
+     * Renomme le genre.
+     * @param nouveauNom le nouveau nom du genre 
+     */
+    public void renommer(final String nouveauNom) {
         this.nom = nouveauNom;
     }
     
@@ -67,17 +102,27 @@ public class Genre implements FillDataset, Comparable {
         }
     }
     
+    
     //INTERFACE FILLDATASET
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTitre() {
         return nom;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTitreDataset() {
         return nom;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ArrayList<Live> getLivesList() {
         ArrayList<Live> livesList = new ArrayList();
@@ -88,13 +133,19 @@ public class Genre implements FillDataset, Comparable {
         return livesList;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
+    public void fillDataset(final DefaultCategoryDataset dataset, final TimeUnit unit, final boolean total) {
         
     }
     
     
     //INTERFACE COMPARABLE
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int compareTo(Object o) {
          if (o instanceof Genre) {

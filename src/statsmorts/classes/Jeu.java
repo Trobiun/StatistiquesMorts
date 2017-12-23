@@ -14,25 +14,53 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import org.jfree.data.category.DefaultCategoryDataset;
+import statsmorts.constantes.TexteConstantes;
 
 /**
- *
+ * Une classe pour représenter un jeu dans la base de données.
  * @author Robin
  */
 public class Jeu implements FillDataset, Comparable {
     
     //ATTRIBUTS
+    /**
+     * L'idenfiant unique du jeu dans la base de données, utilisé pour les maps.
+     */
     private final long id;
+    /**
+     * Le titre du jeu, utilisé pour l'affichage.
+     */
     private String titre;
+    /**
+     * L'année de sortie du jeu.
+     */
     private int anneeSortie;
+    /**
+     * Le studio qui a fait le jeu.
+     */
     private Studio studio;
+    /**
+     * La collection des plateformes sur lesquelles est sorti le jeu.
+     */
     private final HashMap<Long,Plateforme> plateformes;
+    /**
+     * La collection des genres du jeu.
+     */
     private final HashMap<Long,Genre> genres;
+    /**
+     * La collection des runs/parties faites sur ce jeu.
+     */
     private final HashMap<Long,Run> runs;
     
     
     //CONSTRUCTEURS
-    public Jeu(long id, String titre, int anneeSortie) {
+    /**
+     * Crée un jeu sans les attributs studio, plateformes, genres et runs.
+     * @param id l'identifiant du jeu dans la base de données
+     * @param titre le titre du jeu
+     * @param anneeSortie l'année de sortie du jeu
+     */
+    public Jeu(final long id, final String titre, final int anneeSortie) {
         this.id = id;
         this.titre = titre;
         this.anneeSortie = anneeSortie;
@@ -43,49 +71,88 @@ public class Jeu implements FillDataset, Comparable {
     
     
     //ACCESSEURS
+    /**
+     * Retourn l'identifiant du jeu.
+     * @return l'identifiant du jeu
+     */
     public long getID() {
         return id;
     }
     
+    /**
+     * Retourne l'année de sortie du jeu.
+     * @return l'année de sortie du jeu
+     */
     public int getAnneeSortie() {
         return anneeSortie;
     }
     
+    /**
+     * Retourne le studio qui a développé le jeu.
+     * @return le studio qui a développé le jeu
+     */
     public Studio getStudio() {
         return studio;
     }
     
+    /**
+     * Retourne la HashMap des plateformes sur lesquelles le jeu est sorti.
+     * @return la HashMap des plateformes sur lesquelles le jeu est sorti
+     */
     public HashMap<Long,Plateforme> getPlateformes() {
         return plateformes;
     }
     
+    /**
+     * Retourne un tableau de Long qui contient les identifiants des plateformes
+     * sur lesquelles le jeu est sorti. Utilisé pour les présélectionner les plateformes
+     * dans les saisies utilisateur.
+     * @return un tableau de Long qui contient les identifiants des plateformes
+     *         sur lesquelles le jeu est sorti
+     */
     public Long[] getPlateformesID() {
         Long[] res = new Long[plateformes.keySet().size()];
         plateformes.keySet().toArray(res);
         return res;
     }
     
+    /**
+     * Retourne la HashMap des genres du jeu.
+     * @return la HashMap des genres du jeu
+     */
     public HashMap<Long,Genre> getGenres() {
         return genres;
     }
     
+    /**
+     * Retourne un tableau de Long qui contient les identifiants des genres
+     * du jeu. Utilisé pour les présélectionner les genres
+     * dans les saisies utilisateur.
+     * @return un tableau de Long qui contient les identifiants des genres
+     *         du jeu
+     */
     public Long[] getGenresID() {
         Long[] res = new Long[genres.keySet().size()];
         genres.keySet().toArray(res);
         return res;
     }
     
+    /**
+     * Retourne la HashMap des runs/parties faites sur ce jeu.
+     * @return la HashMap des runs/parties faites sur ce jeu
+     */
     public HashMap<Long,Run> getRuns() {
         return runs;
     }
     
-    public Long[] getRunsID() {
-        Long[] res = new Long[runs.keySet().size()];
-        runs.keySet().toArray(res);
-        return res;
-    }
-    
-    public float getTotalDuration(TimeUnit unit) {
+    /**
+     * Retourne la durée totale passé sur ce jeu (fais la somme des durées totales
+     * de toutes les runs/parties).
+     * @param unit l'unité de temps dans laquelle calculer la durée totale
+     * @return la durée totale passé sur ce jeu en float (float pour les heures)
+     * @see statsmorts.classes.Run#getTotalDuration(TimeUnit) 
+     */
+    public float getTotalDuration(final TimeUnit unit) {
         float res = 0;
         Set<Entry<Long,Run>> runsSet = runs.entrySet();
         for (Entry<Long,Run> runEntry : runsSet) {
@@ -94,6 +161,12 @@ public class Jeu implements FillDataset, Comparable {
         return res;
     }
     
+    /**
+     * Retourne le nombre total de lives passé sur ce jeu (fais la somme des lives
+     * totaux de toutes les runs/parties).
+     * @return le nombre total de lives passé sur ce jeu
+     * @see statsmorts.classes.Run#lives
+     */
     public int getTotalLives() {
         int res = 0;
         Set<Entry<Long,Run>> runsSet = runs.entrySet();
@@ -103,6 +176,12 @@ public class Jeu implements FillDataset, Comparable {
         return res;
     }
     
+    /**
+     * Retourne le nombre de morts sur ce jeu (fais la somme des morts dans toutes
+     * les runs/parties).
+     * @return le nombre de morts sur ce jeu
+     * @see statsmorts.classes.Run#getTotalMorts()
+     */
     public int getTotalMorts() {
         int res = 0;
         Set<Entry<Long,Run>> runsSet = runs.entrySet();
@@ -112,7 +191,13 @@ public class Jeu implements FillDataset, Comparable {
         return res;
     }
     
-    public float getMoyenneDureeVie(TimeUnit unit) {
+    /**
+     * Retourne en float la moyenne des durées de vie sur ce jeu (fais la moyenne
+     * des moyennes de durée de vie des runs de ce jeu) en unité de temps 'unit'
+     * @param unit l'unité de temps dans laquelle calculer la moyenne
+     * @return la moyenne des durées de vie sur ce jeu
+     */
+    public float getMoyenneDureeVie(final TimeUnit unit) {
         float moyenneDesMoyennes = 0, sommeDureeVie = 0, moyenne, sommeMoyennes = 0;
         int count = 0;
         TreeSet<Live> livesTreeSet = new TreeSet();
@@ -130,6 +215,12 @@ public class Jeu implements FillDataset, Comparable {
         return moyenneDesMoyennes;
     }
     
+    /**
+     * Retourne une chaîne de caractères qui liste les plateformes sur lesquelles
+     * le jeu est sorti.
+     * @return une chaîne de caractères qui liste les plateformes sur lesquelles
+     * le jeu est sorti
+     */
     private String plateformesToString() {
         String res = "Plateformes : ";
         Set<Entry<Long,Plateforme>> plateformesSet = plateformes.entrySet();
@@ -141,12 +232,16 @@ public class Jeu implements FillDataset, Comparable {
                 res += ", ";
             }
         }
-        res += "\n";
+        res += TexteConstantes.NEW_LINE;
         return res;
     }
     
+    /**
+     * Retourne une chaîne de caractères qui liste les genres du jeu.
+     * @return une chaîne de caractères qui liste les genres du jeu
+     */
     private String genresToString() {
-        String res = "Genres : ";
+        String res = TexteConstantes.GENRES + " : ";
         Set<Entry<Long,Genre>> genresSet = genres.entrySet();
         Iterator<Entry<Long,Genre>> genresIterator = genresSet.iterator();
         while (genresIterator.hasNext()) {
@@ -156,42 +251,62 @@ public class Jeu implements FillDataset, Comparable {
                 res += ", ";
             }
         }
-        res += "\n";
+        res += TexteConstantes.NEW_LINE;
         return res;
     }
     
+    /**
+     * Retourne une chaîne de caractères représentant le jeu, avec ses attributs
+     * et des variables calculées (les durées, durées de vie moyennes, morts etc).
+     * Utilisée par la méthode getInformations de l'interface Informations.
+     * @return une chaîne de caractères représentant le jeu
+     * @see statsmorts.vue.Informations#getInformations()
+     */
     @Override
     public String toString() {
-        String res = "Titre : " + titre + "\n"
-                + "" + studio.toString() + "\n"
-                + "Année de sortie : " + anneeSortie + "\n";
+        String res = TexteConstantes.TITRE + " : " + titre + TexteConstantes.NEW_LINE
+                + "" + studio.toString() + TexteConstantes.NEW_LINE
+                + "Année de sortie : " + anneeSortie + TexteConstantes.NEW_LINE;
         res += plateformesToString();
-        res += genresToString() + "\n";
-        res += "Total de runs : " + runs.size() + "\n";
-        res += "Total de lives : " + getTotalLives() + "\n\n";
+        res += genresToString() + TexteConstantes.NEW_LINE;
+        res += "Total de runs : " + runs.size() + TexteConstantes.NEW_LINE;
+        res += "Total de lives : " + getTotalLives() + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
         float dureeTotaleHeures = getTotalDuration(TimeUnit.HOURS);
         float dureeTotaleMinutes = getTotalDuration(TimeUnit.MINUTES);
-        res += "Durée totale : " + dureeTotaleHeures + " heures\n";
-        res += "Durée totale : " + (int)dureeTotaleHeures + "h" + (int)(dureeTotaleMinutes % 60) + "m\n";
-        res += "Durée totale : " + dureeTotaleMinutes + " minutes\n\n";
+        res += "Durée totale : " + dureeTotaleHeures + " heures" + TexteConstantes.NEW_LINE;
+        res += "Durée totale : " + (int)dureeTotaleHeures + "h" + (int)(dureeTotaleMinutes % 60) + "m" + TexteConstantes.NEW_LINE;
+        res += "Durée totale : " + dureeTotaleMinutes + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
         int totalMorts = getTotalMorts();
-        res += "Total de morts : " + totalMorts + "\n\n";
-        res += "Durée de vie moyenne : " + (dureeTotaleHeures / ((float)totalMorts + 1)) + " heures\n";
-        res += "Durée de vie moyenne : " + (dureeTotaleMinutes / ((float)totalMorts + 1)) + " minutes\n\n";
-        res += "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.HOURS) + " heures\n";
-        res += "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.MINUTES) + " minutes\n\n";
+        res += "Total de morts : " + totalMorts + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
+        res += "Durée de vie moyenne : " + (dureeTotaleHeures / ((float)totalMorts + 1)) + " heures" + TexteConstantes.NEW_LINE;
+        res += "Durée de vie moyenne : " + (dureeTotaleMinutes / ((float)totalMorts + 1)) + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
+        res += "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.HOURS) + " heures" + TexteConstantes.NEW_LINE;
+        res += "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.MINUTES) + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
         return res;
     }
     
+    
     //MUTATEURS
-    public void renommer(String nouveauTitre) {
+    /**
+     * Renomme le jeu.
+     * @param nouveauTitre le nouveau titre du jeu
+     */
+    public void renommer(final String nouveauTitre) {
         this.titre = nouveauTitre;
     }
     
-    public void setAnneeSortie(int anneeSortie) {
+    /**
+     * Change l'année de sortie du jeu.
+     * @param anneeSortie la nouvelle année de sortie du jeu
+     */
+    public void setAnneeSortie(final int anneeSortie) {
         this.anneeSortie = anneeSortie;
     }
     
+    /**
+     * Supprime les occurrences de ce jeu dans les plateformes sur lesquelles il
+     * est sorti puis vide la map des plateformes du jeu.
+     */
     public void clearPlateformes() {
         Set<Entry<Long, Plateforme>> setPlateformes = plateformes.entrySet();
         for (Entry<Long, Plateforme> entry : setPlateformes) {
@@ -200,6 +315,10 @@ public class Jeu implements FillDataset, Comparable {
         plateformes.clear();
     }
     
+    /**
+     * Supprime lzs occurrences de ce jeu dans les genres du jeu puis vide la map
+     * des genres du jeu.
+     */
     public void clearGenres() {
         Set<Entry<Long, Genre>> setGenres = genres.entrySet();
         for (Entry<Long, Genre> entry : setGenres) {
@@ -208,59 +327,103 @@ public class Jeu implements FillDataset, Comparable {
         genres.clear();
     }
     
-    public void setStudio(Studio studio) {
+    /**
+     * Supprime l'occurrence de ce jeu dans le studio du jeu, puis change le studio
+     * du jeu par le studio 'studio'.
+     * @param studio le nouveau studio du jeu
+     */
+    public void setStudio(final Studio studio) {
         if(null != this.studio) {
             this.studio.supprimerJeu(id);
         }
         this.studio = studio;
     }
     
-    public void ajouterPlateforme(Plateforme plateforme) {
+    /**
+     * Ajoute une plateforme à la map des plateformes de ce jeu.
+     * @param plateforme la plateforme à ajouter
+     */
+    public void ajouterPlateforme(final Plateforme plateforme) {
         plateformes.put(plateforme.getID(),plateforme);
     }
     
-    public void supprimerPlateforme(long idPlateforme) {
+    /**
+     * Supprime l'occurrence de ce jeu dans la plateforme dont l'identifiant est 
+     * 'idPlateforme' puis supprime cette plateforme de la map du jeu.
+     * @param idPlateforme l'identifiant de la plateforme à supprimer
+     */
+    public void supprimerPlateforme(final long idPlateforme) {
+        plateformes.get(idPlateforme).supprimerJeu(id);
         plateformes.remove(idPlateforme);
     }
     
-    public void ajouterGenre(Genre genre) {
+    /**
+     * Ajout un genre à la map des genres de ce jeu.
+     * @param genre le genre à ajouter
+     */
+    public void ajouterGenre(final Genre genre) {
         genres.put(genre.getID(),genre);
     }
     
-    public void supprimerGenre(long idGenre) {
+    /**
+     * Supprime l'occurrence de ce jeu dans le genre dont l'identifiant est
+     * 'idGenre' puis supprime le genre de la map du jeu.
+     * @param idGenre l'identifiant du genre à supprimer
+     */
+    public void supprimerGenre(final long idGenre) {
+        genres.get(idGenre).supprimerJeu(id);
         genres.remove(idGenre);
     }
     
-    public void ajouterRun(Run run) {
+    /**
+     * Ajoute une run à la map des runs de ce jeu.
+     * @param run la run à ajouter
+     */
+    public void ajouterRun(final Run run) {
         runs.put(run.getID(),run);
     }
     
-    public void supprimerRun(long idRun) {
+    /**
+     * Supprime la run dont l'identifiant est 'idRun'.
+     * @param idRun l'identifiant de la run à supprimer
+     */
+    public void supprimerRun(final long idRun) {
         runs.remove(idRun);
     }
     
     /**
-     * Supprime toutes les occurences de ce jeu dans tous les plateformes, genres
-     * et et studio lié à ce jeu.
+     * Supprime toutes les occurrences de ce jeu dans tous les plateformes, genres
+     * et studio liés à ce jeu.
      */
     public void supprimerJeu() {
         clearPlateformes();
         clearGenres();
-        studio.supprimerJeu(id);
+        if (null != studio) {
+            studio.supprimerJeu(id);
+        }
     }
     
     
     //INTERFACE FILLDATASET
+    /**
+     * @inheritDoc
+     */
     @Override
     public String getTitre() {
         return titre;
     }
     
+    /**
+     * @inheritDoc
+     */
     @Override
     public String getTitreDataset() {
         return titre;
     }
     
+    /**
+     * @inheritDoc
+     */
     @Override
     public ArrayList<Live> getLivesList() {
         ArrayList<Live> livesList = new ArrayList();
@@ -271,6 +434,9 @@ public class Jeu implements FillDataset, Comparable {
         return livesList;
     }
     
+    /**
+     * @inheritDoc
+     */
     @Override
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
         ArrayList<Live> livesList = this.getLivesList();
@@ -303,6 +469,9 @@ public class Jeu implements FillDataset, Comparable {
     
     
     //INTERFACE COMPARABLE
+    /**
+     * @inheritDoc
+     */
     @Override
     public int compareTo(Object o) {
         if (o instanceof Jeu){
