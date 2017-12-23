@@ -20,16 +20,26 @@ import statsmorts.classes.TypeGroup;
 
 
 /**
- *
+ * Une classe pour gérer les préférences de l'application.
  * @author Robin
  */
 public class Preferences {
     
     //ATTRIBUTS
+    /**
+     * L'objet Ini pour gérer les préférences.
+     */
     private Ini ini;
+    /**
+     * Le fichier de préférences.
+     */
     private File filePreferences;
     
     //CONSTRUCTEURS
+    /**
+     * Crée une objet Preferences avec comme fichier filePreferences.
+     * @param filePreferences le fichier des préférences
+     */
     public Preferences(File filePreferences) {
         this.filePreferences = filePreferences;
         boolean created = false;
@@ -61,6 +71,10 @@ public class Preferences {
     
     
     //ACCESSEURS
+    /**
+     * Retourne une chaîne de caractères qui représente l'objet Preferences.
+     * @return une chaîne de caractères qui représente l'objet Preferences
+     */
     @Override
     public String toString() {
         String res = "Base de données : " + getBDDFichier() + "\n";
@@ -68,36 +82,80 @@ public class Preferences {
         return res;
     }
     
+    /**
+     * Retourne le type de base de données préféré (serveur / fichier)
+     * @return le type de base de données préféré (serveur / fichier)
+     */
     public TypeServeurFichier getType() {
         return TypeServeurFichier.valueOf(ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.TYPE));
     }
+    /**
+     * Retourne le chemin de la base de données fichier dans les préférences.
+     * @return le chemin de la base de données fichier dans les préférences
+     */
     public String getBDDFichier() {
         return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.BDD_FICHIER);
     }
+    /**
+     * Retourne le type de serveur en chaîne de caractères (MySQL / PostgreSQL)
+     * dans les préférences.
+     * @return  le type de serveur en chaîne de caractères (MySQL / PostgreSQL)
+     */
     public String getTypeServeur() {
         return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.TYPE_SERVEUR);
     }
+    /**
+     * Retourne l'adresse du serveur dans les préférences.
+     * @return l'adresse du serveur dans les préférences
+     */
     public String getAdresse() {
         return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.ADRESSE);
     }
+    /**
+     * Retourne le numéro de port du serveur dans les préférences.
+     * @return le numéro de port du serveur dans les préférences
+     */
     public String getPort() {
         return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.PORT);
     }
+    /**
+     * Retouurne la base de données à laquelle se connecter sur le serveur dans 
+     * les préférences.
+     * @return la base de donnée à laquelle se connecter sur le serveur dans
+     * les préférences
+     */
     public String getBDDServeur() {
         return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.BDD_SERVEUR);
     }
+    /**
+     * Retourne l'utilisateur à utiliser pour le serveur dans les préférences.
+     * @return l'utilisateur à utiliser pour le serveur dans les préférences
+     */
     public String getUtilisateur() {
         return ini.fetch(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.UTILISATEUR);
     }
+    /**
+     * Retourne le type de groupement des jeux par défaut pour l'affichage dans les préférences.
+     * @return le type de groupement des jeux par défaut pour l'affichage dans les préférences
+     */
     public TypeGroup getAffichageGroup() {
         return TypeGroup.valueOf(ini.fetch(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_GROUPE));
     }
+    /**
+     * Retourne le type de temps à afficher par défaut pour l'affichage du temps
+     * dans les préférences.
+     * @return le type de temps à afficher par défaut pour l'affichage du temps
+     * dans les préférences
+     */
     public Temps getAffichageTemps() {
         return Temps.valueOf(ini.fetch(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_TEMPS));
     }
     
     
     //MUTATEURS
+    /**
+     * Recharge le fichier ini.
+     */
     public void load() {
         try {
             ini.load();
@@ -106,34 +164,73 @@ public class Preferences {
         }
     }
     
+    /**
+     * Met le type de base de données serveur/fichier dans les préférences.
+     * @param type le type de base de données serveur/fichier
+     */
     public void setType(TypeServeurFichier type) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.TYPE, type);
     }
+    /**
+     * Met la base de données fichier dans les préférences.
+     * @param path le chemin de la base de données
+     */
     public void setBDDFichier(String path) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.BDD_FICHIER, path);
     }
+    /**
+     * Met le type de serveur dans les préférences.
+     * @param type le type de serveur
+     */
     public void setTypeServeur(String type) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.TYPE_SERVEUR, type);
     }
+    /**
+     * Met l'adresse du serveur de base de données dans les préférences.
+     * @param adresse l'adresse du serveur
+     */
     public void setAdresse(String adresse) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.ADRESSE, adresse);
     }
+    /**
+     * Met le numéro de port du serveur de base de données dans les préférences.
+     * @param port le numéro du port du serveur de base de données
+     */
     public void setPort(int port) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.PORT, port);
     }
+    /**
+     * Met la base de données du serveur de base de données dans les préférences.
+     * @param bdd le nom de la base de données du serveur
+     */
     public void setBDDServeur(String bdd) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.BDD_SERVEUR, bdd);
     }
+    /**
+     * Met l'utilisateur du serveur de base de données dans les préférences.
+     * @param user l'utilisateur du serveur
+     */
     public void setUtilisateur(String user) {
         ini.put(TexteConstantesPreferences.BASE_DE_DONNEES, TexteConstantesPreferences.UTILISATEUR, user);
     }
+    /**
+     * Met le groupement pour l'affichage dans les préférences.
+     * @param group le groupement d'affichage
+     */
     public void setAffichageGroup(TypeGroup group) {
         ini.put(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_GROUPE, group);
     }
+    /**
+     * Met le type d'affichage du temps dans les préférences.
+     * @param temps le type d'affichage du temps
+     */
     public void setAffichageTemps(Temps temps) {
         ini.put(TexteConstantesPreferences.AFFICHAGE, TexteConstantesPreferences.AFFICHAGE_TEMPS, temps);
     }
     
+    /**
+     * Sauvegarde les préférences.
+     */
     public void savePreferences() {
         try {
             ini.store();
@@ -143,6 +240,9 @@ public class Preferences {
         
     }
     
+    /**
+     * Crée le fichier de préférences et l'intialise avec quelques valeurs par défaut. 
+     */
     public void createPreferencesFile() {
         ini.clear();
         ini.setFile(filePreferences);
@@ -180,6 +280,9 @@ public class Preferences {
         }
     }
     
+    /**
+     * Détruit le fichier de préférences.
+     */
     public void destroyPreferencesFile() {
         filePreferences.delete();
     }

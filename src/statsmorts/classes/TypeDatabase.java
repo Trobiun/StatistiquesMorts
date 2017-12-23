@@ -48,11 +48,24 @@ public enum TypeDatabase {
     
     
     //CONSTRUCTEUR
+    /**
+     * Crée un objet de l'énumération avec le driver, suffixe et préfixe pour
+     * se connecter avec ld jdbc approprié.
+     * @param driver le driver du jdbc à utiliser
+     * @param prefixe le préfixe à mettre avant le nom de la base de données
+     * @param suffixe le suffixe à mettre après le nom de la base de données
+     */
     private TypeDatabase(String driver, String prefixe, String suffixe) {
         this.driver = driver;
         this.prefixe = prefixe;
         this.suffixe = suffixe;
     }
+    /**
+     * Crée un objet de l'énumération avec le driver, suffixe et préfixe pour
+     * se connecter avec ld jdbc approprié avec un suffixe vide.
+     * @param driver le driver du jgbc à utiliser
+     * @param prefixe le préfixe à mettre avant le nom de la base de données
+     */
     private TypeDatabase(String driver, String prefixe) {
         this(driver,prefixe,"");
     }

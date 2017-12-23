@@ -8,6 +8,7 @@ package statsmorts.classes;
 /**
  * Une énumération pour déterminer les types d'objets à remplir par des saisies
  * utilisateur très basiques (qui ne possèdent qu'un nom).
+ * Valeurs possibles : PLATEFORMES, GENRES, STUDIOS
  * @author robin
  */
 public enum TypeBasicInputs {
