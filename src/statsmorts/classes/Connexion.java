@@ -229,25 +229,6 @@ public class Connexion {
                 //mise en place des paramètres pour le PreparedStatement
                 preparedSetParameters(preparedStatement, args);
                 
-//                for (int i = 0; i < args.length; i++) {
-//                    if (args[i].startsWith("(int)")) {
-//                        preparedStatement.setInt(i+1, Integer.parseInt(args[i].replace("(int)","")));
-//                    }
-//                    else {
-//                        if (args[i].startsWith("(bool)")) {
-//                            preparedStatement.setBoolean(i+1, Boolean.parseBoolean(args[i].replace("(bool)","")));
-//                        }
-//                        else {
-//                            if (args[i].startsWith("(long)")) {
-//                                preparedStatement.setLong(i+1,Long.parseLong(args[i].replace("(long)","")));
-//                            }
-//                            else {
-//                                preparedStatement.setString(i+1, args[i]);
-//                            }
-//                        }
-//                    }
-//                }
-                
                 res = preparedStatement.executeUpdate();
 //                preparedStatement.close();
             } catch (SQLException ex) {
