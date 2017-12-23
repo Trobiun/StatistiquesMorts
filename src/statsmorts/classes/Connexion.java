@@ -6,7 +6,8 @@
 package statsmorts.classes;
 
 /**
- *
+ * Une classe pour gérer la connexion à une base de données et faire les requêtes
+ * sur cette base de données.
  * @author Robin
  */
 
@@ -14,14 +15,36 @@ import java.sql.*;
 import java.util.Properties;
 import java.util.logging.*;
 import org.sqlite.SQLiteConfig;
+import statsmorts.constantes.TexteConstantesConnexion;
 
 public class Connexion {
     
     //ATTRIBUTS
+    /**
+     * Le type de la base de données.
+     * @see TypeDatabase
+     */
     private TypeDatabase type;
+    /**
+     * Le chemin complet pour la base de données avec le préfixe et suffixe du jcbc.
+     * @see TypeDatabase
+     */
     private String database;
+    /**
+     * La connexion établie avec la base de données.
+     * @see Connection
+     */
     private Connection connexion;
+    /**
+     * L'objet qui permet d'exécuter les requêtes simples.
+     * @see Statement
+     */
     private Statement statement;
+    /**
+     * L'objet qui permet d'exécuter des requêtes préparées. Utilisé pour les SELECT
+     * ou pour les UPDATE/INSERT/DELETE.
+     * @see PreparedStatement
+     */
     private PreparedStatement preparedStatement;
     
     //CONSTRUCTEUR
@@ -31,27 +54,54 @@ public class Connexion {
     
     
     //ACCESSSEURS
+    /**
+     * Retourne le type de la base de données connectée.
+     * @return le type de la base de données connectée
+     */
     public TypeDatabase getType() {
         return type;
     }
     
+    /**
+     * Retourne le statement simple pour exécuter les requêtes simples.
+     * @return le statement pour les requêtes simples
+     */
     public Statement getStatement() {
         return statement;
     }
     
+    /**
+     * Retourne le PreparedStatement utilisé pour les requêtes préparées. Utilisé
+     * pour obtenir l'identifiant de la dernière requête d'insertion.
+     * @return le PreparedStatement pour les requêtes préparées
+     */
     public PreparedStatement getPreparedStatement() {
         return preparedStatement;
     }
     
     //MUTATEURS
+    /**
+     * Modifie le type de base de données sur laquelle se connecter.
+     * @param type le nouveau type de la base de données
+     * @see TypeDatabase
+     */
     private void setType(TypeDatabase type) {
         this.type = type;
     }
     
+    /**
+     * Modifie le chemin de la base de données sur laquelle se connecter.
+     * @param db la nouvelle  base de données
+     */
     private void setDatabase(String db) {
         database = db;
     }
     
+    /**
+     * Initialise la connexion avec la base de données avec les propriétés "properties".
+     * @param properties les propriétés avec lesquelles se connecter (utilisateur
+     * ,mot de passe, et autres)
+     */
     private void setConnection(Properties properties) {
         try {
             Class.forName(type.getDriver());
@@ -67,6 +117,10 @@ public class Connexion {
         }
     }
     
+    /**
+     * Se connecte à une base de données (fichier) dont le chemin est path.
+     * @param path le chemin de la base de données
+     */
     public void connecter(String path) {
         String lowerCase = path.toLowerCase();
         boolean isAccess = lowerCase.endsWith(".accdb") || lowerCase.endsWith(".mdb");
@@ -100,6 +154,15 @@ public class Connexion {
         }
     }
     
+    /**
+     * Se connecte à une base de données (serveur) avec le type, l'adresse de la
+     * base de données, l'utilisateur et le mot de passe.
+     * @param type le type de la base de données (serveur)
+     * @param serveur l'adresse de la base de données serveur (dont le nom de la
+     * base de données à laquelle se connecter
+     * @param user l'utilisateur utilisé pour se connecter
+     * @param password le mot de passe de l'utilisateur
+     */
     public void connecter(TypeDatabase type, String serveur, String user, char[] password) {
         setType(type);
         setDatabase(type.getPrefixe() + serveur + type.getSuffixe());
@@ -114,18 +177,29 @@ public class Connexion {
         }
     }
     
+    /**
+     * Prépare les paramètres pour une requête préparée.
+     * @param prepared le PreparedStatement à préparer
+     * @param args les arguments à mettre dans le PreparedStatement en String
+     * @throws SQLException 
+     */
     private void preparedSetParameters(PreparedStatement prepared, String ... args) throws SQLException {
         //mise en place des paramètres pour le PreparedStatement
         for (int i = 0; i < args.length; i++) {
-            if (args[i].startsWith("(int)")) {
-                prepared.setInt(i+1, Integer.parseInt(args[i].replace("(int)","")));
+            if (args[i].startsWith(TexteConstantesConnexion.BOOL)) {
+                prepared.setBoolean(i+1, Boolean.parseBoolean(args[i].replace(TexteConstantesConnexion.BOOL,"")));
             }
             else {
-                if (args[i].startsWith("(bool)")) {
-                    prepared.setBoolean(i+1, Boolean.parseBoolean(args[i].replace("(bool)","")));
+                if (args[i].startsWith(TexteConstantesConnexion.INT)) {
+                    prepared.setInt(i+1, Integer.parseInt(args[i].replace(TexteConstantesConnexion.INT, "")));
                 }
                 else {
-                    prepared.setString(i+1, args[i]);
+                    if (args[i].startsWith(TexteConstantesConnexion.LONG)) {
+                         prepared.setLong(i+1, Long.parseLong(args[i].replace(TexteConstantesConnexion.LONG,"")));
+                    }
+                    else {
+                        prepared.setString(i+1, args[i]);
+                    }
                 }
             }
         }
@@ -153,24 +227,26 @@ public class Connexion {
             try {
                 preparedStatement = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
                 //mise en place des paramètres pour le PreparedStatement
-                for (int i = 0; i < args.length; i++) {
-                    if (args[i].startsWith("(int)")) {
-                        preparedStatement.setInt(i+1, Integer.parseInt(args[i].replace("(int)","")));
-                    }
-                    else {
-                        if (args[i].startsWith("(bool)")) {
-                            preparedStatement.setBoolean(i+1, Boolean.parseBoolean(args[i].replace("(bool)","")));
-                        }
-                        else {
-                            if (args[i].startsWith("(long)")) {
-                                preparedStatement.setLong(i+1,Long.parseLong(args[i].replace("(long)","")));
-                            }
-                            else {
-                                preparedStatement.setString(i+1, args[i]);
-                            }
-                        }
-                    }
-                }
+                preparedSetParameters(preparedStatement, args);
+                
+//                for (int i = 0; i < args.length; i++) {
+//                    if (args[i].startsWith("(int)")) {
+//                        preparedStatement.setInt(i+1, Integer.parseInt(args[i].replace("(int)","")));
+//                    }
+//                    else {
+//                        if (args[i].startsWith("(bool)")) {
+//                            preparedStatement.setBoolean(i+1, Boolean.parseBoolean(args[i].replace("(bool)","")));
+//                        }
+//                        else {
+//                            if (args[i].startsWith("(long)")) {
+//                                preparedStatement.setLong(i+1,Long.parseLong(args[i].replace("(long)","")));
+//                            }
+//                            else {
+//                                preparedStatement.setString(i+1, args[i]);
+//                            }
+//                        }
+//                    }
+//                }
                 
                 res = preparedStatement.executeUpdate();
 //                preparedStatement.close();
