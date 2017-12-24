@@ -26,30 +26,67 @@ import statsmorts.constantes.TexteConstantes;
 import statsmorts.constantes.TexteConstantesBDD;
 
 /**
- *
+ * Une classe pour les options en rapport avec la base de données.
  * @author Robin
  */
 public class BDDOptions extends JPanel {
     
     //ATTRIBUTS
+    /**
+     * Le panel pour les options base de données.
+     */
     private JPanel panelBaseDonnees;
+    /**
+     * Le panel pour le fichier de base de données.
+     */
     private JPanel panelFichier;
+    /**
+     * Le panel pour le serveur de base de données.
+     */
     private JPanel panelServeur;
+    /**
+     * Le panel pour le type de base de données.
+     */
     private JPanel panelType;
     
+    /**
+     * Le ButtonGroup pour le type de base de données (fichier/serveur)
+     */
     private ButtonGroup groupTypeDatabase;
+    /**
+     * Le RadioButton pour la base de données fichier.
+     */
     private JRadioButton radioFichier;
+    /**
+     * Le RadioButton pour la base de données serveur.
+     */
     private JRadioButton radioServeur;
     
+    /**
+     * Le fileChooser pour la base de données fichier.
+     */
     private FileChooser fileChooser;
     
+    /**
+     * Le bouton pour afficher les options d serveur.
+     */
     private JButton buttonServeur;
     
+    /**
+     * Les préférences.
+     */
     private final Preferences preferences;
+    /**
+     * Le panel des options du serveur.
+     */
     private final ServeurOptions serveurOptions;
     
     
     //CONSTRUCTEUR
+    /**
+     * Crée le panel pour les options de base de données.
+     * @param prefs les préférences
+     */
     public BDDOptions(Preferences prefs) {
         super(new BorderLayout());
         
@@ -62,6 +99,10 @@ public class BDDOptions extends JPanel {
     
     
     //ACCESSEURS
+    /**
+     * Retourne le type de base de données (serveur/fichier) sélectionné.
+     * @return le type de base de données (serveur/fichier) sélectionné
+     */
     public TypeServeurFichier getType() {
         if (radioServeur.isSelected()) {
             return TypeServeurFichier.SERVEUR;
@@ -71,36 +112,67 @@ public class BDDOptions extends JPanel {
         }
     }
     
+    /**
+     * Retourne le chemin de la base de données fichier du FilChooser.
+     * @return le chemin de la base de données fichier
+     */
     public String getBDDFichier() {
         return fileChooser.getPath();
     }
     
+    /**
+     * Retourne le panel des options du serveur.
+     * @return les options du serveur
+     */
     public ServeurOptions getServeurOptions() {
         return serveurOptions;
     }
     
+    /**
+     * Retourne le type de serveur sélectionné dans les options de serveur.
+     * @return le type de serveur sélectionné
+     */
     public String getTypeServeur() {
         return serveurOptions.getType();
     }
     
+    /**
+     * Retourne l'adresse du serveur dans les options de serveur.
+     * @return l'adresse du serveur
+     */
     public String getAdresse() {
         return serveurOptions.getAdresse();
     }
     
+    /**
+     * Retourne le numéro de port du serveur dans les options de serveur.
+     * @return le numéro de port du serveur
+     */
     public int getPort() {
         return serveurOptions.getPort();
     }
     
+    /**
+     * Retourne l'utilisateur du serveur dans les options de serveur.
+     * @return l'utilsiateur du serveur
+     */
     public String getUtilisateur() {
         return serveurOptions.getUtilisateur();
     }
     
+    /**
+     * Retourne la base de données du serveur dans les options de serveur.
+     * @return la base de données du serveur
+     */
     public String getBDDServeur() {
         return serveurOptions.getBaseDonnees();
     }
     
     
     //MUTATEURS PRIVÉS
+    /**
+     * Initialise tous les composants graphiques.
+     */
     private void initAll() {
         initPanels();
         initFileChooser();
@@ -108,6 +180,9 @@ public class BDDOptions extends JPanel {
         initButtonGroup();
         initButtons();
     }
+    /**
+     * Initialise les panels.
+     */
     private void initPanels() {
         panelBaseDonnees = new JPanel(new GridBagLayout());
         panelBaseDonnees.setBorder(new TitledBorder(TexteConstantesBDD.BDD));
@@ -121,6 +196,9 @@ public class BDDOptions extends JPanel {
         panelType = new JPanel(new GridLayout(3,1));
         panelType.setBorder(new TitledBorder(BorderFactory.createEmptyBorder(),TexteConstantesBDD.TYPE));
     }
+    /**
+     * Initialise le FileChooser
+     */
     private void initFileChooser() {
         if(preferences.getBDDFichier() != null) {
             fileChooser = new FileChooser(TexteConstantes.EMPTY, preferences.getBDDFichier(), JFileChooser.FILES_ONLY, JFileChooser.OPEN_DIALOG,true);
@@ -131,24 +209,39 @@ public class BDDOptions extends JPanel {
         
         fileChooser.setFilter(new FileNameExtensionFilter(TexteConstantesBDD.BDD + " " + TexteConstantesBDD.EXTENSIONS_BDD,"accdb","mdb","db","sdb","sqlite","db2","s2db","sqlite2","sl2","db3","s3db","sqlite3","sl3"),"sqlite3");
     }
+    /**
+     * Initialise les RadioButtons.
+     */
     private void initRadioButtons() {
         radioFichier = new JRadioButton(TexteConstantesPreferences.FICHIER);
         radioServeur = new JRadioButton(TexteConstantesPreferences.SERVEUR);
         
         setType(preferences.getType());
     }
+    /**
+     * Initialise le ButtonGroup.
+     */
     private void initButtonGroup() {
         groupTypeDatabase = new ButtonGroup();
     }
+    /**
+     * Initialise les boutons.
+     */
     private void initButtons() {
         buttonServeur = new JButton(TexteConstantesPreferences.CONFIGURER);
         buttonServeur.addActionListener(new ServeurListener());
     }
     
+    /**
+     * Met les RadioButton dans le ButtonGroup.
+     */
     private void setButtonGroups() {
         groupTypeDatabase.add(radioFichier);
         groupTypeDatabase.add(radioServeur);
     }
+    /**
+     * Met les composants les uns dans les autres puis les met dans ce panel.
+     */
     private void setComponents() {
         setButtonGroups();
         
@@ -181,14 +274,24 @@ public class BDDOptions extends JPanel {
     
     
     //MUTATEURS PUBLICS
+    /**
+     * Remet les options en comme dans les préférences.
+     */
     public void reset() {
         resetServeurOptions();
         fileChooser.setText(preferences.getBDDFichier());
         setType(preferences.getType());
     }
+    /**
+     * Remet les optios du serveur comme dans les préférences.
+     */
     public void resetServeurOptions() {
         serveurOptions.reset();
     }
+    /**
+     * Sélectionne le RadioButton approprié par rapport au type passé en paramètre.
+     * @param type le type de fichier/serveur à sélectionner
+     */
     private void setType(TypeServeurFichier type) {
         switch (type) {
             case SERVEUR :
@@ -201,6 +304,9 @@ public class BDDOptions extends JPanel {
     
     
     //LISTENER
+    /**
+     * Une classe pour afficher les options du serveur.
+     */
     class ServeurListener implements ActionListener {
         
         @Override

@@ -25,7 +25,7 @@ import statsmorts.constantes.TexteConstantes;
 import statsmorts.constantes.TexteConstantesBDD;
 
 /**
- *
+ * Une classe pour afficher un dialogue avec les options pour changer les préférences.
  * @author Robin
  */
 public class PreferencesDialog extends JDialog {
@@ -34,24 +34,71 @@ public class PreferencesDialog extends JDialog {
     private static final int HGAP = 10;
     private static final int VGAP = 5;
     //ATTRIBUTS
+    /**
+     * Les préférences.
+     */
     private final Preferences preferences;
+    /**
+     * Le controleur pour controler le modèle en fonction des changements dans
+     * les options.
+     */
     private final StatsMortsControler controler;
+    /**
+     * La fenêtre parent de ce dialog.
+     */
     private Fenetre fenetreParent;
     
+    /**
+     * Le type de base de données serveur/fichier.
+     */
     private TypeServeurFichier typeBDD;
+    /**
+     * Le type de serveur.
+     */
     private String typeServeur;
     
+    /**
+     * Le TabbedPane pour séparer les options de base de données à celles de
+     * de l'affichage.
+     */
     private JTabbedPane tabbedPane;
+    /**
+     * Le panel pour les options de base de données.
+     */
     private BDDOptions panelBDD;
+    /**
+     * Le panel pour les options d'affichage.
+     */
     private AffichageOptions panelAffichage;
+    /**
+     * Le panel pour les boutons.
+     */
     private JPanel panelBoutons;
     
+    /**
+     * Le bouton pour valider (appliquer les changements puis fermer le dialogue).
+     */
     private JButton valider;
+    /**
+     * Le bouton pour appliquer les changements mais garder le dialogue.
+     */
     private JButton appliquer;
+    /**
+     * Le bouton pour enlever les changement appliqués puis fermer le dialogue.
+     */
     private JButton annuler;
     
     
     //CONSTRUCTEUR
+    /**
+     * Crée une dialogue pour les options/préférences.
+     * @param parent la fenêtre parent
+     * @param title le titre du dialogue
+     * @param modal 
+     * @param controler le controleur pour appliquer les changements
+     * @param prefs le préférences pour les changer ou les lire
+     * 
+     */
     public PreferencesDialog(JFrame parent, String title, boolean modal, StatsMortsControler controler, Preferences prefs) {
         super(parent,title,modal);
         this.controler = controler;
@@ -73,6 +120,14 @@ public class PreferencesDialog extends JDialog {
         setLocationRelativeTo(parent);
         setResizable(false);
     }
+    /**
+     * Crée un dialogue pour les options/préférences.
+     * @param parent la fenêtre parent
+     * @param title le titre du dialogue
+     * @param modal
+     * @param controler le controleur pour appliquer les changements
+     * @param prefs les préférences pour les changes ou les lire
+     */
     public PreferencesDialog(Fenetre parent, String title, boolean modal, StatsMortsControler controler, Preferences prefs) {
         this((JFrame)parent, title, modal, controler, prefs);
         this.fenetreParent = parent;
@@ -83,10 +138,16 @@ public class PreferencesDialog extends JDialog {
     
     
     //MUTATEURS
+    /**
+     * Affiche le dialog
+     */
     public void showDialog() {
         setVisible(true);
     }
     
+    /**
+     * Met les composants les uns dans les autres puis dans ce dialogue.
+     */
     private void setComponents() {
         tabbedPane.add(TexteConstantesBDD.BDD, panelBDD);
         tabbedPane.add(TexteConstantes.AFFICHAGE,panelAffichage);
@@ -98,14 +159,23 @@ public class PreferencesDialog extends JDialog {
         }
     }
     
+    /**
+     * Initialise tous les composants graphiques.
+     */
     private void initAll() {
         initTabbedPane();
         initPanels();
         initButtons();
     }
+    /**
+     * Initialise le TabbedPane.
+     */
     private void initTabbedPane() {
         tabbedPane = new JTabbedPane();
     }
+    /**
+     * Initialise les panels.
+     */
     private void initPanels() {
         panelBDD = new BDDOptions(preferences);
         
@@ -114,6 +184,9 @@ public class PreferencesDialog extends JDialog {
         panelBoutons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelBoutons.setPreferredSize(new Dimension(480,40));
     }
+    /**
+     * Initialise les boutons et leur ajouté le listener.
+     */
     private void initButtons() {
         BoutonsListener boutonListener = new BoutonsListener();
         
@@ -126,8 +199,14 @@ public class PreferencesDialog extends JDialog {
     }
     
     //LISTENERS
+    /**
+     * Une classe pourr écouter les boutons.
+     */
     class BoutonsListener implements ActionListener {
        
+        /**
+         * Affiche un dialogue pour la connexion au serveur.
+         */
         private void showServeurConnectionDialog() {
             ServeurOptions options = panelBDD.getServeurOptions();
             options.setPasswordFieldVisible(true);
@@ -149,6 +228,14 @@ public class PreferencesDialog extends JDialog {
         }
         
         
+        /**
+         * Quand le bouton valider est appuyé : applique les changements puis
+         *      sauvegarde les préférences et ferme ce dialogue.
+         * Quand le bouton appliquer est appuyé : applique les changements
+         * Quand le bouton annuler est appuyé : réapplique les préférences
+         *      puis ferme ce dialogue.
+         * @param e 
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
@@ -169,6 +256,9 @@ public class PreferencesDialog extends JDialog {
             }
         }
         
+        /**
+         * Applique les changements dans le modèle et dans la vue.
+         */
         private void appliquer() {
             String pathBDD = panelBDD.getBDDFichier();
             File fileBDD = new File(pathBDD);
