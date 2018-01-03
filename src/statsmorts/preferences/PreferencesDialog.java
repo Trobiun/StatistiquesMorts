@@ -240,18 +240,18 @@ public class PreferencesDialog extends JDialog {
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
             if (src.equals(valider)) {
-                appliquer();
+                appliquer(false);
                 preferences.savePreferences();
                 setVisible(false);
             }
             if (src.equals(appliquer)) {
-                appliquer();
+                appliquer(false);
             }
             if (src.equals(annuler)) {
                 preferences.load();
                 panelBDD.reset();
                 panelAffichage.reset();
-                appliquer();
+                appliquer(true);
                 setVisible(false);
             }
         }
@@ -259,30 +259,33 @@ public class PreferencesDialog extends JDialog {
         /**
          * Applique les changements dans le modèle et dans la vue.
          */
-        private void appliquer() {
+        private void appliquer(boolean annulation) {
             String pathBDD = panelBDD.getBDDFichier();
             File fileBDD = new File(pathBDD);
             
-            boolean bddFichierChanged = !preferences.getBDDFichier().equals(pathBDD);
-            boolean typeBDDChanged = !preferences.getType().equals(panelBDD.getType());
-            boolean typeServeurChanged = !preferences.getTypeServeur().equals(panelBDD.getTypeServeur());
-            boolean adresseServeurChanged = !preferences.getAdresse().equals(panelBDD.getAdresse());
-            boolean portChanged = Integer.parseInt(preferences.getPort()) != panelBDD.getPort();
-            boolean bddServeurChanged = !preferences.getBDDServeur().equals(panelBDD.getBDDServeur());
-            boolean utilisateurChanged = !preferences.getUtilisateur().equals(panelBDD.getUtilisateur());
-            boolean affichageGroupChanged = !preferences.getAffichageGroup().equals(panelAffichage.getAffichageGroup());
-            boolean affichageTempsChanged = !preferences.getAffichageTemps().equals(panelAffichage.getAffichageTemps());
+            boolean bddFichierChanged = !preferences.getBDDFichier().equals(pathBDD) || annulation;
+            boolean typeBDDChanged = !preferences.getType().equals(panelBDD.getType()) || annulation;
+            boolean typeServeurChanged = !preferences.getTypeServeur().equals(panelBDD.getTypeServeur()) || annulation;
+            boolean adresseServeurChanged = !preferences.getAdresse().equals(panelBDD.getAdresse()) || annulation;
+            boolean portChanged = Integer.parseInt(preferences.getPort()) != panelBDD.getPort() || annulation;
+            boolean bddServeurChanged = !preferences.getBDDServeur().equals(panelBDD.getBDDServeur()) || annulation;
+            boolean utilisateurChanged = !preferences.getUtilisateur().equals(panelBDD.getUtilisateur()) || annulation;
+            boolean affichageGroupChanged = !preferences.getAffichageGroup().equals(panelAffichage.getAffichageGroup()) || annulation;
+            boolean affichageTempsChanged = !preferences.getAffichageTemps().equals(panelAffichage.getAffichageTemps()) || annulation;
             
-             boolean stateChanged = bddFichierChanged || 
-                    typeBDDChanged || 
-                    typeServeurChanged || 
-                    adresseServeurChanged || 
-                    portChanged || 
-                    bddServeurChanged || 
-                    utilisateurChanged || 
-                    affichageGroupChanged || 
-                    affichageTempsChanged;
-            
+            boolean stateChanged = bddFichierChanged
+                    || typeBDDChanged
+                    || typeServeurChanged
+                    || adresseServeurChanged
+                    || portChanged
+                    || bddServeurChanged
+                    || utilisateurChanged
+                    || affichageGroupChanged
+                    || affichageTempsChanged
+                    || annulation;
+            System.out.println(stateChanged);
+            System.out.println(pathBDD);
+            System.out.println(bddFichierChanged);
             if (stateChanged) {
                 preferences.setBDDFichier(pathBDD);
                 preferences.setType(panelBDD.getType());
@@ -295,7 +298,7 @@ public class PreferencesDialog extends JDialog {
                 preferences.setAffichageGroup(panelAffichage.getAffichageGroup());
                 preferences.setAffichageTemps(panelAffichage.getAffichageTemps());
                 
-                typeBDDChanged = !preferences.getType().equals(typeBDD);
+                typeBDDChanged = !preferences.getType().equals(typeBDD) || annulation;
                 
                 if (typeBDDChanged) {
                     typeBDD = panelBDD.getType();
@@ -330,7 +333,7 @@ public class PreferencesDialog extends JDialog {
                 else {
                     if (typeBDD.equals(TypeServeurFichier.FICHIER) && bddFichierChanged) {
                         if (controler != null) {
-                            if (fileBDD.isFile()) {
+                            if (fileBDD.exists()) {
                                 controler.ouvrirBDD(pathBDD);
                             }
                             else {
