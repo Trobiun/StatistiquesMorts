@@ -29,6 +29,7 @@ public final class TexteConstantesSQL {
     public static final String TABLE_JEUX_ID = "jeu_id";
     public static final String TABLE_JEUX_TITRE = "jeu_Titre";
     public static final String TABLE_JEUX_ANNEE_SORTIE = "jeu_AnneeSortie";
+    public static final String TABLE_JEUX_ID_STUDIO = "jeu_idStudio";
     
     public static final String TABLE_JEU_PLATEFORME = "JeuPlateforme";
     public static final String TABLE_JEU_PLATEFORME_ID_JEU = "jp_idJeu";
@@ -76,7 +77,7 @@ public final class TexteConstantesSQL {
     public static final String SELECT_STUDIOS = "SELECT * FROM Studios";
     public static final String SELECT_JEU_PLATEFORME = "SELECT * FROM JeuPlateforme";
     public static final String SELECT_JEU_GENRE = "SELECT * FROM JeuGenre";
-    public static final String SELECT_JEU__STUDIO = "SELECT * FROM JeuStudio";
+//    public static final String SELECT_JEU__STUDIO = "SELECT * FROM JeuStudio";
     public static final String SELECT_VUE_GLOBALE = "SELECT * FROM VueGlobale";
     public static final String SELECT_VUE_GLOBALE_SQL = "SELECT * FROM "
                                                          + TABLE_JEUX + " LEFT OUTER JOIN "

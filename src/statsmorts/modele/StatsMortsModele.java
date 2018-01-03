@@ -39,24 +39,53 @@ import statsmorts.classes.TypeBasicInputs;
 import statsmorts.constantes.TexteConstantesConnexion;
 
 /**
- *
+ * Une classe pour gérer la BDD et la vue.
  * @author Robin
  */
 public class StatsMortsModele implements Observable {
     
     //ATTRIBUTS
+    /**
+     * Les préférences.
+     */
     private final Preferences preferences;
+    /**
+     * La connexion pour les requêtes.
+     */
     private final Connexion connexion;
+    /**
+     * La BDD à gérer.
+     */
     private BDD bdd;
+    /**
+     * L'unité de temps dans laquelle calculer les données pour le dataset.
+     */
     private TimeUnit timeUnit;
-    private TreeSet<Live> livesForDataset;
+    /**
+     * Le TreeSet des lives pour afficher dans le dataset. Utilisation d'un
+     * TreeSet pour trier les lives en fonction de leur date.
+     */
+    private final TreeSet<Live> livesForDataset;
+    /**
+     * Le titre pour le dataset.
+     */
     private String titreForDataset;
+    /**
+     * Le TypeGroup pour l'affichage du dataset?
+     */
     private TypeGroup typeGroup;
     
+    /**
+     * L'observer à qui notifier les changements dans le modèle.
+     */
     private Observer observer;
     
     
     //CONSTRUCTEUR
+    /**
+     * Crée un modèle avec les préférences.
+     * @param prefs les préférences
+     */
     public StatsMortsModele(Preferences prefs) {
         connexion = new Connexion();
         preferences = prefs;
@@ -67,36 +96,52 @@ public class StatsMortsModele implements Observable {
     
     
     //ACCESSEURS
+    /**
+     * Retourne un booléen pour savoir si le modèle à un Observer ou non.
+     * @return un booléen à vrai si le modèle à un observer, faux sinon
+     */
     public boolean hasObserver() {
         return null != observer;
     }
     
     
     //MUTATEURS
+    /**
+     * Crée une base de données fichier.
+     * @param pathBDD le chemin de la base de données à créer
+     */
     public void creerBDD(String pathBDD) {
         deconnecter();
         bdd = BDD.creerBDD(connexion,pathBDD);
         actualiser();
     }
     
-    public void ouvrirBDD(String pathBDD) {
-        deconnecter();
-        bdd = new BDD(connexion,pathBDD);
-        actualiser();
-    }
-    
+    /**
+     * Se connecte à une base de données fichier.
+     * @param database la base de données
+     */
     public void connecter(String database) {
         deconnecter();
         bdd = new BDD(connexion,database);
         actualiser();
     }
     
+    /**
+     * Se connecte à une base de données serveur.
+     * @param type le type de la base de données
+     * @param serveur le serveur auquel se connecter (+ le nom de la base de données)
+     * @param user le no d'utilisateur à utiliser
+     * @param password le mot de passe à utiliser
+     */
     public void connecter(TypeDatabase type, String serveur, String user, char[] password) {
         deconnecter();
         bdd = new BDD(connexion, type, serveur, user, password);
         actualiser();
     }
     
+    /**
+     * Se déconnecte de la base de données.
+     */
     public void deconnecter() {
         connexion.deconnecter();
     }
@@ -104,6 +149,11 @@ public class StatsMortsModele implements Observable {
     
     //MÉTHODES DE GESTION DE LA BASE DE DONNÉES
     //GESTION BASIC INPUTS (PLATEFORMES, GENRES, STUDIOS)
+    /**
+     * Ajoute un objet "basique" (plateforme/genre/studio) dans la base de données.
+     * @param typeBasicInputs le type d'obejt à ajouter
+     * @param nom le nom de l'objet à ajouter
+     */
     public void ajouterBasicInputs(TypeBasicInputs typeBasicInputs, String nom) {
         String table = null;
         String table_nom = null;
@@ -154,6 +204,12 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * Modifie un objet "basique" (plateforme/genre/studio) dans la base de données.
+     * @param typeBasicInputs le type de l'objet à modifier
+     * @param id l'identifiant de l'obejt à modifier
+     * @param nom le nom de l'objet à modifier
+     */
     public void modifierBasicInputs(TypeBasicInputs typeBasicInputs, long id, String nom) {
         String table = null;
         String table_id = null;
@@ -198,6 +254,12 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * Supprime un objet "basique" (plateforme/genre) dans la base de données.
+     * Excepté pour les studios : il faut supprimer les jeux liés au studio AVANT.
+     * @param typeBasicInputs le type de l'objet à supprimer.
+     * @param id l'identifiant de l'objet à modifier
+     */
     public void supprimerBasicInputs(TypeBasicInputs typeBasicInputs, long id) {
         if(typeBasicInputs.equals(TypeBasicInputs.STUDIOS)) {
             supprimerStudio(id);
@@ -263,6 +325,10 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * Supprime un studio et tous les jeux liés au studio.
+     * @param idStudio l'identifiant du studio
+     */
     public void supprimerStudio(long idStudio) {
         long start = System.currentTimeMillis();
         String idStudioRequete = TexteConstantesConnexion.LONG + idStudio;
@@ -292,16 +358,27 @@ public class StatsMortsModele implements Observable {
         System.out.println((end - start) + "ms");
     }
     
+    /**
+     * Ajoute un jeu dans la base de données.
+     * @param titre le titre du jeu
+     * @param anneeSortie l'année de sortie du jeu
+     * @param listPlateformes la liste des plateformes à lier au jeu
+     * @param listGenres la liste des genres à lier au jeu
+     * @param idStudio le studio à lier au jeu
+     */
     public void ajouterJeu(String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
         String requete = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEUX
                 + "(" + TexteConstantesSQL.TABLE_JEUX_TITRE + "," + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE
-                + ") " + TexteConstantesSQL.VALUES + "(?,?)";
-        int rowsInserted = connexion.executerPreparedUpdate(requete, titre, TexteConstantesConnexion.INT + anneeSortie);
+                + ") " + TexteConstantesSQL.VALUES + "(?,?,?)";
+        int rowsInserted = connexion.executerPreparedUpdate(requete, titre,
+                TexteConstantesConnexion.INT + anneeSortie,
+                TexteConstantesConnexion.LONG + idStudio);
         try {
             ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
             if (resultID.next()) {
                 long idJeu = resultID.getInt(1);
-                Jeu jeu = new Jeu(idJeu,titre,anneeSortie);
+                Studio studio = bdd.getStudio(idStudio);
+                Jeu jeu = new Jeu(idJeu,titre,anneeSortie,studio);
                 int rows;
                 //ajout des plateformes au jeu et fait le lien dans la base de données
                 String requetePlateformes = TexteConstantesSQL.INSERT_INTO + " "
@@ -333,7 +410,7 @@ public class StatsMortsModele implements Observable {
                         + ")" + TexteConstantesSQL.VALUES + "(?,?)";
                 rows = connexion.executerPreparedUpdate(requeteStudio, TexteConstantesConnexion.LONG + idJeu, TexteConstantesConnexion.LONG + idStudio);
                 if (rows > 0) {
-                    jeu.setStudio(bdd.getStudio(idStudio));
+//                    jeu.setStudio(bdd.getStudio(idStudio));
                     bdd.getStudio(idStudio).ajouterJeu(jeu);
                 }
                 if (rowsInserted > 0) {
@@ -346,10 +423,25 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * Retourne une requête pour supprimer des enregistrements dans une table.
+     * @param table le nom de table dans laquelle supprimer
+     * @param champID le nom du champ d'identifiant de la table
+     * @return une requête pour supprimer des enregistrements
+     */
     private String getClearRequete(String table, String champID) {
         return TexteConstantesSQL.DELETE_FROM + " " + table + " "
                 + TexteConstantesSQL.WHERE + " " + champID + " = ?";
     }
+    /**
+     * Modifie un jeu dans la base de données.
+     * @param idJeu l'identifiant du jeu à modifier
+     * @param titre le nouveau titre du jeu à modifier
+     * @param anneeSortie la nouvelle année de sortie du jeu
+     * @param listPlateformes la nouvelle liste de plateformes à lier au jeu
+     * @param listGenres la nouvelle liste des genres à lier au jeu
+     * @param idStudio le nouveau studio à lier au eju
+     */
     public void modifierJeu(long idJeu, String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
         Jeu jeu = bdd.getJeu(idJeu);
         String idJeuRequete = TexteConstantesConnexion.LONG + idJeu;
@@ -411,6 +503,10 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * Supprime un jeu dans la base de données.
+     * @param idJeu l'identifiant du jeu à supprimer.
+     */
     public void supprimerJeu(long idJeu) {
         String requete = TexteConstantesSQL.DELETE_FROM + " " + TexteConstantesSQL.TABLE_JEUX
                 + " " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEUX_ID
@@ -422,6 +518,11 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * Ajoute une run dans la base de données.
+     * @param titreRun le titre de la run
+     * @param idJeu l'identifiant du jeu de la run
+     */
     public void ajouterRun(String titreRun, long idJeu) {
         String requete = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_RUNS
                 + "(" + TexteConstantesSQL.TABLE_RUNS_ID_JEU + ","
@@ -444,10 +545,20 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * Modifie une run dans la base de données.
+     * @param idRun l'identifiant de la run à modifier
+     * @param titreRun le nouveau titre de la run
+     * @param idJeu l'identifiant du nouveau jeu à lier à la run
+     */
     public void modifierRun(long idRun, String titreRun, long idJeu) {
         
     }
     
+    /**
+     * Supprime une run dans la base de données.
+     * @param idRun l'identifiant de la run à supprimer
+     */
     public void supprimerRun(long idRun) {
         String requete = TexteConstantesSQL.DELETE_FROM + " "+ TexteConstantesSQL.TABLE_RUNS
                 + " " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_RUNS_ID
@@ -459,19 +570,43 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * Ajoute un live dans la base de données.
+     * @param dateDebut la date de début du live
+     * @param dateFin la date de fin du live
+     * @param morts le nombre de morts sur ce live
+     * @param idRun l'identifiant de la run du live
+     */
     public void ajouterLive(Date dateDebut, Date dateFin, int morts, long idRun) {
         
     }
     
+    /**
+     * Modifie un live dans la base de données.
+     * @param idLive l'identifiant du lvie à modifier
+     * @param dateDebut la nouvelle date de début du live
+     * @param dateFin la nouvelle date de fin du live
+     * @param morts le nouveau nombre de morts sur ce live
+     * @param idRun le nouvel identifiant de la run du live
+     */
     public void modifierLive(long idLive, Date dateDebut, Date dateFin, int morts, long idRun) {
         
     }
     
+    /**
+     * Supprime un live dans la base de données.
+     * @param idLive l'identifiant du live à supprimer
+     */
     public void supprimerLive(long idLive) {
         
     }
     
     
+    /**
+     * Change l'unité de temps dans laquelle afficher et calculer les durées
+     * pour le graphique.
+     * @param unit la nouvelle unité de temps
+     */
     public void setTimeUnit(TimeUnit unit) {
         if (!this.timeUnit.equals(unit)) {
             this.timeUnit = unit;
@@ -481,6 +616,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * Actualise la base de données (objets) puis notifie l'observer des changements.
+     */
     public void actualiser() {
         try {
             bdd.actualiserBDD(connexion);
@@ -562,41 +700,78 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * 
+     * @param idPlateforme 
+     */
     public void fillPlateformePanel(long idPlateforme) {
         notifyFillPlateforme(idPlateforme);
     }
     
+    /**
+     * 
+     * @param idGenre 
+     */
     public void fillGenrePanel(long idGenre) {
         notifyFillGenre(idGenre);
     }
     
+    /**
+     * 
+     * @param idStudio 
+     */
     public void fillStudiPanel(long idStudio) {
         notifyFillStudio(idStudio);
     }
     
+    /**
+     * 
+     * @param idJeu 
+     */
     public void fillJeuPanel(long idJeu) {
         notifyFillJeu(idJeu);
     }
     
+    /**
+     * 
+     * @param idRun 
+     */
     public void fillRunPanel(long idRun) {
         notifyFillRun(idRun);
     }
     
+    /**
+     * 
+     * @param idJeu 
+     */
     public void fillRunPanelJeu(long idJeu) {
         notifyFillRunJeu(idJeu);
     }
     
+    /**
+     * 
+     * @param idLive 
+     */
     public void fillLivePanel(long idLive) {
         notifyFillLive(idLive);
     }
     
+    /**
+     * 
+     * @param idRun 
+     */
     public void fillLivePanelRun(long idRun) {
         notifyFillLiveRun(idRun);
     }
     
     
+    /**
+     * 
+     * @param titre
+     * @param nodes 
+     */
     public void createDataset(String titre, ArrayList<FillDataset> nodes) {
-        livesForDataset = new TreeSet();
+        livesForDataset.clear();
         for (FillDataset node : nodes) {
             livesForDataset.addAll(node.getLivesList());
         }
@@ -604,6 +779,9 @@ public class StatsMortsModele implements Observable {
         actualiserDataset();
     }
     
+    /**
+     * 
+     */
     public void actualiserDataset() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         float moyenne = 0, sommeDureeVie = 0, sommeMoyennes = 0;
@@ -632,17 +810,26 @@ public class StatsMortsModele implements Observable {
     
     
     //OBSERVER
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void setObserver(Observer observer) {
         this.observer = observer;
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void setGroup(TypeGroup type) {
         this.typeGroup = type;
         this.actualiser();
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyAddPlateforme(Plateforme plateforme) {
         if (hasObserver()) {
@@ -650,6 +837,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyAddGenre(Genre genre) {
         if(hasObserver()) {
@@ -657,6 +847,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyAddStudio(Studio studio) {
         if (hasObserver()) {
@@ -664,6 +857,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyAddJeu(Jeu jeu) {
         if (hasObserver()) {
@@ -683,6 +879,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyAddRun(Run run) {
         if (hasObserver()) {
@@ -690,6 +889,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyAddLive(Live live) {
         if (hasObserver()) {
@@ -698,6 +900,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyRemovePlateforme(long idPlateforme) {
         if (hasObserver()) {
@@ -705,6 +910,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyRemoveGenre(long idGenre) {
         if (hasObserver()) {
@@ -712,6 +920,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyRemoveStudio(long idStudio) {
         if (hasObserver()) {
@@ -719,6 +930,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyRemoveJeu(long idJeu) {
         if (hasObserver()) {
@@ -726,6 +940,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyRemoveRun(long idRun) {
         if (hasObserver()) {
@@ -733,6 +950,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyRemoveLive(long idLive) {
         if (hasObserver()) {
@@ -740,6 +960,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyDataset(String titre, DefaultCategoryDataset dataset) {
         if (hasObserver() && null != dataset) {
@@ -747,6 +970,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyFillPlateforme(long idPlateforme) {
         if (hasObserver()) {
@@ -757,6 +983,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyFillGenre(long idGenre) {
         if (hasObserver()) {
@@ -767,6 +996,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyFillStudio(long idStudio) {
         if (hasObserver()) {
@@ -777,6 +1009,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyFillJeu(long idJeu) {
         if (hasObserver()) {
@@ -787,6 +1022,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyFillRun(long idRun) {
         if (hasObserver()) {
@@ -798,6 +1036,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyFillRunJeu(long idJeu) {
         if (hasObserver()) {
@@ -808,6 +1049,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyFillLive(long idLive) {
         if (hasObserver()) {
@@ -818,6 +1062,9 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public void notifyFillLiveRun(long idRun) {
         if (hasObserver()) {

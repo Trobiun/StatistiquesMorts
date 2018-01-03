@@ -386,7 +386,7 @@ public class BDD {
         String requeteStudios = TexteConstantesSQL.SELECT_STUDIOS;
         String requeteJeuPlateforme = TexteConstantesSQL.SELECT_JEU_PLATEFORME;
         String requeteJeuGenre = TexteConstantesSQL.SELECT_JEU_GENRE;
-        String requeteJeuStudio = TexteConstantesSQL.SELECT_JEU__STUDIO;
+//        String requeteJeuStudio = TexteConstantesSQL.SELECT_JEU__STUDIO;
         String requeteVueGlobale = TexteConstantesSQL.SELECT_VUE_GLOBALE;
         if (connexion.getType().equals(TypeDatabase.Access)) {
             requeteVueGlobale = TexteConstantesSQL.SELECT_VUE_GLOBALE_SQL;
@@ -439,8 +439,10 @@ public class BDD {
             idJeu = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID);
             titreJeu = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_JEUX_TITRE);
             anneeSortieJeu = resultsVueGlobale.getInt(TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE);
+            idStudio = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID_STUDIO);
+            Studio jeuStudio = studios.get(idStudio);
             if (!jeux.containsKey(idJeu) && idJeu > 0) {
-                jeu = new Jeu(idJeu,titreJeu,anneeSortieJeu);
+                jeu = new Jeu(idJeu,titreJeu,anneeSortieJeu,jeuStudio);
                 this.ajouterJeu(jeu);
 //                jeux.put(idJeu,jeu);
             }
@@ -472,9 +474,9 @@ public class BDD {
                 run.ajouterLive(live);
                 live.setRun(run);
             }
-            else {
-                live = lives.get(idLive);
-            }
+//            else {
+//                live = lives.get(idLive);
+//            }
         }
         
         ResultSet resultsJeuPlateforme = connexion.executerRequete(requeteJeuPlateforme);
@@ -496,16 +498,16 @@ public class BDD {
             genre.ajouterJeu(jeu);
             jeu.ajouterGenre(genre);
         }
-        
-        ResultSet resultsJeuStudio = connexion.executerRequete(requeteJeuStudio);
-        while (resultsJeuStudio.next()) {
-            idStudio = resultsJeuStudio.getLong(TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO);
-            idJeu = resultsJeuStudio.getLong(TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU);
-            studio = studios.get(idStudio);
-            jeu = jeux.get(idJeu);
-            studio.ajouterJeu(jeu);
-            jeu.setStudio(studio);
-        }
+//        
+//        ResultSet resultsJeuStudio = connexion.executerRequete(requeteJeuStudio);
+//        while (resultsJeuStudio.next()) {
+//            idStudio = resultsJeuStudio.getLong(TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO);
+//            idJeu = resultsJeuStudio.getLong(TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU);
+//            studio = studios.get(idStudio);
+//            jeu = jeux.get(idJeu);
+//            studio.ajouterJeu(jeu);
+//            jeu.setStudio(studio);
+//        }
     }
     
     

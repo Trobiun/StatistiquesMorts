@@ -59,11 +59,13 @@ public class Jeu implements FillDataset, Comparable {
      * @param id l'identifiant du jeu dans la base de données
      * @param titre le titre du jeu
      * @param anneeSortie l'année de sortie du jeu
+     * @param studio le studio de développement du jeu
      */
-    public Jeu(final long id, final String titre, final int anneeSortie) {
+    public Jeu(final long id, final String titre, final int anneeSortie, final Studio studio) {
         this.id = id;
         this.titre = titre;
         this.anneeSortie = anneeSortie;
+        this.studio = studio;
         plateformes = new HashMap();
         genres = new HashMap();
         runs = new HashMap();
