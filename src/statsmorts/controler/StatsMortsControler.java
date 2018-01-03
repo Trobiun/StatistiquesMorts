@@ -196,7 +196,7 @@ public class StatsMortsControler {
          || lowerCase.endsWith(".sl2") || lowerCase.endsWith(".db3")
          || lowerCase.endsWith(".s3db") || lowerCase.endsWith(".sqlite3")
          || lowerCase.endsWith(".sl3") || lowerCase.endsWith(".kexi")) {
-            modele.ouvrirBDD(pathBDD);
+            modele.connecter(pathBDD);
         }
     }
     
