@@ -21,7 +21,7 @@ import javax.swing.border.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- *
+ * Une classe pour gérer un file chooser avec un JTextField et des boutons.
  * @author Robin
  */
 public class FileChooser extends JPanel{
@@ -32,21 +32,57 @@ public class FileChooser extends JPanel{
     private static final int HGAP = 5;
     private static final int VGAP = 5;
     //ATTRIBUTS
+    /**
+     * Le panel qui contient les boutons.
+     */
     private JPanel panelButtons;
+    /**
+     * Le file chooser pour sélectionner un fichier.
+     */
     private JFileChooser fileChooser;
+    /**
+     * 
+     */
     private int typeDialog;
+    /**
+     * Le champ de saisie du nom de fichier.
+     */
     private JTextField textField;
+    /**
+     * 
+     */
     private String text;
+    /**
+     * Le bouton pour ouvrir le file chooser en mode "ouvrir fichier".
+     */
     private JButton buttonOpen;
+    /**
+     * Le bouton pour ouvrir le file chooser en mdoe "sauvegarder fichier".
+     */
     private JButton buttonCreer;
     
+    /**
+     * Booléen qui permet de déterminer si ce file chooser a le bouton "créer".
+     */
     private final boolean create;
+    /**
+     * L'extension par défaut à mettre au fichier si l'utilisateur ne rentre pas
+     * un fichier correct.
+     */
     private String defaultExtension;
     
     
     //CONSTRUCTEUR
+    /**
+     * Crée un FileChooser.
+     * @param title le titre du FileChooser
+     * @param text le texte par défaut dans le jtextfield
+     * @param mode le mode du JFileChooser {@link javax.swing.JFileChooser}
+     * @param typeDialog le type du dialogue {@link javax.swing.JFileChooser}
+     * @param create détermine si ce file chooser a le bouton "créer"
+     */
     public FileChooser(String title, String text, int mode, int typeDialog, boolean create) {
-        super(new BorderLayout(5,5));
+        super(new BorderLayout(HGAP,VGAP));
         this.typeDialog = typeDialog;
         this.create = create;
         
@@ -57,6 +93,11 @@ public class FileChooser extends JPanel{
         setComponents();
     }
     
+    /**
+     * Initialise tous les composants graphiques.
+     * @param text le texte à afficher par défaut dans le JTextField
+     * @param mode le mode 
+     */
     private void init(String text, int mode) {
         panelButtons = new JPanel(new GridLayout(ROWS,COLS,HGAP,VGAP));
         
@@ -75,6 +116,9 @@ public class FileChooser extends JPanel{
         buttonCreer.addActionListener(listener);
     }
     
+    /**
+     * Met les composantes les uns dans les autres puis dans ce panel.
+     */
     private void setComponents() {
         panelButtons.add(buttonOpen);
         if (create) {
@@ -86,6 +130,10 @@ public class FileChooser extends JPanel{
     
     
     //ACCESSEURS
+    /**
+     * Retourne le chemin du fichier sélectionné du FileChooser.
+     * @return le chemin du fichier sélectionné du FileChooser
+     */
     public String getPath() {
         File file = new File(textField.getText());
         
@@ -117,11 +165,20 @@ public class FileChooser extends JPanel{
     
     
     //MUTATEURS
+    /**
+     * Change le texte.
+     * @param text le nouveau texte
+     */
     public void setText(String text) {
         this.text = text;
         textField.setText(text);
     }
     
+    /**
+     * Met le filtre de fichiers et l'extension par défaut.
+     * @param filter le filtre de fichiers acceptés
+     * @param defaultExtension l'extension par défaut quand l'extension n'est pas précisée
+     */
     public void setFilter(FileNameExtensionFilter filter, String defaultExtension) {
         fileChooser.setFileFilter(filter);
         this.defaultExtension = defaultExtension;
@@ -129,8 +186,15 @@ public class FileChooser extends JPanel{
     
     
     //LISTENERS
+    /**
+     * Classe pour écouter les boutons pour afficher le JFileChooser.
+     */
     class ButtonsListener implements ActionListener {
         
+        /**
+         * Affiche le JFileChooser et change le texte par le fichier sélectionné.
+         * @param e 
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource().equals(buttonOpen)) {
@@ -152,7 +216,7 @@ public class FileChooser extends JPanel{
                         setText(file.getAbsolutePath());
                     }
                     else {
-                        setText(file.getAbsolutePath() + TexteConstantes.DOT + defaultExtension);
+                        setText(file.getAbsolutePath() + "." + defaultExtension);
                     }
 //                    }
                 }
@@ -173,7 +237,7 @@ public class FileChooser extends JPanel{
                         setText(file.getAbsolutePath());
                     }
                     else {
-                        setText(file.getAbsolutePath() + TexteConstantes.DOT + defaultExtension);
+                        setText(file.getAbsolutePath() + "." + defaultExtension);
                     }
                 }
             }

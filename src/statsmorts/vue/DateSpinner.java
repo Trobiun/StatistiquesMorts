@@ -5,8 +5,6 @@
  */
 package statsmorts.vue;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,18 +17,31 @@ import statsmorts.constantes.TexteConstantes;
 import statsmorts.constantes.TexteConstantesFormatDate;
 
 /**
- *
+ * Une classe pour gérer un JSpinner pour une date.
  * @author Robin
  */
 public class DateSpinner extends JPanel {
     
     //ATTRIBUTS
+    /**
+     * Le modèle du JSpinner.
+     */
     private SpinnerDateModel modelSpinner;
+    /**
+     * Le JSpinner.
+     */
     private JSpinner spinner;
+    /**
+     * Le bouton pour mettre la date du JSpinner à l'instant ou le bouton est
+     * appuyé.
+     */
     private JButton insererMaintenant;
     
     
     //CONSTRUCTEUR
+    /**
+     * Crée un DateSpinner.
+     */
     public DateSpinner() {
         super(new GridLayout(1,0,10,10));
         init();
@@ -39,12 +50,19 @@ public class DateSpinner extends JPanel {
     
     
     //ACCESSEURS
+    /**
+     * Retourne la date du modèle du spinner.
+     * @return la date du modèle du spinner
+     */
     public Date getDate() {
         return modelSpinner.getDate();
     }
     
     
     //MUTATEURS
+    /**
+     * Initialise tous les composants graphiques.
+     */
     private void init() {
         modelSpinner = new SpinnerDateModel();
         spinner = new JSpinner(modelSpinner);
@@ -53,6 +71,9 @@ public class DateSpinner extends JPanel {
         insererMaintenant.addActionListener(new BoutonMaintenantListener());
     }
     
+    /**
+     * Met les composants dans ce panel.
+     */
     private void setComponents() {
 //        GridBagConstraints gbc = new GridBagConstraints();
 //        gbc.anchor = GridBagConstraints.CENTER;
@@ -71,17 +92,31 @@ public class DateSpinner extends JPanel {
         add(insererMaintenant/*,gbc*/);
     }
     
+    /**
+     * Met la date du modèle à la date donnée.
+     * @param date la date à mettre sur le modèle
+     */
     public void setDate(Date date) {
         modelSpinner.setValue(date);
     }
     
     
     //LISTENER
+    /**
+     * Classe pour écouter le bouton pour insérer la date d'appui du bouton dans
+     * le spinner.
+     */
     class BoutonMaintenantListener implements ActionListener {
         
+        /**
+         * Met la date courante dans le modèle. 
+         * @param e 
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
-            modelSpinner.setValue(new Date(System.currentTimeMillis()));
+            if (e.getSource().equals(insererMaintenant)) {
+                setDate(new Date(System.currentTimeMillis()));
+            }
         }
         
     }

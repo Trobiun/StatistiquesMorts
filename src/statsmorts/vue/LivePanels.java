@@ -20,7 +20,8 @@ import statsmorts.constantes.TexteConstantes;
 import statsmorts.controler.StatsMortsControler;
 
 /**
- *
+ * Une classe  gérer les entrées utilisateur pour gérer les lives de la base de
+ * données.
  * @author Robin
  */
 public class LivePanels extends ObjectDatabasePanels {
@@ -35,11 +36,29 @@ public class LivePanels extends ObjectDatabasePanels {
     private JPanel datesPanel;
     private JPanel mortsPanel;
     //ENTREES UTILISATEUR
+    /**
+     * Le champ de saisie du nom de la run.
+     */
     private JTextField nomRunField;
+    /**
+     * Le champ de saisie du nom du jeu.
+     */
     private JTextField nomJeuField;
+    /**
+     * Une JComboBox pour sélectionner la run du live.
+     */
     private JComboBox idRunComboBox;
+    /**
+     * Spinner pour la date de début du live.
+     */
     private DateSpinner dateDebutSpinner;
+    /**
+     * Spinner pour la date de fin du live.
+     */
     private DateSpinner dateFinSpinner;
+    /**
+     * Compteur de morts.
+     */
     private MortsSpinner mortsSpinner;
     
     
@@ -55,10 +74,16 @@ public class LivePanels extends ObjectDatabasePanels {
     
     
     //MUTATEURS
+    /**
+     * Initialise tous les composants graphqiues.
+     */
     private void init() {
         initPanels();
         initFields();
     }
+    /**
+     * Initialise les JPanels.
+     */
     private void initPanels() {
         //panels pour la run
         runPanel = new JPanel(new GridBagLayout());
@@ -84,6 +109,9 @@ public class LivePanels extends ObjectDatabasePanels {
         mortsPanel = new JPanel(new BorderLayout());
         mortsPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.MORTS));
     }
+    /**
+     * Initialise les champs de saisie.
+     */
     private void initFields() {
         idRunComboBox = new JComboBox();
         idRunComboBox.addItemListener(new RunChangeListener());
@@ -103,6 +131,9 @@ public class LivePanels extends ObjectDatabasePanels {
         mortsSpinner = new MortsSpinner();
     }
     
+    /**
+     * Met les composants les uns dans les autres.
+     */
     private void setComponents() {
         //ajout des champs de saisie dans leur panel respectif
         idRunPanel.add(idRunComboBox);
@@ -161,6 +192,13 @@ public class LivePanels extends ObjectDatabasePanels {
         saisiesPanel.add(mortsPanel,gbc2);
     }
     
+    /**
+     * Réinitialise et/ou vide les champs de saisie.
+     * @param editable permet de rendre éditable ou non les champs de saisie
+     *                 (pour suppression ou non)
+     * @param empty booléen pour vider ou non les champs de saisie (vrai pour
+     *              les vider, faux sinon)
+     */
     @Override
     public void clearFields(boolean editable, boolean empty) {
         super.clearFields(editable, empty);
@@ -169,6 +207,10 @@ public class LivePanels extends ObjectDatabasePanels {
         }
     }
     
+    /**
+     * Change l'état de la visibilité du bouton réinitialiser.
+     * @param visible booléen, vrai pour le rendre visible, faux sinon 
+     */
     @Override
     public void setResetButtonVisible(boolean visible) {
         if (visible){
@@ -186,54 +228,102 @@ public class LivePanels extends ObjectDatabasePanels {
         }
     }
     
+    /**
+     * Ajoute une run à la liste de sélection possible.
+     * @param idRun l'identifiant de la run à ajouter
+     */
     public void ajouterRun(long idRun) {
         idRunComboBox.addItem(idRun);
     }
     
+    /**
+     * Supprime toutes les runs dans la liste de sélection possible.
+     */
     public void supprimerToutesRuns() {
         idRunComboBox.removeAllItems();
     }
     
+    /**
+     * Supprime une run dans la liste de sélection possible.
+     * @param idRun l'identifiant de la run à supprimer
+     */
     public void supprimerRun(long idRun) {
         idRunComboBox.removeItem(idRun);
     }
     
+    /**
+     * Sélectionne une run dans la JComboBox.
+     * @param idRun l'identifiant de la run à sélectionner.
+     */
     public void setIDRun(long idRun) {
         idRunComboBox.setSelectedItem(idRun);
     }
     
+    /**
+     * Change le titre de la run dans le champ de saisie concerné
+     * @param titreRun le titre de la run à mettre dans le champ de saisie
+     */
     public void setTitreRun(String titreRun) {
         nomRunField.setText(titreRun);
     }
     
+    /**
+     * Change le titre du jeu du live dans le champ de saisie concerné
+     * @param titreJeu le titre du jeu à mettre dans le champ de saisie
+     */
     public void setTitreJeu(String titreJeu) {
         nomJeuField.setText(titreJeu);
     }
     
+    /**
+     * Change la date de début du live dans le Spinner concerné.
+     * @param dateDebut la date de début à mettre dans le Spinner
+     */
     public void setDateDebut(Date dateDebut) {
         dateDebutSpinner.setDate(dateDebut);
     }
     
+    /**
+     * Change la date de fin de la run dans le Spinner concerné.
+     * @param dateFin la date de fin à mettre dans le Spinner
+     */
     public void setDateFin(Date dateFin) {
         dateFinSpinner.setDate(dateFin);
     }
     
+    /**
+     * Met le nombre de morts dans le compteur de morts.
+     * @param morts le nombre de morts à mettre dans le compteur
+     */
     public void setMorts(int morts) {
         mortsSpinner.setValue(morts);
     }
     
     
+    /**
+     * Demande au contrôleur de remplir les champs de saisie du live avec les 
+     * données du modèle.
+     * @param idItem l'identifiant du live auquel chercher les données.
+     */
     @Override
     public void fillItem(long idItem) {
         controler.fillLivePanel(idItem);
     }
     
+    /**
+     * Demande au contrôleur de remplir les champs de saisie de la run avec les
+     * données du modèle.
+     * @param idRun l'identifiant de la run à laquele chercher les données
+     */
     public void fillItemRun(long idRun) {
         controler.fillLivePanelRun(idRun);
     }
     
     
     //LISTENERS
+    /**
+     * Classe interne pour écouter les changements de sélection de run.
+     */
     class RunChangeListener implements ItemListener {
         
         @Override

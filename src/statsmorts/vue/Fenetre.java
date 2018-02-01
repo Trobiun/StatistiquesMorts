@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -47,6 +46,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -70,7 +70,7 @@ import statsmorts.preferences.PreferencesDialog;
 import statsmorts.preferences.Temps;
 
 /**
- *
+ * Une classe pour toute l'interface graphique principale.
  * @author Robin
  */
 public class Fenetre extends JFrame implements Observer {
@@ -78,34 +78,91 @@ public class Fenetre extends JFrame implements Observer {
     
     //ATTRIBUTS
     //SPLIT PANES
+    /**
+     * Le JSplitPane le plus global, qui contient l'autre JSplitPane.
+     */
     private JSplitPane splitVerticalGlobal;
+    /**
+     * Le JSplitPane horizontal qui contient le panel qui contient l'arbre, et
+     * le panel qui contient les informations.
+     */
     private JSplitPane splitHorizontalInGlobal;
     
     //JPANELS
+    /**
+     * Le panel qui contient l'arbre.
+     */
     private JPanel panelArbre;
+    /**
+     * Le panel qui contient les informations.
+     */
     private JPanel panelInfos;
-    private ChartPanel panelGraph;
+    /**
+     * Le panel qui contient le graphique (chart).
+     */
+    private ChartPanel panelChart;
     
     //ARBRES
+    /**
+     * L'arbre qui représente la base de données.
+     */
     private JTree treeJeux;
+    /**
+     * La racine de l'arbre.
+     */
     private SortableTreeNode rootTree;
+    /**
+     * La collection des nœuds des plateformes.
+     */
     private HashMap<Long, SortableTreeNode> mapPlateformes;
+    /**
+     * La collection des nœuds des genres.
+     */
     private HashMap<Long, SortableTreeNode> mapGenres;
+    /**
+     * La collection des nœuds des studios.
+     */
     private HashMap<Long, SortableTreeNode> mapStudios;
+    /**
+     * La collection des nœuds des jeux. Utilisation d'ArrayList 
+     */
     private HashMap<Long, ArrayList<SortableTreeNode>> mapJeux;
+    /**
+     * 
+     */
     private HashMap<Long, ArrayList<SortableTreeNode>> mapRuns;
     
     //TEXTPANE
+    /**
+     * Le JTextPane pour afficher les informations sur les plateformes, genres,
+     * studios, jeux, runs et lives.
+     */
     private JTextPane textPaneInfos;
     
     //MENUS
+    /**
+     * Le JMenuBar.
+     */
     private JMenuBar menuBar;
     //MENU FICHIER
+    /**
+     * Le menu "Fichier", qui regroupe la création, l'ouverture et le gestion de
+     * base de données et pour quitter.
+     */
     private JMenu fichierMenu;
+    /**
+     * Le menuItem pour la création d'une base de données.
+     */
     private JMenuItem nouveauMenuItem;
+    /**
+     * Le menuItem pour l'ouverture d'une base de données.
+     */
     private JMenuItem ouvrirMenuItem;
-    private JMenu gestionBaseDonnees;
     //SOUS MENU GESTION BASE DE DONNEES
+    /**
+     * Le sous menu pour gérer la base de données.
+     */
+    private JMenu gestionBaseDonnees;
     //SOUS MENU AJOUTER
     private JMenu ajouterSousMenu;
     private JMenuItem ajouterPlateformeMenuItem;
@@ -185,6 +242,7 @@ public class Fenetre extends JFrame implements Observer {
     private StudioPanels studioPanels;
     private JeuPanels jeuPanels;
     private RunPanels runPanels;
+    private LivePanels livePanels;
     
     private final Preferences preferences;
     private final PreferencesDialog prefsDialog;
@@ -248,7 +306,7 @@ public class Fenetre extends JFrame implements Observer {
         splitHorizontalInGlobal.setDividerLocation(0.5);
         
         splitVerticalGlobal.setTopComponent(splitHorizontalInGlobal);
-        splitVerticalGlobal.setBottomComponent(panelGraph);
+        splitVerticalGlobal.setBottomComponent(panelChart);
         splitVerticalGlobal.setDividerLocation(0.5);
     }
     private void setMenu() {
@@ -361,7 +419,7 @@ public class Fenetre extends JFrame implements Observer {
     private void initPanels() {
         panelArbre = new JPanel(new BorderLayout());
         panelInfos = new JPanel(new BorderLayout());
-        panelGraph = new ChartPanel(null);
+        panelChart = new ChartPanel(null);
     }
     private void initPersoPanels() {
         plateformePanels = new PlateformePanels(controler);
@@ -369,9 +427,10 @@ public class Fenetre extends JFrame implements Observer {
         studioPanels = new StudioPanels(controler);
         jeuPanels = new JeuPanels(controler);
         runPanels = new RunPanels(controler);
+        livePanels = new LivePanels(controler);
     }
     private void initTree() {
-        rootTree = new SortableTreeNode(TexteConstantes.JEUX, false);
+        rootTree = new SortableTreeNode(TexteConstantes.JEUX);
         treeJeux = new JTree(rootTree);
         treeJeux.addTreeSelectionListener(new TreeListener());
         treeJeux.addMouseListener(new TreeMouseListener());
@@ -604,69 +663,72 @@ public class Fenetre extends JFrame implements Observer {
         jeuPanels.clearLists();
         jeuPanels.removeAllItems();
         runPanels.removeAllItems();
-        runPanels.removeAllJeux();
+        runPanels.supprimerTousJeux();
+        livePanels.supprimerToutesRuns();
+        livePanels.removeAllItems();
         rootTree.setUserObject(type.getNom());
         ((DefaultTreeModel) treeJeux.getModel()).reload(rootTree);
-        panelGraph.setChart(null);
+        panelChart.setChart(null);
         textPaneInfos.setText(TexteConstantes.EMPTY);
     }
     
     @Override
     public void addPlateforme(Plateforme plateforme) {
-        SortableTreeNode nodePlateforme = new SortableTreeNode(plateforme, true);
+        SortableTreeNode nodePlateforme = new SortableTreeNode(plateforme);
         mapPlateformes.put(plateforme.getID(), nodePlateforme);
-        plateformePanels.addItem(plateforme.getID());
-        jeuPanels.addPlateforme(plateforme);
         if (typeGroup.equals(TypeGroup.PLATEFORMES)) {
             rootTree.add(nodePlateforme);
             rootTree.sort();
             ((DefaultTreeModel)treeJeux.getModel()).reload();
-            //treeJeux.updateUI();
         }
+        plateformePanels.addItem(plateforme.getID());
+        jeuPanels.addPlateforme(plateforme);
     }
     
     @Override
     public void addGenre(Genre genre) {
-        SortableTreeNode nodeGenre = new SortableTreeNode(genre, true);
+        SortableTreeNode nodeGenre = new SortableTreeNode(genre);
         mapGenres.put(genre.getID(), nodeGenre);
-        genrePanels.addItem(genre.getID());
-        jeuPanels.addGenre(genre);
         if (typeGroup.equals(TypeGroup.GENRES)) {
             rootTree.add(nodeGenre);
             rootTree.sort();
             ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
+        genrePanels.addItem(genre.getID());
+        jeuPanels.addGenre(genre);
     }
     
     @Override
     public void addStudio(Studio studio) {
-        SortableTreeNode nodeStudio = new SortableTreeNode(studio, true);
+        SortableTreeNode nodeStudio = new SortableTreeNode(studio);
         mapStudios.put(studio.getID(), nodeStudio);
-        studioPanels.addItem(studio.getID());
-        jeuPanels.addStudio(studio);
         if (typeGroup.equals(TypeGroup.STUDIOS)) {
             rootTree.add(nodeStudio);
             rootTree.sort();
             ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
+        studioPanels.addItem(studio.getID());
+        jeuPanels.addStudio(studio);
     }
     
     @Override
     public void addJeu(Jeu jeu) {
-        jeuPanels.addItem(jeu.getID());
-        runPanels.addJeu(jeu.getID());
         if (typeGroup.equals(TypeGroup.PLATEFORMES)) {
             Set<Entry<Long, Plateforme>> setPlateformes = jeu.getPlateformes().entrySet();
 //            ArrayList<SortableTreeNode> arrayJeu = mapJeux.getOrDefault(jeu, new ArrayList());
 //            arrayJeu.add(nodeJeu);
-            mapJeux.putIfAbsent(jeu.getID(), new ArrayList());
+                mapJeux.putIfAbsent(jeu.getID(), new ArrayList());
 //            mapJeux.getOrDefault(jeu.getID(),new ArrayList()).add(nodeJeu);
-            for (Entry<Long, Plateforme> entryPlateforme : setPlateformes) {
-                SortableTreeNode nodeJeu = new SortableTreeNode(jeu, true);
-                mapJeux.get(jeu.getID()).add(nodeJeu);
-                mapPlateformes.get(entryPlateforme.getKey()).add(nodeJeu);
-                mapPlateformes.get(entryPlateforme.getKey()).sort();
-            }
+                for (Entry<Long, Plateforme> entryPlateforme : setPlateformes) {
+                    SortableTreeNode nodeJeu = new SortableTreeNode(jeu);
+                    mapJeux.get(jeu.getID()).add(nodeJeu);
+                    SortableTreeNode parent = mapPlateformes.get(entryPlateforme.getKey());
+//                mapPlateformes.get(entryPlateforme.getKey()).add(nodeJeu);
+//                mapPlateformes.get(entryPlateforme.getKey()).sort();
+                    parent.add(nodeJeu);
+                    parent.sort();
+                    ((DefaultTreeModel) treeJeux.getModel()).reload(parent);
+                }
         }
         if (typeGroup.equals(TypeGroup.GENRES)) {
             Set<Entry<Long, Genre>> setGenres = jeu.getGenres().entrySet();
@@ -675,22 +737,29 @@ public class Fenetre extends JFrame implements Observer {
             mapJeux.putIfAbsent(jeu.getID(), new ArrayList());
 //            mapJeux.getOrDefault(jeu.getID(),new ArrayList()).add(nodeJeu);
             for (Entry<Long, Genre> entryGenre : setGenres) {
-                SortableTreeNode nodeJeu = new SortableTreeNode(jeu, true);
+                SortableTreeNode nodeJeu = new SortableTreeNode(jeu);
                 mapJeux.get(jeu.getID()).add(nodeJeu);
-                mapGenres.get(entryGenre.getKey()).add(nodeJeu);
-                mapGenres.get(entryGenre.getKey()).sort();
+                SortableTreeNode parent = mapGenres.get(entryGenre.getKey());
+//                mapGenres.get(entryGenre.getKey()).add(nodeJeu);
+//                mapGenres.get(entryGenre.getKey()).sort();
+                parent.add(nodeJeu);
+                parent.sort();
+                ((DefaultTreeModel)treeJeux.getModel()).reload(parent);
             }
         }
         if (typeGroup.equals(TypeGroup.STUDIOS)) {
-            SortableTreeNode nodeJeu = new SortableTreeNode(jeu, true);
+            SortableTreeNode nodeJeu = new SortableTreeNode(jeu);
             mapJeux.putIfAbsent(jeu.getID(),new ArrayList());
             mapJeux.get(jeu.getID()).add(nodeJeu);
             if (null != jeu.getStudio()) {
-                mapStudios.get(jeu.getStudio().getID()).add(nodeJeu);
+                SortableTreeNode parent = mapStudios.get(jeu.getStudio().getID());
+                parent.add(nodeJeu);
+//                mapStudios.get(jeu.getStudio().getID()).add(nodeJeu);
+                ((DefaultTreeModel)treeJeux.getModel()).reload(parent);
             }
         }
         if (typeGroup.equals(TypeGroup.JEUX)) {
-            SortableTreeNode nodeJeu = new SortableTreeNode(jeu, true);
+            SortableTreeNode nodeJeu = new SortableTreeNode(jeu);
 //            ArrayList<SortableTreeNode> arrayJeu = mapJeux.getOrDefault(jeu, new ArrayList());
             mapJeux.putIfAbsent(jeu.getID(), new ArrayList());
             mapJeux.get(jeu.getID()).add(nodeJeu);
@@ -698,18 +767,24 @@ public class Fenetre extends JFrame implements Observer {
             rootTree.sort();
             ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
+//        ((DefaultTreeModel)treeJeux.getModel()).reload();
+        jeuPanels.addItem(jeu.getID());
+        runPanels.ajouterJeu(jeu.getID());
     }
     
     @Override
-    public void addRun(long idJeu, Run run) {
-        ArrayList<SortableTreeNode> arrayJeu = mapJeux.get(idJeu);
+    public void addRun(Run run) {
+        ArrayList<SortableTreeNode> arrayJeu = mapJeux.get(run.getJeu().getID());
         mapRuns.putIfAbsent(run.getID(), new ArrayList());
         for (SortableTreeNode nodeJeu : arrayJeu) {
-            SortableTreeNode nodeRun = new SortableTreeNode(run, true);
+            SortableTreeNode nodeRun = new SortableTreeNode(run);
             mapRuns.get(run.getID()).add(nodeRun);
             nodeJeu.add(nodeRun);
             nodeJeu.sort();
+            ((DefaultTreeModel)treeJeux.getModel()).reload(nodeJeu);
         }
+        runPanels.addItem(run.getID());
+        livePanels.ajouterRun(run.getID());
 //        ArrayList<SortableTreeNode> arrayRun = mapRuns.getOrDefault(run.getID(), new ArrayList());
 //        mapRuns.putIfAbsent(idJeu, arrayRun);
 //        arrayRun.add(nodeRun);
@@ -722,14 +797,16 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void addLive(long idRun, Live live) {
+    public void addLive(Live live) {
+        long idRun = live.getRun().getID();
         ArrayList<SortableTreeNode> arrayRun = mapRuns.getOrDefault(idRun,new ArrayList());
         for (SortableTreeNode nodeRun : arrayRun) {
-            SortableTreeNode nodeLive = new SortableTreeNode(live, true);
+            SortableTreeNode nodeLive = new SortableTreeNode(live);
             nodeRun.add(nodeLive);
             nodeRun.sort();
         }
         mapRuns.putIfAbsent(idRun, arrayRun);
+        livePanels.addItem(live.getID());
 //        mapRuns.get(idRun).add(nodeLive);
 //        mapRuns.get(idRun).sort();
     }
@@ -737,6 +814,7 @@ public class Fenetre extends JFrame implements Observer {
     @Override
     public void removePlateforme(long idPlateforme) {
         if (typeGroup.equals(TypeGroup.PLATEFORMES)) {
+            mapPlateformes.get(idPlateforme).removeAllChildren();
             ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapPlateformes.get(idPlateforme));
         }
         mapPlateformes.remove(idPlateforme);
@@ -749,7 +827,7 @@ public class Fenetre extends JFrame implements Observer {
         if (typeGroup.equals(TypeGroup.GENRES)) {
             ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapGenres.get(idGenre));
         }
-        mapPlateformes.remove(idGenre);
+        mapGenres.remove(idGenre);
         plateformePanels.removeItem(idGenre);
         jeuPanels.removeGenre(idGenre);
     }
@@ -766,19 +844,48 @@ public class Fenetre extends JFrame implements Observer {
     
     @Override
     public void removeJeu(long idJeu) {
-        if (typeGroup.equals(TypeGroup.JEUX)) {
-            ArrayList<SortableTreeNode> nodesJeu = mapJeux.get(idJeu);
-            for (SortableTreeNode nodeJeu : nodesJeu) {
-                ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(nodeJeu);
-            }
+//        Set<Entry<Long, SortableTreeNode>> setStudios = mapStudios.entrySet();
+//        for (Entry<Long, SortableTreeNode> entry : setStudios) {
+//            if (entry.getValue().isInformations()) {
+//                FillDataset object = entry.getValue().getObjectFillDataset();
+//                if (object instanceof Jeu) {
+//                    entry.getValue().removeFromParent();
+//                }
+//            }
+//        }
+//        if (typeGroup.equals(TypeGroup.JEUX)) {
+//            ArrayList<SortableTreeNode> nodesJeu = mapJeux.get(idJeu);
+//            for (SortableTreeNode nodeJeu : nodesJeu) {
+//                nodeJeu.removeAllChildren();
+//                nodeJeu.removeFromParent();
+//                if(typeGroup.equals(TypeGroup.JEUX)) {
+//                    ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(nodeJeu);
+//                    ((DefaultTreeModel)treeJeux.getModel()).reload();
+//                }
+//            }
+//        }
+        ArrayList<SortableTreeNode> nodesJeu = mapJeux.get(idJeu);
+        for (SortableTreeNode nodeJeu : nodesJeu) {
+            nodeJeu.removeAllChildren();
+            TreeNode parent = nodeJeu.getParent();
+            nodeJeu.removeFromParent();
+            ((DefaultTreeModel)treeJeux.getModel()).reload(parent);
         }
         mapJeux.remove(idJeu);
+//        ((DefaultTreeModel)treeJeux.getModel()).reload();
         jeuPanels.removeItem(idJeu);
+        runPanels.supprimerJeu(idJeu);
     }
     
     @Override
     public void removeRun(long idRun) {
-        
+        ArrayList<SortableTreeNode> nodesRun = mapRuns.get(idRun);
+        for (SortableTreeNode nodeRun : nodesRun) {
+            nodeRun.removeAllChildren();
+            nodeRun.removeFromParent();
+        }
+        mapRuns.remove(idRun);
+        ((DefaultTreeModel)treeJeux.getModel()).reload();
     }
     
     @Override
@@ -792,7 +899,7 @@ public class Fenetre extends JFrame implements Observer {
         chart.addSubtitle(new TextTitle(TexteConstantes.TEMPS + " en " + temps.getNom()));
         LineAndShapeRenderer renderer = (LineAndShapeRenderer)chart.getCategoryPlot().getRenderer();
         renderer.setBaseShapesVisible(true);
-        panelGraph.setChart(chart);
+        panelChart.setChart(chart);
     }
     
     @Override
@@ -831,13 +938,18 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void fillLive(Date dateDebut, Date dateFin, int morts) {
-        
+    public void fillLive(long idRun, Date dateDebut, Date dateFin, int morts) {
+        livePanels.setIDRun(idRun);
+        livePanels.setDateDebut(dateDebut);
+        livePanels.setDateFin(dateFin);
+        livePanels.setMorts(morts);
     }
     
     @Override
-    public void fillLiveRun(long idRun, String titreRun) {
-        
+    public void fillLiveRun(long idRun, String titreRun, String titreJeu) {
+        livePanels.setIDRun(idRun);
+        livePanels.setTitreRun(titreRun);
+        livePanels.setTitreJeu(titreJeu);
     }
     
     
@@ -949,13 +1061,42 @@ public class Fenetre extends JFrame implements Observer {
             long idJeu = runPanels.getSelectedJeuID();
             switch (mode) {
                 case AJOUTER :
-                    controler.ajouterRun(idRun, titreRun, idJeu);
+                    controler.ajouterRun(titreRun, idJeu);
                     break;
                 case MODIFIER :
                     controler.modifierRun(idRun, titreRun, idJeu);
                     break;
                 case SUPPRIMER :
                     controler.supprimerRun(idRun);
+                    break;
+                default :
+            }
+        }
+    }
+    
+    private void gererLivesInputs(ModeGestion mode) {
+        livePanels.setIDPanelVisible(!mode.equals(ModeGestion.AJOUTER));
+        livePanels.setResetButtonVisible(mode.equals(ModeGestion.MODIFIER));
+        if (mode.equals(ModeGestion.AJOUTER)) {
+            livePanels.clearFields(true,true);
+        }
+        else {
+            boolean editable = mode.equals(ModeGestion.MODIFIER);
+            livePanels.clearFields(editable,false);
+        }
+        String[] options = { mode.getAction(), TexteConstantes.ANNULER };
+        int res = JOptionPane.showOptionDialog(this, livePanels, mode.getAction()
+                + " " + TexteConstantes.LIVE.toLowerCase(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+        if (res == JOptionPane.YES_OPTION) {
+            switch (mode) {
+                case AJOUTER :
+                    
+                    break;
+                case MODIFIER :
+                    
+                    break;
+                case SUPPRIMER :
+                    
                     break;
                 default :
             }
@@ -1236,7 +1377,7 @@ public class Fenetre extends JFrame implements Observer {
                 gererRunsInputs(ModeGestion.AJOUTER);
             }
             if (src.equals(ajouterLiveMenuItem)) {
-                
+                gererLivesInputs(ModeGestion.AJOUTER);
             }
             //GESTION MODIFIER
             if (src.equals(modifierPlateformeMenuItem)) {
@@ -1255,7 +1396,7 @@ public class Fenetre extends JFrame implements Observer {
                 gererRunsInputs(ModeGestion.MODIFIER);
             }
             if (src.equals(modifierLiveMenuItem)) {
-                
+                gererLivesInputs(ModeGestion.MODIFIER);
             }
             //GESTION SUPPRIMER
             if (src.equals(supprimerPlateformeMenuItem)) {
@@ -1274,7 +1415,7 @@ public class Fenetre extends JFrame implements Observer {
                 gererRunsInputs(ModeGestion.SUPPRIMER);
             }
             if (src.equals(supprimerLiveMenuItem)) {
-                
+                gererLivesInputs(ModeGestion.SUPPRIMER);
             }
         }
         
@@ -1327,7 +1468,7 @@ public class Fenetre extends JFrame implements Observer {
                     Object node = paths[0].getLastPathComponent();
                     if (node instanceof SortableTreeNode) {
                         if (((SortableTreeNode) node).isInformations()) {
-                            titreGraph = ((Informations) node).getObjectFillDataset().
+                            titreGraph = ((Informations)node).getObjectFillDataset().
                                     getTitreDataset();
                         }
                     }
@@ -1337,7 +1478,7 @@ public class Fenetre extends JFrame implements Observer {
                     for (TreePath path1 : paths) {
                         if (path != path1 && path.isDescendant(path1)) {
                             treeJeux.clearSelection();
-                            panelGraph.setChart(null);
+                            panelChart.setChart(null);
                             treeJeux.setSelectionPath(e.getNewLeadSelectionPath());
                             return;
                         }
@@ -1347,7 +1488,7 @@ public class Fenetre extends JFrame implements Observer {
                         nodes.add(((Informations)node).getObjectFillDataset());
                     }
                     else {
-                        panelGraph.setChart(null);
+                        panelChart.setChart(null);
                         textPaneInfos.setText(TexteConstantes.EMPTY);
                         return;
                     }
@@ -1393,12 +1534,13 @@ public class Fenetre extends JFrame implements Observer {
                 Object item = e.getItem();
                 if (item.equals(heuresAffichageTempsMenuItem)) {
                     temps = Temps.HEURES;
-                    controler.setTimeUnit(TimeUnit.HOURS);
+//                    controler.setTimeUnit(TimeUnit.HOURS);
                 }
                 if (item.equals(minutesAffichageTempsMenuItem)) {
                     temps = Temps.MINUTES;
-                    controler.setTimeUnit(TimeUnit.MINUTES);
+//                    controler.setTimeUnit(TimeUnit.MINUTES);
                 }
+                controler.setTimeUnit(temps.getTimeUnit());
             }
         }
         
