@@ -47,8 +47,11 @@ public class Live implements FillDataset, Comparable<Live> {
     /**
      * Le nombre de morts durant ce live (ou partie du live).
      */
-    private final int morts;
-    
+    private int morts;
+    /**
+     * Le nombre de boss vaincus durant ce live (ou partie du live).
+     */
+    private int boss;
     
     //CONSTRUCTEURS
     /**
@@ -57,8 +60,9 @@ public class Live implements FillDataset, Comparable<Live> {
      * @param dateDebutString la date de début (en String) du live
      * @param dateFinString la date de fin (en String) du live
      * @param morts le nombre de morts
+     * @param boss le nombre de boss vaincus
      */
-    public Live(final long id, final String dateDebutString, final String dateFinString, final int morts) {
+    public Live(final long id, final String dateDebutString, final String dateFinString, final int morts, final int boss) {
         this.id = id;
         try {
             this.dateDebut = DATE_FORMAT_SQL.parse(dateDebutString);
@@ -69,6 +73,7 @@ public class Live implements FillDataset, Comparable<Live> {
             Logger.getLogger(Live.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.morts = morts;
+        this.boss = boss;
     }
     
     

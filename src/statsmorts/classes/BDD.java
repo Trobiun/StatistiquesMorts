@@ -430,7 +430,7 @@ public class BDD {
         
         String titreJeu, titreRun, dateDebut, dateFin;
         long idJeu, idRun, idLive;
-        int anneeSortieJeu, morts;
+        int anneeSortieJeu, morts, boss;
         Jeu jeu;
         Run run;
         Live live;
@@ -467,8 +467,9 @@ public class BDD {
             dateDebut = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_LIVES_DATE_DEBUT);
             dateFin = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_LIVES_DATE_FIN);
             morts = resultsVueGlobale.getInt(TexteConstantesSQL.TABLE_LIVES_MORTS);
+            boss = resultsVueGlobale.getInt(TexteConstantesSQL.TABLE_LIVES_BOSS);
             if (!lives.containsKey(idLive) && idLive > 0) {
-                live = new Live(idLive,dateDebut,dateFin,morts);
+                live = new Live(idLive,dateDebut,dateFin,morts,boss);
                 this.ajouterLive(live);
 //                lives.put(idLive,live);
                 run.ajouterLive(live);
