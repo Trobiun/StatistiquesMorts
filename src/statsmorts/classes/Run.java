@@ -120,6 +120,21 @@ public class Run implements FillDataset, Comparable<Run> {
     }
     
     /**
+     * Retourne le nombre total de boss vaincus sur cette run (fais laa somme des
+     * boss de tous les lives).
+     * @return le nombre total de boss vaincus
+     * @see statsmorts.classes.Live#boss
+     */
+    public int getTotalBoss() {
+        int res = 0;
+        Set<Entry<Long,Live>> livesSet = lives.entrySet();
+        for (Entry<Long,Live> liveEntry : livesSet) {
+            res += liveEntry.getValue().getBoss();
+        }
+        return res;
+    }
+    
+    /**
      * Retourne une durée de vie moyenne ( = temps / (morts + 1)).
      * @param temps le temps passé
      * @param morts le nombre de morts
@@ -165,8 +180,12 @@ public class Run implements FillDataset, Comparable<Run> {
     @Override
     public String toString() {
         int mortsTotales = getTotalMorts();
+        int boss = getTotalBoss();
         float heures = getTotalDuration(TimeUnit.HOURS);
         float minutes = getTotalDuration(TimeUnit.MINUTES);
+        float mortsParBoss = (boss == 0) ? 0 : (float)(mortsTotales) / (float)(boss);
+        float minutesParBoss = (boss == 0) ? 0 : (float)(minutes) / (float)(boss);
+        float heuresParBoss = (boss == 0) ? 0 : (float)(heures) / (float)(boss);
         String res = "Titre : " + titre + "\n"
                 + "Nombre de lives : " + getNombreLives() + "\n\n"
                 + "Durée totale : " + heures + " heures\n"
@@ -176,7 +195,11 @@ public class Run implements FillDataset, Comparable<Run> {
                 + "Durée de vie moyenne totale : " + getDureeVieMoyenne(heures, mortsTotales) + " heures\n"
                 + "Durée de vie moyenne totale : " + getDureeVieMoyenne(minutes, mortsTotales) + " minutes\n\n"
                 + "Moyenne des durées de vie : " + getMoyenneDureesVie(TimeUnit.HOURS) + " heures\n"
-                + "Moyenne des durées de vie : " + getMoyenneDureesVie(TimeUnit.MINUTES) + " minutes\n";
+                + "Moyenne des durées de vie : " + getMoyenneDureesVie(TimeUnit.MINUTES) + " minutes\n\n"
+                + "Boss vaincus : " + boss + "\n\n"
+                + "Moyenne de morts par boss : " + mortsParBoss + "\n\n"
+                + "Temps moyen par boss : " + minutesParBoss + " minutes\n"
+                + "Temps moyen par boss : " + heuresParBoss + " heures\n\n";
         return res;
     }
     

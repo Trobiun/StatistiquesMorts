@@ -194,6 +194,19 @@ public class Jeu implements FillDataset, Comparable {
     }
     
     /**
+     * 
+     * @return 
+     */
+    public int getTotalBoss() {
+        int res = 0;
+        Set<Entry<Long,Run>> runsSet = runs.entrySet();
+        for (Entry<Long,Run> runEntry : runsSet) {
+            res += runEntry.getValue().getTotalBoss();
+        }
+        return res;
+    }
+    
+    /**
      * Retourne en float la moyenne des durées de vie sur ce jeu (fais la moyenne
      * des moyennes de durée de vie des runs de ce jeu) en unité de temps 'unit'
      * @param unit l'unité de temps dans laquelle calculer la moyenne
@@ -266,24 +279,32 @@ public class Jeu implements FillDataset, Comparable {
      */
     @Override
     public String toString() {
-        String res = TexteConstantes.TITRE + " : " + titre + TexteConstantes.NEW_LINE
-                + "" + studio.toString() + TexteConstantes.NEW_LINE
-                + "Année de sortie : " + anneeSortie + TexteConstantes.NEW_LINE;
-        res += plateformesToString();
-        res += genresToString() + TexteConstantes.NEW_LINE;
-        res += "Total de runs : " + runs.size() + TexteConstantes.NEW_LINE;
-        res += "Total de lives : " + getTotalLives() + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
+        int totalMorts = getTotalMorts();
+        int boss = getTotalBoss();
         float dureeTotaleHeures = getTotalDuration(TimeUnit.HOURS);
         float dureeTotaleMinutes = getTotalDuration(TimeUnit.MINUTES);
-        res += "Durée totale : " + dureeTotaleHeures + " heures" + TexteConstantes.NEW_LINE;
-        res += "Durée totale : " + (int)dureeTotaleHeures + "h" + (int)(dureeTotaleMinutes % 60) + "m" + TexteConstantes.NEW_LINE;
-        res += "Durée totale : " + dureeTotaleMinutes + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
-        int totalMorts = getTotalMorts();
-        res += "Total de morts : " + totalMorts + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
-        res += "Durée de vie moyenne : " + (dureeTotaleHeures / ((float)totalMorts + 1)) + " heures" + TexteConstantes.NEW_LINE;
-        res += "Durée de vie moyenne : " + (dureeTotaleMinutes / ((float)totalMorts + 1)) + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
-        res += "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.HOURS) + " heures" + TexteConstantes.NEW_LINE;
-        res += "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.MINUTES) + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE;
+        float mortsParBoss = (boss == 0) ? 0 : (float)(totalMorts) / (float)(boss);
+        float heuresParBoss = (boss == 0) ? 0 : dureeTotaleHeures / (float)boss;
+        float minutesParBoss = (boss == 0) ? 0 : dureeTotaleMinutes / (float)boss;
+        String res = TexteConstantes.TITRE + " : " + titre + TexteConstantes.NEW_LINE
+                + "" + studio.toString() + TexteConstantes.NEW_LINE
+                + "Année de sortie : " + anneeSortie + TexteConstantes.NEW_LINE
+                + plateformesToString()
+                + genresToString() + TexteConstantes.NEW_LINE
+                + "Total de runs : " + runs.size() + TexteConstantes.NEW_LINE
+                + "Total de lives : " + getTotalLives() + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Durée totale : " + dureeTotaleHeures + " heures" + TexteConstantes.NEW_LINE
+                + "Durée totale : " + (int) dureeTotaleHeures + "h" + (int) (dureeTotaleMinutes % 60) + "m" + TexteConstantes.NEW_LINE
+                + "Durée totale : " + dureeTotaleMinutes + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Total de morts : " + totalMorts + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Durée de vie moyenne : " + (dureeTotaleHeures / ((float) totalMorts + 1)) + " heures" + TexteConstantes.NEW_LINE
+                + "Durée de vie moyenne : " + (dureeTotaleMinutes / ((float) totalMorts + 1)) + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.HOURS) + " heures" + TexteConstantes.NEW_LINE
+                + "Moyenne des durées de vie : " + getMoyenneDureeVie(TimeUnit.MINUTES) + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Boss vaincus : " + boss + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Moyenne de morts par boss : " + mortsParBoss + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Temps moyen par boss : " + heuresParBoss + " heures" + TexteConstantes.NEW_LINE
+                + "Temps moyen par boss : " + minutesParBoss + " minutes" + TexteConstantes.NEW_LINE;
         return res;
     }
     

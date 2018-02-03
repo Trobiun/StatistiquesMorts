@@ -103,6 +103,14 @@ public class Live implements FillDataset, Comparable<Live> {
     }
     
     /**
+     * Retourne le nombre de boss vaincus durant ce live.
+     * @return le nombre de boss vaincus durant ce live
+     */
+    public int getBoss() {
+        return boss;
+    }
+    
+    /**
      * Retourne la date de début du live.
      * @return la date de début du live
      */
@@ -168,14 +176,23 @@ public class Live implements FillDataset, Comparable<Live> {
     public String toString() {
         float heures = this.getDuration(TimeUnit.HOURS);
         float minutes = this.getDuration(TimeUnit.MINUTES);
+        float mortsParBoss = (boss == 0) ? 0 : (float)(morts) / (float)(boss);
+        float minutesParBoss = (boss == 0) ? 0 : minutes / (float)(boss);
+        float heuresParBoss = (boss == 0) ? 0 : heures / (float)(boss);
         String res = "Date début : " + dateDebut.toString() + TexteConstantes.NEW_LINE
                 + "Date fin : " + dateFin.toString() + TexteConstantes.NEW_LINE
-                + "Durée : " + heures + " heures" +TexteConstantes.NEW_LINE
+                + "Durée : " + heures + " heures" + TexteConstantes.NEW_LINE
                 + "Durée : " + (int)(heures) + "h" + (int)(minutes % 60) + "m" +TexteConstantes.NEW_LINE
                 + "Durée : " + minutes + " minutes" + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
-                + "Morts  : " + morts + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Morts  : " + morts + TexteConstantes.NEW_LINE
+                + "Boss vaincus : " + boss + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
                 + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.HOURS) + " heures" + TexteConstantes.NEW_LINE
-                + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.MINUTES) + " minutes" + TexteConstantes.NEW_LINE;
+                + "Durée de vie moyenne : " + getDureeVieMoyenne(TimeUnit.MINUTES) + " minutes"
+                + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Boss vaincus : " + boss + TexteConstantes.NEW_LINE  + TexteConstantes.NEW_LINE
+                + "Moyenne de morts par boss : " + mortsParBoss + TexteConstantes.NEW_LINE + TexteConstantes.NEW_LINE
+                + "Temps moyen par boss : " + minutesParBoss + " minutes" + TexteConstantes.NEW_LINE
+                + "Temsp moyen par boss : " + heuresParBoss + "heures" + TexteConstantes.NEW_LINE;
         return res;
     }
     
@@ -231,7 +248,12 @@ public class Live implements FillDataset, Comparable<Live> {
     public void fillDataset(DefaultCategoryDataset dataset, TimeUnit unit, boolean total) {
         float temps  = this.getDuration(unit);
         float dureeVie = this.getDureeVieMoyenne(unit);
+        float mortsParBoss = (boss == 0) ? 0 : (float)(morts) / (float)(boss);
+        float tempsParBoss = (boss == 0) ? 0 :temps / (float)(boss);
         dataset.addValue(morts, "Morts", dateDebut);
+        dataset.addValue(boss, "Boss", dateDebut);
+        dataset.addValue(tempsParBoss, "Temps par boss", dateDebut);
+        dataset.addValue(mortsParBoss, "Morts par boss", dateDebut);
         dataset.addValue(temps, "Durée du live", dateDebut);
         dataset.addValue(dureeVie, "Durée de vie moyenne", dateDebut);
     }

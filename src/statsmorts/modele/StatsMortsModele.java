@@ -701,7 +701,7 @@ public class StatsMortsModele implements Observable {
     }
     
     /**
-     * 
+     * Remplit le Plate
      * @param idPlateforme 
      */
     public void fillPlateformePanel(long idPlateforme) {
@@ -766,9 +766,9 @@ public class StatsMortsModele implements Observable {
     
     
     /**
-     * 
-     * @param titre
-     * @param nodes 
+     * Crée le dataset pour le graphique.
+     * @param titre le titre du dataset/graphique à créer
+     * @param nodes la liste des objets avec lesquels créer le dataset
      */
     public void createDataset(String titre, ArrayList<FillDataset> nodes) {
         livesForDataset.clear();
@@ -780,27 +780,38 @@ public class StatsMortsModele implements Observable {
     }
     
     /**
-     * 
+     * Actualise le dataset avec les informations de l'arryalist "livesForDataset".
      */
     public void actualiserDataset() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        float moyenne = 0, sommeDureeVie = 0, sommeMoyennes = 0;
-        int count = 0, sommeMorts = 0;
+        float moyenne = 0, sommeDureeVie = 0, sommeMoyennes = 0, bossParLive = 0
+                , tempsParBoss = 0;
+        int count = 0, sommeMorts = 0, sommeBoss = 0;
         float sommeTime = 0;
         for (Live live : livesForDataset) {
             sommeTime += live.getDuration(timeUnit);
             sommeMorts += live.getMorts();
+            sommeBoss += live.getBoss();
             sommeDureeVie += live.getDureeVieMoyenne(timeUnit);
             count++;
-            moyenne = sommeDureeVie / (float)count;
+            moyenne = sommeDureeVie / (float)(count);
+            bossParLive = sommeBoss / (float)(count);
             sommeMoyennes += moyenne;
             live.fillDataset(dataset, timeUnit, false);
-            dataset.addValue(moyenne,"Moyenne des durées de vie",live.getDateDebut());
+            dataset.addValue(moyenne, "Moyenne des durées de vie", live.getDateDebut());
+            dataset.addValue(bossParLive, "Boss par live", live.getDateDebut());
         }
         if (livesForDataset.size() > 1) {
-            float dureeVieMoyenneTotale = (float)sommeTime / (float)(sommeMorts + 1);
-            moyenne = sommeMoyennes / (float)count;
+            float dureeVieMoyenneTotale = (float)(sommeTime) / (float)(sommeMorts + 1);
+            float bossParLiveTotal = /*(sommeBoss == 0) ? 0 : */(float)(sommeBoss) / (float)(count);
+            float mortsParBossTotal = (sommeBoss == 0) ? 0 :(float)(sommeMorts) / (float)(sommeBoss);
+            tempsParBoss =  (sommeBoss == 0) ? 0 : sommeTime / (float)(sommeBoss);
+            moyenne = sommeMoyennes / (float)(count);
             dataset.addValue(sommeMorts, "Morts", "Total");
+            dataset.addValue(sommeBoss, "Boss", "Total");
+            dataset.addValue(mortsParBossTotal, "Morts par boss", "Total");
+            dataset.addValue(tempsParBoss, "Temps par boss", "Total");
+            dataset.addValue(bossParLiveTotal, "Boss par live","Total");
             dataset.addValue(dureeVieMoyenneTotale, "Durée de vie moyenne", "Total");
             dataset.addValue(sommeTime, "Durée du live", "Total");
             dataset.addValue(moyenne, "Moyenne des durées de vie", "Total");
