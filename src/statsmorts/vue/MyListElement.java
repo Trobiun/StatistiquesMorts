@@ -45,7 +45,7 @@ public class MyListElement {
      */
     @Override
     public String toString() {
-        return id + " : " + objet.getTitre();
+        return objet.getTitre();
     }
     
     /**
