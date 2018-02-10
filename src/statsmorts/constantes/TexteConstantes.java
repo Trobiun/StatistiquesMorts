@@ -59,15 +59,19 @@ public final class TexteConstantes {
     public static final String CONNEECTER = "Se connecter";
     
     //OBJECT_DATABASE_PANELS
+    public static final String SELECTION = "Sélection";
     public static final String ID = "Identifiant";
     public static final String TITRE = "Titre";
     public static final String NOM = "Nom";
+    public static final String NOUVEAU_NOM = "Nouveau nom";
     public static final String ANNEE_SORTIE = "Année de sortie";
     public static final String DATES = "Dates";
     public static final String DATE_DEBUT = "Date de début";
     public static final String DATE_FIN = "Date de fin";
     public static final String INSERER_MAINTENANT = "Maintenant";
+    public static final String COMPTEURS = "Compteurs";
     public static final String MORTS = "Morts";
+    public static final String BOSS = "Boss";
     public static final String INCREMENTER = "Incrémenter";
     public static final String REINITIALISATION = "Réinitialisation";
     public static final String REINITIALISER = "Réinitialiser";
