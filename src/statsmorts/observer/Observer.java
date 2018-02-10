@@ -58,6 +58,21 @@ public interface Observer {
      */
     void addLive(Live live);
     /**
+     * 
+     * @param idRun
+     */
+    void addPossibleRunOnRunPanels(long idRun);
+    /**
+     * 
+     * @param idRun
+     */
+    void addPossibleRunOnLivePanels(long idRun);
+    /**
+     * 
+     * @param idLive 
+     */
+    void addPossibleLiveOnLivePanels(long idLive);
+    /**
      * Supprime une plateforme de l'affichage.
      * @param idPlateforme l'identifiant de la plateforme à supprimer de la vue
      */
@@ -87,6 +102,23 @@ public interface Observer {
      * @param idLive l'identifiant du live à supprimer de la vue
      */
     void removeLive(long idLive);
+    
+    
+    void removeAllPlateformes();
+    
+    void removeAllGenres();
+    
+    void removeAllStudios();
+    
+    void removeAllJeux();
+    
+    void removeAllRunsOnRunPanels();
+    
+    void removeAllRunsOnLivePanels();
+    
+    void removeAllLivesOnLivePanels();
+    
+    void removeAllLives();
     
     /**
      * Met à jour le dataset pour le graphique à afficher.
@@ -125,15 +157,18 @@ public interface Observer {
      * Remplit les panels de saisies utilisateur pour les runs.
      * Remplit les champs de saisies directement liés à la run.
      * @param titreRun le titre de la run
-     * @param idJeu l'identifiant du jeu à présélectionner
      */
-    void fillRun(String titreRun, long idJeu);
+    void fillRun(String titreRun);
     /**
      * Remplit les panels de saisies utilisateur pour les runs.
      * Remplit les champs de saisies liés au jeu de la run.
      * @param titreJeu le titre du jeu
      */
-    void fillRunJeu(String titreJeu);
+    void fillJeuOnRunPanels(String titreJeu);
+    
+    void fillJeuOnLivePanels(String titreJeu);
+    
+    void fillRunOnLivePanels(String titreRun);
     /**
      * Remplit les panels de saisies utilisateur pour les lives.
      * Remplit les champs de saisies directement liés au live.
@@ -141,8 +176,9 @@ public interface Observer {
      * @param dateDebut la date de début
      * @param dateFin la date de fin
      * @param morts le nombre de morts
+     * @param boss le nombre de boss vaincus
      */
-    void fillLive(long idRun, Date dateDebut, Date dateFin, int morts);
+    void fillLive(long idRun, Date dateDebut, Date dateFin, int morts, int boss);
     /**
      * Remplit les panels de saisies utilisateur pour les lives.
      * Remplit les champs de saisies liés à la run du live.
