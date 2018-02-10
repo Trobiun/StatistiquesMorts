@@ -22,6 +22,8 @@ public abstract class GridBagConstraintsSimpleFactory {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
+        gbc.gridx = 0;
+        gbc.gridx = 0;
         return gbc;
     }
     
