@@ -135,9 +135,21 @@ public class StatsMortsControler {
      * @param idJeu l'identifiant du jeu auquel il faut chercher les
      * informations
      */
-    public void fillRunPanelJeu(final long idJeu) {
+    public void selectJeuRunPanels(final long idJeu) {
         if (idJeu > 0) {
-            modele.fillRunPanelJeu(idJeu);
+            modele.selectJeuRunPanels(idJeu);
+        }
+    }
+    
+    public void selectJeuLivePanels(final long idJeu) {
+        if (idJeu > 0){
+            modele.selectJeuLivePanels(idJeu);
+        }
+    }
+    
+    public void selectRunLivePanels(final long idRun) {
+        if (idRun > 0) {
+            modele.selectRunLivePanels(idRun);
         }
     }
     
@@ -164,6 +176,11 @@ public class StatsMortsControler {
         }
     }
     
+    public void fillRunOnPanelLive(final long idRun) {
+        if (idRun > 0) {
+            modele.fillRunOnLivePanels(idRun);
+        }
+    }
     
     //MÉTHODES AYANT UN IMPACT SUR LE MODÈLE
     /**
