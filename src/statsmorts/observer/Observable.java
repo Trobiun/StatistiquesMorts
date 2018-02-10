@@ -127,19 +127,26 @@ public interface Observable {
      */
     void notifyFillRun(long idRun);
     /**
-     * Notifie l'observer de remplir les panels de jeux dans les panels de saisie de runs.
-     * @param idJeu l'identifiant du jeu à remplir.
+     * Notifie l'observer de la sélection d'un jeu
+     * @param idJeu l'identifiant du jeu sélectionné
      */
-    void notifyFillRunJeu(long idJeu);
+    void notifySelectJeuRunPanels(long idJeu);
+    /**
+     * 
+     * @param idJeu l'identifiant du jeu sélectionné
+     */
+    void notifySelectJeuLivePanels(long idJeu);
+    /**
+     * 
+     * @param idRun 
+     */
+    void notifySelectRunLivePanels(long idRun);
     /**
      * Notifie l'observer de remplir les panels de saisie de lives.
      * @param idLive l'identifiant du live à remplir.
      */
     void notifyFillLive(long idLive);
-    /**
-     * Notifie l'observer de remplir les panels de runs dans les panels de saisie de lives.
-     * @param idRun l'identifiant de la run à remplir.
-     */
-    void notifyFillLiveRun(long idRun);
+    
+    void notifyFillRunOnLivePanels(long idRUn);
     
 }
