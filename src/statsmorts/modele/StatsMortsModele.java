@@ -406,7 +406,7 @@ public class StatsMortsModele implements Observable {
                         bdd.getGenre(idGenre).ajouterJeu(jeu);
                     }
                 }
-                //ajoute le studio au jeu et fait el lien dans la base de données
+//                //ajoute le studio au jeu et fait el lien dans la base de données
 //                String requeteStudio = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
 //                        + "(" + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
 //                        + ")" + TexteConstantesSQL.VALUES + "(?,?)";
@@ -449,8 +449,10 @@ public class StatsMortsModele implements Observable {
         String idJeuRequete = TexteConstantesConnexion.LONG + idJeu;
         //modifie les champs directs du jeu
         String requete = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_JEUX
-                + " " + TexteConstantesSQL.SET + " " + TexteConstantesSQL.TABLE_JEUX_TITRE
-                + " = ? , " + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + " = ? "
+                + " " + TexteConstantesSQL.SET + " "
+                + TexteConstantesSQL.TABLE_JEUX_TITRE + " = ? , "
+                + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + " = ? , "
+                + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " = ? "
                 + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEUX_ID + " = ?";
         int rows = connexion.executerPreparedUpdate(requete, titre, TexteConstantesConnexion.INT + anneeSortie, idJeuRequete);
         if (rows > 0) {
@@ -491,15 +493,15 @@ public class StatsMortsModele implements Observable {
                     jeu.ajouterGenre(bdd.getGenre(idGenre));
                 }
             }
-            //changement du studio dans la table JeuStudio
-            String requeteChangeStudio = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
-                    + " " + TexteConstantesSQL.SET + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
-                    + " = ? " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU
-                    + " = ?";
-            rows = connexion.executerPreparedUpdate(requeteChangeStudio, TexteConstantesConnexion.LONG + idStudio, idJeuRequete);
-            if (rows > 0) {
-                jeu.setStudio(bdd.getStudio(idStudio));
-            }
+//            //changement du studio dans la table JeuStudio
+//            String requeteChangeStudio = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
+//                    + " " + TexteConstantesSQL.SET + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
+//                    + " = ? " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU
+//                    + " = ?";
+//            rows = connexion.executerPreparedUpdate(requeteChangeStudio, TexteConstantesConnexion.LONG + idStudio, idJeuRequete);
+//            if (rows > 0) {
+//                jeu.setStudio(bdd.getStudio(idStudio));
+//            }
             notifyRemoveJeu(idJeu);
             notifyAddJeu(jeu);
         }
