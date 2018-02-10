@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -369,6 +370,7 @@ public class StatsMortsModele implements Observable {
     public void ajouterJeu(String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
         String requete = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEUX
                 + "(" + TexteConstantesSQL.TABLE_JEUX_TITRE + "," + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE
+                + "," + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO
                 + ") " + TexteConstantesSQL.VALUES + "(?,?,?)";
         int rowsInserted = connexion.executerPreparedUpdate(requete, titre,
                 TexteConstantesConnexion.INT + anneeSortie,
@@ -405,14 +407,14 @@ public class StatsMortsModele implements Observable {
                     }
                 }
                 //ajoute le studio au jeu et fait el lien dans la base de données
-                String requeteStudio = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
-                        + "(" + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
-                        + ")" + TexteConstantesSQL.VALUES + "(?,?)";
-                rows = connexion.executerPreparedUpdate(requeteStudio, TexteConstantesConnexion.LONG + idJeu, TexteConstantesConnexion.LONG + idStudio);
-                if (rows > 0) {
-//                    jeu.setStudio(bdd.getStudio(idStudio));
-                    bdd.getStudio(idStudio).ajouterJeu(jeu);
-                }
+//                String requeteStudio = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
+//                        + "(" + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
+//                        + ")" + TexteConstantesSQL.VALUES + "(?,?)";
+//                rows = connexion.executerPreparedUpdate(requeteStudio, TexteConstantesConnexion.LONG + idJeu, TexteConstantesConnexion.LONG + idStudio);
+//                if (rows > 0) {
+////                    jeu.setStudio(bdd.getStudio(idStudio));
+//                    bdd.getStudio(idStudio).ajouterJeu(jeu);
+//                }
                 if (rowsInserted > 0) {
                     bdd.ajouterJeu(jeu);
                     notifyAddJeu(jeu);
@@ -740,12 +742,24 @@ public class StatsMortsModele implements Observable {
         notifyFillRun(idRun);
     }
     
+    public void fillRunOnLivePanels(long idRun) {
+        notifyFillRunOnLivePanels(idRun);
+    }
+    
     /**
      * 
      * @param idJeu 
      */
-    public void fillRunPanelJeu(long idJeu) {
-        notifyFillRunJeu(idJeu);
+    public void selectJeuRunPanels(long idJeu) {
+        notifySelectJeuRunPanels(idJeu);
+    }
+    
+    public void selectJeuLivePanels(long idJeu) {
+        notifySelectJeuLivePanels(idJeu);
+    }
+    
+    public void selectRunLivePanels(long idRun) {
+        notifySelectRunLivePanels(idRun);
     }
     
     /**
@@ -761,16 +775,27 @@ public class StatsMortsModele implements Observable {
      * @param idRun 
      */
     public void fillLivePanelRun(long idRun) {
-        notifyFillLiveRun(idRun);
+        notifyFillRunOnLivePanels(idRun);
     }
     
+    /**
+     * 
+     * @param idJeu 
+     */
+    public void setSelectionPossibleRun(final long idJeu) {
+        HashMap<Long,Run> runsPossibles = bdd.getJeu(idJeu).getRuns();
+        Set<Entry<Long,Run>>setEntries = runsPossibles.entrySet();
+        for (Entry<Long,Run> runEntry : setEntries) {
+            notifyAddRunPosssible(runEntry.getValue());
+        }
+    }
     
     /**
      * Crée le dataset pour le graphique.
      * @param titre le titre du dataset/graphique à créer
      * @param nodes la liste des objets avec lesquels créer le dataset
      */
-    public void createDataset(String titre, ArrayList<FillDataset> nodes) {
+    public void createDataset(final String titre,final  ArrayList<FillDataset> nodes) {
         livesForDataset.clear();
         for (FillDataset node : nodes) {
             livesForDataset.addAll(node.getLivesList());
@@ -825,7 +850,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void setObserver(Observer observer) {
+    public void setObserver(final Observer observer) {
         this.observer = observer;
     }
     
@@ -833,7 +858,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void setGroup(TypeGroup type) {
+    public void setGroup(final TypeGroup type) {
         this.typeGroup = type;
         this.actualiser();
     }
@@ -842,7 +867,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyAddPlateforme(Plateforme plateforme) {
+    public void notifyAddPlateforme(final Plateforme plateforme) {
         if (hasObserver()) {
             observer.addPlateforme(plateforme);
         }
@@ -852,7 +877,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyAddGenre(Genre genre) {
+    public void notifyAddGenre(final Genre genre) {
         if(hasObserver()) {
             observer.addGenre(genre);
         }
@@ -862,7 +887,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyAddStudio(Studio studio) {
+    public void notifyAddStudio(final Studio studio) {
         if (hasObserver()) {
             observer.addStudio(studio);
         }
@@ -872,7 +897,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyAddJeu(Jeu jeu) {
+    public void notifyAddJeu(final Jeu jeu) {
         if (hasObserver()) {
             observer.addJeu(jeu);
             Map<Long, Run> runsMap = jeu.getRuns();
@@ -890,11 +915,17 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    public void notifyAddRunPosssible(final Run run) {
+        if (hasObserver()) {
+            observer.addPossibleRunOnRunPanels(run.getID());
+        }
+    }
+    
     /**
      * {@inheritDoc} 
      */
     @Override
-    public void notifyAddRun(Run run) {
+    public void notifyAddRun(final Run run) {
         if (hasObserver()) {
             observer.addRun(run);
         }
@@ -904,7 +935,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyAddLive(Live live) {
+    public void notifyAddLive(final Live live) {
         if (hasObserver()) {
             final Run run = live.getRun();
             observer.addLive(live);
@@ -915,7 +946,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyRemovePlateforme(long idPlateforme) {
+    public void notifyRemovePlateforme(final long idPlateforme) {
         if (hasObserver()) {
             observer.removePlateforme(idPlateforme);
         }
@@ -925,7 +956,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyRemoveGenre(long idGenre) {
+    public void notifyRemoveGenre(final long idGenre) {
         if (hasObserver()) {
             observer.removeGenre(idGenre);
         }
@@ -935,7 +966,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyRemoveStudio(long idStudio) {
+    public void notifyRemoveStudio(final long idStudio) {
         if (hasObserver()) {
             observer.removeStudio(idStudio);
         }
@@ -945,7 +976,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyRemoveJeu(long idJeu) {
+    public void notifyRemoveJeu(final long idJeu) {
         if (hasObserver()) {
             observer.removeJeu(idJeu);
         }
@@ -955,7 +986,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyRemoveRun(long idRun) {
+    public void notifyRemoveRun(final long idRun) {
         if (hasObserver()) {
             observer.removeRun(idRun);
         }
@@ -965,7 +996,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyRemoveLive(long idLive) {
+    public void notifyRemoveLive(final long idLive) {
         if (hasObserver()) {
             observer.removeLive(idLive);
         }
@@ -975,7 +1006,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyDataset(String titre, DefaultCategoryDataset dataset) {
+    public void notifyDataset(final String titre, final DefaultCategoryDataset dataset) {
         if (hasObserver() && null != dataset) {
             observer.updateDataset(titre,dataset);
         }
@@ -985,7 +1016,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyFillPlateforme(long idPlateforme) {
+    public void notifyFillPlateforme(final long idPlateforme) {
         if (hasObserver()) {
             final Plateforme plateforme = bdd.getPlateformes().get(idPlateforme);
             if (null != plateforme) {
@@ -998,7 +1029,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyFillGenre(long idGenre) {
+    public void notifyFillGenre(final long idGenre) {
         if (hasObserver()) {
             final Genre genre = bdd.getGenres().get(idGenre);
             if (null != genre) {
@@ -1011,7 +1042,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyFillStudio(long idStudio) {
+    public void notifyFillStudio(final long idStudio) {
         if (hasObserver()) {
             final Studio studio = bdd.getStudios().get(idStudio);
             if (null != studio) { 
@@ -1024,7 +1055,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyFillJeu(long idJeu) {
+    public void notifyFillJeu(final long idJeu) {
         if (hasObserver()) {
             final Jeu jeu = bdd.getJeux().get(idJeu);
             if (null != jeu && jeu.getStudio() != null) {
@@ -1037,12 +1068,11 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyFillRun(long idRun) {
+    public void notifyFillRun(final long idRun) {
         if (hasObserver()) {
             final Run run = bdd.getRun(idRun);
             if (null != run) {
-                final Jeu jeu = run.getJeu();
-                observer.fillRun(run.getTitre(),jeu.getID());
+                observer.fillRun(run.getTitre());
             }
         }
     }
@@ -1051,11 +1081,50 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyFillRunJeu(long idJeu) {
+    public void notifySelectJeuRunPanels(final long idJeu) {
         if (hasObserver()) {
             final Jeu jeu = bdd.getJeu(idJeu);
             if (null != jeu) {
-                observer.fillRunJeu(jeu.getTitre());
+                observer.removeAllRunsOnRunPanels();
+                observer.fillJeuOnRunPanels(jeu.getTitre());
+                Set<Entry<Long,Run>> mapRuns = jeu.getRuns().entrySet();
+                for(Entry<Long,Run> run : mapRuns) {
+                    observer.addPossibleRunOnRunPanels(run.getValue().getID());
+                }
+            }
+        }
+    }
+    
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public void notifySelectJeuLivePanels(long idJeu) {
+        if (hasObserver()) {
+            Jeu jeu = bdd.getJeu(idJeu);
+            if (null != jeu) {
+                observer.removeAllLivesOnLivePanels();
+                observer.removeAllRunsOnLivePanels();
+                observer.fillJeuOnLivePanels(jeu.getTitre());
+                Set<Entry<Long,Run>> mapRuns = jeu.getRuns().entrySet();
+                for(Entry<Long,Run> run : mapRuns) {
+                    observer.addPossibleRunOnLivePanels(run.getValue().getID());
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void notifySelectRunLivePanels(long idRun) {
+        if (hasObserver()) {
+            Run run = bdd.getRun(idRun);
+            if (null != run) {
+                observer.removeAllLivesOnLivePanels();
+                observer.fillRunOnLivePanels(run.getTitre());
+                Set<Entry<Long,Live>> mapLives = run.getLives().entrySet();
+                for (Entry<Long,Live> live : mapLives) {
+                    observer.addPossibleLiveOnLivePanels(live.getValue().getID());
+                }
             }
         }
     }
@@ -1068,23 +1137,17 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Live live = bdd.getLive(idLive);
             if (null != live) {
-                observer.fillLive(live.getRun().getID(), live.getDateDebut(), live.getDateFin(), live.getMorts());
+                observer.fillLive(live.getRun().getID(), live.getDateDebut(), live.getDateFin(), live.getMorts(), live.getBoss());
             }
         }
     }
     
-    /**
-     * {@inheritDoc} 
-     */
     @Override
-    public void notifyFillLiveRun(long idRun) {
+    public void notifyFillRunOnLivePanels(long idRun) {
         if (hasObserver()) {
-            final Run run = bdd.getRun(idRun);
+            Run run = bdd.getRun(idRun);
             if (null != run) {
-                final Jeu jeu = run.getJeu();
-                if (null != jeu) {
-                    observer.fillLiveRun(run.getID(), run.getTitre(), jeu.getTitre());
-                }
+                observer.fillRunOnLivePanels(run.getTitre());
             }
         }
     }
