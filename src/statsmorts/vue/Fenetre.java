@@ -426,6 +426,9 @@ public class Fenetre extends JFrame implements Observer {
         genrePanels = new GenrePanels(controler);
         studioPanels = new StudioPanels(controler);
         jeuPanels = new JeuPanels(controler);
+        jeuPanels.addPlateformesActionListener(new PlateformesActionListener());
+        jeuPanels.addGenresActionListener(new GenresActionListener());
+        jeuPanels.addStudiosActionListener(new StudiosActionListener());
         runPanels = new RunPanels(controler);
         livePanels = new LivePanels(controler);
     }
@@ -657,15 +660,15 @@ public class Fenetre extends JFrame implements Observer {
     @Override
     public void clear(TypeGroup type) {
         rootTree.removeAllChildren();
-        plateformePanels.removeAllItems();
-        genrePanels.removeAllItems();
-        studioPanels.removeAllItems();
+        plateformePanels.supprimerTousItems();
+        genrePanels.supprimerTousItems();
+        studioPanels.supprimerTousItems();
         jeuPanels.clearLists();
-        jeuPanels.removeAllItems();
-        runPanels.removeAllItems();
+        jeuPanels.supprimerTousItems();
+        runPanels.supprimerTousItems();
         runPanels.supprimerTousJeux();
         livePanels.supprimerToutesRuns();
-        livePanels.removeAllItems();
+        livePanels.supprimerTousItems();
         rootTree.setUserObject(type.getNom());
         ((DefaultTreeModel) treeJeux.getModel()).reload(rootTree);
         panelChart.setChart(null);
@@ -681,7 +684,7 @@ public class Fenetre extends JFrame implements Observer {
             rootTree.sort();
             ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
-        plateformePanels.addItem(plateforme.getID());
+        plateformePanels.ajouterItem(plateforme.getID());
         jeuPanels.addPlateforme(plateforme);
     }
     
@@ -694,7 +697,7 @@ public class Fenetre extends JFrame implements Observer {
             rootTree.sort();
             ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
-        genrePanels.addItem(genre.getID());
+        genrePanels.ajouterItem(genre.getID());
         jeuPanels.addGenre(genre);
     }
     
@@ -707,7 +710,7 @@ public class Fenetre extends JFrame implements Observer {
             rootTree.sort();
             ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
-        studioPanels.addItem(studio.getID());
+        studioPanels.ajouterItem(studio.getID());
         jeuPanels.addStudio(studio);
     }
     
@@ -768,8 +771,9 @@ public class Fenetre extends JFrame implements Observer {
             ((DefaultTreeModel)treeJeux.getModel()).reload();
         }
 //        ((DefaultTreeModel)treeJeux.getModel()).reload();
-        jeuPanels.addItem(jeu.getID());
+        jeuPanels.ajouterItem(jeu.getID());
         runPanels.ajouterJeu(jeu.getID());
+        livePanels.ajouterJeu(jeu.getID());
     }
     
     @Override
@@ -783,8 +787,8 @@ public class Fenetre extends JFrame implements Observer {
             nodeJeu.sort();
             ((DefaultTreeModel)treeJeux.getModel()).reload(nodeJeu);
         }
-        runPanels.addItem(run.getID());
-        livePanels.ajouterRun(run.getID());
+//        runPanels.ajouterItem(run.getID());
+//        livePanels.ajouterPossibleRun(run.getID());
 //        ArrayList<SortableTreeNode> arrayRun = mapRuns.getOrDefault(run.getID(), new ArrayList());
 //        mapRuns.putIfAbsent(idJeu, arrayRun);
 //        arrayRun.add(nodeRun);
@@ -806,10 +810,67 @@ public class Fenetre extends JFrame implements Observer {
             nodeRun.sort();
         }
         mapRuns.putIfAbsent(idRun, arrayRun);
-        livePanels.addItem(live.getID());
+//        livePanels.ajouterItem(live.getID());
 //        mapRuns.get(idRun).add(nodeLive);
 //        mapRuns.get(idRun).sort();
     }
+    
+    @Override
+    public void addPossibleRunOnRunPanels(long idRun) {
+        runPanels.ajouterPossibleRun(idRun);
+    }
+    
+    @Override
+    public void addPossibleRunOnLivePanels(long idRun) {
+        livePanels.ajouterPossibleRun(idRun);
+    }
+    
+    @Override
+    public void addPossibleLiveOnLivePanels(long idLive) {
+        livePanels.ajouterPossibleLive(idLive);
+    }
+    
+    @Override
+    public void removeAllPlateformes() {
+        
+    }
+    
+    @Override
+    public void removeAllGenres() {
+        
+    }
+    
+    @Override
+    public void removeAllStudios() { 
+        
+    }
+    
+    @Override
+    public void removeAllJeux() { 
+        
+    }
+    
+    @Override
+    public void removeAllRunsOnRunPanels() {
+        runPanels.supprimerToutesRuns();
+    }
+    
+    @Override
+    public void removeAllRunsOnLivePanels() {
+        livePanels.supprimerToutesRuns();
+    }
+    
+    @Override
+    public void removeAllLivesOnLivePanels() {
+        livePanels.supprimerTousLives();
+    }
+    
+    
+    @Override
+    public void removeAllLives() {
+        
+    }
+    
     
     @Override
     public void removePlateforme(long idPlateforme) {
@@ -818,7 +879,7 @@ public class Fenetre extends JFrame implements Observer {
             ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapPlateformes.get(idPlateforme));
         }
         mapPlateformes.remove(idPlateforme);
-        plateformePanels.removeItem(idPlateforme);
+        plateformePanels.supprimerItem(idPlateforme);
         jeuPanels.removePlateforme(idPlateforme);
     }
     
@@ -828,7 +889,7 @@ public class Fenetre extends JFrame implements Observer {
             ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapGenres.get(idGenre));
         }
         mapGenres.remove(idGenre);
-        plateformePanels.removeItem(idGenre);
+        plateformePanels.supprimerItem(idGenre);
         jeuPanels.removeGenre(idGenre);
     }
     
@@ -838,7 +899,7 @@ public class Fenetre extends JFrame implements Observer {
             ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapStudios.get(idStudio));
         }
         mapStudios.remove(idStudio);
-        studioPanels.removeItem(idStudio);
+        studioPanels.supprimerItem(idStudio);
         jeuPanels.removeStudio(idStudio);
     }
     
@@ -873,7 +934,7 @@ public class Fenetre extends JFrame implements Observer {
         }
         mapJeux.remove(idJeu);
 //        ((DefaultTreeModel)treeJeux.getModel()).reload();
-        jeuPanels.removeItem(idJeu);
+        jeuPanels.supprimerItem(idJeu);
         runPanels.supprimerJeu(idJeu);
     }
     
@@ -927,22 +988,33 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void fillRun(String titreRun, long idJeu) {
+    public void fillRun(String titreRun/*, long idJeu*/) {
         runPanels.setNom(titreRun);
-        runPanels.setIDJeu(idJeu);
+//        runPanels.setIDJeu(idJeu);
     }
     
     @Override
-    public void fillRunJeu(String titreJeu) {
+    public void fillJeuOnRunPanels(String titreJeu) {
         runPanels.setTitreJeu(titreJeu);
     }
     
     @Override
-    public void fillLive(long idRun, Date dateDebut, Date dateFin, int morts) {
+    public void fillJeuOnLivePanels(String titreJeu) {
+        livePanels.setTitreJeu(titreJeu);
+    }
+    
+    @Override
+    public void fillRunOnLivePanels(String titreRun) {
+        livePanels.setTitreRun(titreRun);
+    }
+    
+    @Override
+    public void fillLive(long idRun, Date dateDebut, Date dateFin, int morts, int boss) {
         livePanels.setIDRun(idRun);
         livePanels.setDateDebut(dateDebut);
         livePanels.setDateFin(dateFin);
         livePanels.setMorts(morts);
+        livePanels.setBoss(boss);
     }
     
     @Override
@@ -970,28 +1042,30 @@ public class Fenetre extends JFrame implements Observer {
                 inputs = null;
         }
         if (null != inputs) {
-            inputs.setIDPanelVisible(!mode.equals(ModeGestion.AJOUTER));
-            inputs.setResetButtonVisible(mode.equals(ModeGestion.MODIFIER));
+            inputs.setSelectionPanelVisible(!mode.equals(ModeGestion.AJOUTER));
             if (mode.equals(ModeGestion.AJOUTER)) {
-//                inputs.setIDPanelVisible(false);
+//                inputs.setSelectionPanelVisible(false);
+                inputs.setSaisiesPanelVisible(true);
                 inputs.clearFields(true,true);
             }
             else {
                 boolean editable = mode.equals(ModeGestion.MODIFIER);
-//                inputs.setIDPanelVisible(true);
+//                inputs.setSelectionPanelVisible(true);
+                inputs.setSaisiesPanelVisible(editable);
                 inputs.clearFields(editable,false);
             }
             
+            inputs.setResetButtonVisible(mode.equals(ModeGestion.MODIFIER));
             String[] options = { mode.getAction(), TexteConstantes.ANNULER };
             int res = JOptionPane.showOptionDialog(this, inputs, mode.getAction() + " " + typeInputs.getNom(),
                     JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if (res == JOptionPane.YES_OPTION) {
                 switch (mode) {
                     case AJOUTER:
-                        controler.ajouterBasicInputs(typeInputs, inputs.getNom());
+                        controler.ajouterBasicInputs(typeInputs, inputs.getNouveauNom());
                         break;
                     case MODIFIER:
-                        controler.modifierBasicInputs(typeInputs, inputs.getSelectedID(), inputs.getNom());
+                        controler.modifierBasicInputs(typeInputs, inputs.getSelectedID(), inputs.getNouveauNom());
                         treeJeux.updateUI();
                         break;
                     case SUPPRIMER:
@@ -1004,15 +1078,17 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     private void gererJeuxInputs(ModeGestion mode) {
-        jeuPanels.setIDPanelVisible(!mode.equals(ModeGestion.AJOUTER));
+        jeuPanels.setSelectionPanelVisible(!mode.equals(ModeGestion.AJOUTER));
         jeuPanels.setResetButtonVisible(mode.equals(ModeGestion.MODIFIER));
+//        jeuPanels.setSelectionPanelVisible(true);
         if (mode.equals(ModeGestion.AJOUTER)) {
-//            jeuPanels.setIDPanelVisible(false);
+//            jeuPanels.setSelectionPanelVisible(false);
             jeuPanels.clearFields(true,true);
         }
         else {
             boolean editable = mode.equals(ModeGestion.MODIFIER);
-//            jeuPanels.setIDPanelVisible(true);
+//            jeuPanels.setSelectionPanelVisible(true);
+            jeuPanels.setNouveauNomPanelVisible(editable);
             jeuPanels.clearFields(editable,false);
         }
         String[] options = { mode.getAction(), TexteConstantes.ANNULER };
@@ -1020,7 +1096,7 @@ public class Fenetre extends JFrame implements Observer {
                 + " " + TexteConstantes.JEU.toLowerCase(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
             long idJeu = jeuPanels.getSelectedID();
-            String titreJeu = jeuPanels.getNom();
+            String titreJeu = jeuPanels.getNouveauNom();
             int anneeSortie = jeuPanels.getAnneeSortie();
             List<Long> listPlateformes = jeuPanels.getPlateformes();
             List<Long> listGenres = jeuPanels.getGenres();
@@ -1041,23 +1117,27 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     private void gererRunsInputs(ModeGestion mode) {
-        runPanels.setIDPanelVisible(!mode.equals(ModeGestion.AJOUTER));
-        runPanels.setResetButtonVisible(mode.equals(ModeGestion.MODIFIER));
+//        runPanels.setSelectionPanelVisible(!mode.equals(ModeGestion.AJOUTER));
         if (mode.equals(ModeGestion.AJOUTER)) {
-//            jeuPanels.setIDPanelVisible(false);
+            runPanels.setSelectionCurrentPanelVisible(false);
+            runPanels.setNouveauNomPanelVisible(true);
+            runPanels.setSaisiesPanelVisible(true);
             runPanels.clearFields(true,true);
         }
         else {
             boolean editable = mode.equals(ModeGestion.MODIFIER);
-//            jeuPanels.setIDPanelVisible(true);
+            runPanels.setSelectionCurrentPanelVisible(true);
+            runPanels.setSaisiesPanelVisible(editable);
+            runPanels.setNouveauNomPanelVisible(editable);
             runPanels.clearFields(editable,false);
         }
+        runPanels.setResetButtonVisible(mode.equals(ModeGestion.MODIFIER));
         String[] options = { mode.getAction(), TexteConstantes.ANNULER };
         int res = JOptionPane.showOptionDialog(this, runPanels, mode.getAction()
                 + " " + TexteConstantes.RUN.toLowerCase(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
             long idRun = runPanels.getSelectedID();
-            String titreRun = runPanels.getNom();
+            String titreRun = runPanels.getNouveauNom();
             long idJeu = runPanels.getSelectedJeuID();
             switch (mode) {
                 case AJOUTER :
@@ -1075,7 +1155,8 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     private void gererLivesInputs(ModeGestion mode) {
-        livePanels.setIDPanelVisible(!mode.equals(ModeGestion.AJOUTER));
+        livePanels.setNouveauNomPanelVisible(false);
+        livePanels.setSelectionCurrentPanelVisible(!mode.equals(ModeGestion.AJOUTER));
         livePanels.setResetButtonVisible(mode.equals(ModeGestion.MODIFIER));
         if (mode.equals(ModeGestion.AJOUTER)) {
             livePanels.clearFields(true,true);
@@ -1106,10 +1187,10 @@ public class Fenetre extends JFrame implements Observer {
 //    
 //    private void gererPlateformeInputs(ModeGestion mode) {
 //        if (mode.equals(ModeGestion.AJOUTER)) {
-//            plateformePanels.setIDPanelVisible(false);
+//            plateformePanels.setSelectionPanelVisible(false);
 //        }
 //        else {
-//            plateformePanels.setIDPanelVisible(true);
+//            plateformePanels.setSelectionPanelVisible(true);
 //        }
 //        
 //        String[] options = { mode.getAction(), TexteConstantes.ANNULER };
@@ -1134,10 +1215,10 @@ public class Fenetre extends JFrame implements Observer {
 //    
 //    private void gererGenresInputs(ModeGestion mode) {
 //        if (mode.equals(ModeGestion.AJOUTER)) {
-//            genrePanels.setIDPanelVisible(false);
+//            genrePanels.setSelectionPanelVisible(false);
 //        }
 //        else {
-//            genrePanels.setIDPanelVisible(true);
+//            genrePanels.setSelectionPanelVisible(true);
 //        }
 //        
 //        String[] options = { mode.getAction(), TexteConstantes.ANNULER };
@@ -1162,10 +1243,10 @@ public class Fenetre extends JFrame implements Observer {
 //    
 //    private void gererStudiosInputs(ModeGestion mode) {
 //        if (mode.equals(ModeGestion.AJOUTER)) {
-//            studioPanels.setIDPanelVisible(false);
+//            studioPanels.setSelectionPanelVisible(false);
 //        }
 //        else {
-//            studioPanels.setIDPanelVisible(true);
+//            studioPanels.setSelectionPanelVisible(true);
 //        }
 //        
 //        String[] options = { mode.getAction(), TexteConstantes.ANNULER };
@@ -1541,6 +1622,39 @@ public class Fenetre extends JFrame implements Observer {
 //                    controler.setTimeUnit(TimeUnit.MINUTES);
                 }
                 controler.setTimeUnit(temps.getTimeUnit());
+            }
+        }
+        
+    }
+    
+    class PlateformesActionListener implements ActionListener {
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals(TexteConstantes.AJOUTER)) {
+                gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.PLATEFORMES);
+            }
+        }
+        
+    }
+    
+    class GenresActionListener implements ActionListener {
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals(TexteConstantes.AJOUTER)) {
+                gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.GENRES);
+            }
+        }
+        
+    }
+    
+    class StudiosActionListener implements ActionListener {
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals(TexteConstantes.AJOUTER)) {
+                gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.STUDIOS);
             }
         }
         
