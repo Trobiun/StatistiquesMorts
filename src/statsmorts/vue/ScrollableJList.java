@@ -6,12 +6,15 @@
 package statsmorts.vue;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import statsmorts.constantes.TexteConstantes;
 
 /**
  * Une classe pour une JList dans un JScrollPane pour prendre moins de place, et
@@ -33,6 +36,10 @@ public class ScrollableJList extends JPanel {
      * La JList utilisée.
      */
     private JList list;
+    /**
+     * Un bouton pour ajouter un item de la liste.
+     */
+    private JButton ajouterButton;
     
     
     //CONSTRUCTEUR
@@ -80,13 +87,15 @@ public class ScrollableJList extends JPanel {
         list = new JList(listModel);
         list.setVisibleRowCount(4);
         scrollPane = new JScrollPane(list);
+        ajouterButton = new JButton(TexteConstantes.AJOUTER);
     }
     
     /**
      * Met les composants les uns dans les autres. (ajoute le JScrollPane à ce panel)
      */
     private void setComponents() {
-        this.add(scrollPane);
+        this.add(scrollPane,BorderLayout.CENTER);
+        this.add(ajouterButton,BorderLayout.SOUTH);
     }
     
     /**
@@ -118,6 +127,7 @@ public class ScrollableJList extends JPanel {
      */
     public void setEditable(boolean editable) {
         list.setEnabled(editable);
+        ajouterButton.setEnabled(editable);
     }
     
     /**
@@ -157,6 +167,12 @@ public class ScrollableJList extends JPanel {
      */
     public void removeElement(MyListElement element) {
         listModel.removeElement(element);
+    }
+    
+    
+    //LISTENER
+    public void addActionListener(ActionListener listener) {
+        ajouterButton.addActionListener(listener);
     }
     
 }

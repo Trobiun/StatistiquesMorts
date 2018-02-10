@@ -8,6 +8,7 @@ package statsmorts.vue;
 import statsmorts.constantes.TexteConstantes;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -144,6 +145,7 @@ public class JeuPanels extends ObjectDatabasePanels {
         
         listPlateformes = new ScrollableJList();
         listPlateformes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        listPlateformes.addActionListener(idComboBox);
         listGenres = new ScrollableJList();
         listGenres.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         listStudios = new ScrollableJList();
@@ -160,13 +162,7 @@ public class JeuPanels extends ObjectDatabasePanels {
         genresPanel.add(listGenres);
         studioPanel.add(listStudios);
         
-        GridBagConstraints gbc = new GridBagConstraints();
-        //contraintes pour tous les éléments
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
+        GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
         
         gbc.gridx = 0;
         gbc.gridy = 2 ;
@@ -184,26 +180,21 @@ public class JeuPanels extends ObjectDatabasePanels {
         saisiesPanel.add(studioPanel,gbc);
     }
     
-    @Override
     /**
      * Change la visibilité du bouton de réinitialisation.
      * @param visible vrai pour rendre visible, faux sinon
      */
-    public void setResetButtonVisible(boolean visible) {
-        if (visible){
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor  = GridBagConstraints.CENTER;
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.gridx = 0;
-            gbc.gridy = 15;
-            gbc.gridwidth = GridBagConstraints.REMAINDER;
-            gbc.gridheight = 1;
-            this.add(resetPanel,gbc);
-        }
-        else {
-            this.remove(resetPanel);
-        }
-    }
+//    @Override
+//    public void setResetButtonVisible(boolean visible) {
+//        if (visible){
+//            GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+//            gbc.gridy = 15;
+//            this.add(resetPanel,gbc);
+//        }
+//        else {
+//            this.remove(resetPanel);
+//        }
+//    }
     
     /**
      * Vide les listes des plateformes, genres et du studio.
@@ -333,4 +324,17 @@ public class JeuPanels extends ObjectDatabasePanels {
         controler.fillJeuPanel(idItem);
     }
     
+    
+    //LISTENER
+    public void addPlateformesActionListener(ActionListener listener) {
+        listPlateformes.addActionListener(listener);
+    }
+    
+    public void addGenresActionListener(ActionListener listener) {
+        listGenres.addActionListener(listener);
+    }
+    
+    public void addStudiosActionListener(ActionListener listener) {
+        listStudios.addActionListener(listener);
+    }
 }
