@@ -30,6 +30,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     
     //ATTRIBUTS
     //PANELS
+    JPanel selectionPanel;
     /**
      * Le panel qui contient tous les panels qui contiennent les champs de saisie.
      */
@@ -43,6 +44,10 @@ public abstract class ObjectDatabasePanels extends JPanel {
      */
     JPanel nomPanel;
     /**
+     * Le panel qui contient le champ de saisie pour le nouveau nom.
+     */
+    JPanel nouveauNomPanel;
+    /**
      * Le panel qui contient le bouton pour réinitialiser les champs de saisie.
      */
     JPanel resetPanel;
@@ -52,14 +57,20 @@ public abstract class ObjectDatabasePanels extends JPanel {
      */
     JComboBox idComboBox;
     /**
-     * Le JTextField pour entrer le nom.
+     * Le JTextField pour entrer le nom. (fonction recherche)
      */
     JTextField nomTextField;
+    /**
+     * Le JTextField pour entrer le nouveau nom.
+     */
+    JTextField nouveauNomTextField;
     //RESET
     /**
      * Le bouton pour réinitialiser les champs de saisie.
      */
     JButton resetButton;
+    
+//    boolean keepEmpty;
     
     /**
      * Le controleur pour demander au modèle de remplir les champs de saisie.
@@ -122,6 +133,13 @@ public abstract class ObjectDatabasePanels extends JPanel {
         return nomTextField.getText();
     }
     
+    /**
+     * Retourne le nouveau nom dans le champ de saisie du nouvea nom.
+     * @return le nom entré
+     */
+    public String getNouveauNom() {
+        return nouveauNomTextField.getText();
+    }
     
     //MUTATEURS
     /**
@@ -135,11 +153,17 @@ public abstract class ObjectDatabasePanels extends JPanel {
      * Initialise les panels.
      */
     private void initPanels() {
+        selectionPanel = new JPanel(new GridBagLayout());
+        selectionPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.SELECTION));
+        
         idPanel = new JPanel(new BorderLayout());
         idPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ID));
         
         nomPanel = new JPanel(new BorderLayout());
         nomPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.NOM));
+        
+        nouveauNomPanel = new JPanel(new BorderLayout());
+        nouveauNomPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.NOUVEAU_NOM));
         
         saisiesPanel = new JPanel(new GridBagLayout());
         
@@ -155,6 +179,8 @@ public abstract class ObjectDatabasePanels extends JPanel {
         
         nomTextField = new JTextField();
         
+        nouveauNomTextField = new JTextField();
+        
         resetButton = new JButton(TexteConstantes.REINITIALISER);
         resetButton.addActionListener(new BoutonResetListener());
     }
@@ -166,52 +192,77 @@ public abstract class ObjectDatabasePanels extends JPanel {
         //ajout des champs de saisie dans leur panel respectif
         idPanel.add(idComboBox);
         nomPanel.add(nomTextField);
+        nouveauNomPanel.add(nouveauNomTextField);
         resetPanel.add(resetButton);
         
-        //ajout des panels dans saisiesPanel
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
         
-        gbc.gridx = 0;
-        gbc.gridy = 0;
         gbc.gridheight = 1;
-        saisiesPanel.add(idPanel,gbc);
+        selectionPanel.add(nomPanel,gbc);
         
         gbc.gridy = 1;
-        saisiesPanel.add(nomPanel,gbc);
+        gbc.gridheight = GridBagConstraints.REMAINDER;
+        selectionPanel.add(idPanel,gbc);
         
-        //met en place saisiesPanel dans cet objet
-        GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.anchor = GridBagConstraints.CENTER;
-        gbc2.fill = GridBagConstraints.BOTH;
-        gbc2.weightx = 1.0;
-        gbc2.weighty = 1.0;
-        gbc2.gridwidth = GridBagConstraints.REMAINDER;
+        //ajout des panels dans saisiesPanel
+        GridBagConstraints gbc2 = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
         
         gbc2.gridheight = 2;
-        gbc2.gridx = 0;
-        gbc2.gridy = 0;
-        this.add(saisiesPanel,gbc2);
+        saisiesPanel.add(nouveauNomPanel,gbc2);
+        
+        
+        //met en place saisiesPanel dans cet objet
+        GridBagConstraints gbc3 = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+        
+        gbc3.gridheight = 2;
+        this.add(selectionPanel,gbc3);
+        
+        gbc3.gridheight = 1;
+        gbc3.gridy = 2;
+        this.add(saisiesPanel,gbc3);
     }
     
     /**
-     * Change la visibilité du panel qui contient le champ de saisie de
-     * l'identifiant.
+     * Change la visibilité du panel qui contient les champs de sélection 
+     * d'item.
      * @param visible vrai pour rendre visible, faux sinon
      */
-    public void setIDPanelVisible(boolean visible) {
+    public void setSelectionPanelVisible(boolean visible) {
         if (visible) {
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor = GridBagConstraints.CENTER;
-            gbc.fill = GridBagConstraints.BOTH;
-            saisiesPanel.add(idPanel,gbc,0);
+            GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+//            gbc.gridheight = 2;
+            this.add(selectionPanel,gbc,0);
         }
         else {
-            saisiesPanel.remove(idPanel);
+            this.remove(selectionPanel);
+        }
+    }
+    
+    /**
+     * Change la visibilité du panel qui contient les champs de saisie des données.
+     * @param visible vrai por rendre visible, faux sinon
+     */
+    public void setSaisiesPanelVisible(boolean visible) {
+        if (visible) {
+            GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+            this.add(saisiesPanel,gbc);
+        }
+        else {
+            this.remove(saisiesPanel);
+        }
+    }
+    
+    /**
+     * Change la visibilité du panel pour le nouveau nom de l'item.
+     * @param visible vrai pour rendre visible, faux sinon
+     */
+    public void setNouveauNomPanelVisible(boolean visible) {
+        if (visible) {
+            GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+            saisiesPanel.add(nouveauNomPanel,gbc,0);
+        }
+        else {
+            saisiesPanel.remove(nouveauNomPanel);
         }
     }
     
@@ -221,12 +272,9 @@ public abstract class ObjectDatabasePanels extends JPanel {
      */
     public void setResetButtonVisible(boolean visible) {
         if (visible) {
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor = GridBagConstraints.CENTER;
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
             gbc.gridheight = GridBagConstraints.REMAINDER;
-            gbc.gridy = 2;
+//            gbc.gridy = 2;
             this.add(resetPanel,gbc);
         }
         else {
@@ -235,24 +283,28 @@ public abstract class ObjectDatabasePanels extends JPanel {
     }
     
     /**
-     * Vide les champs de saisie et la sélection.
+     * Vide/réinitialise les champs de saisie et la sélection.
      * @param editable permet de rendre éditable ou non les champs de saisie
-     *                  (pour suppression ou non)
+     *                 (pour suppression ou non)
      * @param empty booléen pour vider ou non les champs de saisie (vrai pour
      *              les vider, faux sinon)
      */
     public void clearFields(boolean editable, boolean empty) {
-        nomTextField.setEnabled(editable);
+//        nomTextField.setEnabled(editable);
         nomTextField.setText(TexteConstantes.EMPTY);
+        nouveauNomTextField.setText(TexteConstantes.EMPTY);
+        //remet l'élément sélectionné au premier élément (s'il y en a)
         if (idComboBox.getItemCount() > 0) {
             idComboBox.setSelectedIndex(0);
         }
         if (empty) {
+            //vide le champ de saisie du nom et du nouveau nom
             nomTextField.setText(TexteConstantes.EMPTY);
+            nouveauNomTextField.setText(TexteConstantes.EMPTY);
         }
         else {
             if (idComboBox.getItemCount() > 0) {
-                fillItem((Long)idComboBox.getSelectedItem());
+                fillItem((long)idComboBox.getSelectedItem());
             }
         }
     }
@@ -260,7 +312,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     /**
      * Supprime tous le identfiiants de la JComboBox.
      */
-    public void removeAllItems() {
+    public void supprimerTousItems() {
         idComboBox.removeAllItems();
     }
     
@@ -268,7 +320,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
      * Ajoute un identfiant dans la JComboBox.
      * @param idItem l'identifiant à ajouter
      */
-    public void addItem(long idItem) {
+    public void ajouterItem(long idItem) {
         idComboBox.addItem(idItem);
     }
     
@@ -276,7 +328,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
      * Supprime un identifiant de la JComboBox.
      * @param idItem l'identifiant à supprimer
      */
-    public void removeItem(long idItem) {
+    public void supprimerItem(long idItem) {
         idComboBox.removeItem(idItem);
     }
     
@@ -286,6 +338,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
      */
     public void setNom(String nom) {
         nomTextField.setText(nom);
+        nouveauNomTextField.setText(nom);
     }
     
     /**
@@ -300,7 +353,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     /**
      * Classe pour écouter les changements de sélection de la JComboBox.
      */
-    class ChangeIDListener implements ItemListener {
+    private class ChangeIDListener implements ItemListener {
         
         /**
          * Si un item a été sélectionné : demande à remplir les champs de saisie.
@@ -311,6 +364,9 @@ public abstract class ObjectDatabasePanels extends JPanel {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 fillItem((long)idComboBox.getSelectedItem());
             }
+            if (idComboBox.getItemCount() == 0) {
+                clearFields(true, true);
+            }
         }
         
     }
@@ -318,7 +374,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     /**
      * Classe pour réinitialiser les champs de saisie.
      */
-    class BoutonResetListener implements ActionListener {
+    private class BoutonResetListener implements ActionListener {
         
         /**
          * Si le bouton réinitialiser a été appuyé : réinitialise les champs de
@@ -331,9 +387,10 @@ public abstract class ObjectDatabasePanels extends JPanel {
                 //remplit les champs de saisie en fonction de l'item sélectionné
                 fillItem((long)idComboBox.getSelectedItem());
             }
-            if (e.getSource().equals(resetButton) && idComboBox.getItemCount() == 0) {
+            if (/*e.getSource().equals(resetButton) && */idComboBox.getItemCount() == 0) {
                 //doit remettre à vide les champs de saisie
-                
+                nomTextField.setText(TexteConstantes.EMPTY);
+                nouveauNomTextField.setText(TexteConstantes.EMPTY);
             }
         }
         
