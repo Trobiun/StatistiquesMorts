@@ -5,15 +5,7 @@
  */
 package statsmorts.vue;
 
-import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import statsmorts.constantes.TexteConstantes;
 import statsmorts.controler.StatsMortsControler;
 
@@ -22,31 +14,31 @@ import statsmorts.controler.StatsMortsControler;
  * données.
  * @author Robin
  */
-public class RunPanels extends ObjectDatabasePanels {
+public class RunPanels extends ObjectDatabaseComplexPanels {
     
     //ATTRIBUTS
     //PANELS
     /**
      * Le JPanel qui contient les champs de saisie pour le jeu.
      */
-    private JPanel jeuPanel;
+//    private JPanel jeuPanel;
     /**
      * Le JPanel qui contient le champ de saisie pour l'identifiant du jeu.
      */
-    private JPanel idJeuPanel;
+//    private JPanel idJeuPanel;
     /**
      * Le JPanel qui contient le champ de saisie pour le titre du jeu.
      */
-    private JPanel nomJeuPanel;
-    //ENTREES UTILISATEUR
+//    private JPanel nomJeuPanel;
+    //ENTRÉES UTILISATEUR
     /**
      * La JComboBox pour sélectionner un jeu.
      */
-    private JComboBox idJeuComboBox;
+//    private JComboBox idJeuComboBox;
     /**
      * Le TextField pour le titre du jeu.
      */
-    private JTextField nomJeuField;
+//    private JTextField nomJeuField;
     
     
     //CONSTRUCTEURS
@@ -56,7 +48,7 @@ public class RunPanels extends ObjectDatabasePanels {
      * saisie
      */
     public RunPanels(StatsMortsControler controler) {
-        super(controler,TexteConstantes.RUN);
+        super(controler,TexteConstantes.RUN, TexteConstantes.JEU);
         this.init();
         this.setComponents();
     }
@@ -69,8 +61,8 @@ public class RunPanels extends ObjectDatabasePanels {
      */
     public long getSelectedJeuID() {
         long res = -1;
-        if (idJeuComboBox.getItemCount() >  0) {
-            res = (long)idJeuComboBox.getSelectedItem();
+        if (idSuperieurComboBox.getItemCount() > 0) {
+            res = (long)(idSuperieurComboBox.getSelectedItem());
         }
         return res;
     }
@@ -81,46 +73,97 @@ public class RunPanels extends ObjectDatabasePanels {
      * Initialise tous les composants graphiques.
      */
     private void init() {
-        //création des panels
-        jeuPanel = new JPanel(new GridLayout(0,1));
-        jeuPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.JEU));
-        
-        idJeuPanel = new JPanel(new BorderLayout());
-        idJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ID));
-        
-        nomJeuPanel = new JPanel(new BorderLayout());
-        nomJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TITRE));
-        
-        //création des champs de saisie utilisateur
-        idJeuComboBox = new JComboBox();
-        idJeuComboBox.addItemListener(new JeuChangeListener());
-        nomJeuField = new JTextField();
-        nomJeuField.setEditable(false);
+        initPanels();
+        initFields();
+    }
+    private void initPanels() {
+//        jeuPanel = new JPanel(new GridLayout(0,1));
+//        jeuPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.JEU));
+//        
+//        idJeuPanel = new JPanel(new BorderLayout());
+//        idJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ID));
+//        
+//        nomJeuPanel = new JPanel(new BorderLayout());
+//        nomJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TITRE));
+    }
+    private void initFields() {
+//        idJeuComboBox = new JComboBox();
+//        idJeuComboBox.addItemListener(new JeuChangeListener());
+//        nomJeuField = new JTextField();
+//        nomJeuField.setEditable(false);
     }
     
     /**
      * Met les composants les uns dans les autres.
      */
-    private void setComponents() {
-        //ajout des champs de saisie dans leur panel spécifique
+    private void setComponents() {/*
         idJeuPanel.add(idJeuComboBox);
         nomJeuPanel.add(nomJeuField);
         
-        jeuPanel.add(idJeuPanel);
         jeuPanel.add(nomJeuPanel);
+        jeuPanel.add(idJeuPanel);
+        
+        selectionPanel.removeAll();
+        
+        GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+        gbc.gridheight = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        
+//        selectionPanel.removeAll();
+        selectionPanel.add(jeuPanel,gbc);
+        
+        
+        GridBagConstraints gbc2 = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+        gbc2.gridx = 0;
+        gbc2.gridy = 0;
+        saisiesPanel.add(nouveauNomPanel,gbc);
+        
+//        this.removeAll();
+        GridBagConstraints gbc3 = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+        gbc3.gridheight = 2;
+        gbc3.gridx = 0;
+        gbc3.gridy = 0;
+        this.add(selectionPanel,gbc3);
+        
+        gbc3.gridheight = 1;
+        gbc3.gridy = 2;
+        this.add(saisiesPanel,gbc3);
+        */
+//        ajout des champs de saisie dans leur panel spécifique
+//        
         
         //ajout du panel de jeu à saisiePanels
         //utilisation de GridBagLayout car la classe mère l'utilise
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
+//        
+//        gbc.anchor = GridBagConstraints.CENTER;
+//        gbc.fill = GridBagConstraints.BOTH;
+//        gbc.gridwidth = GridBagConstraints.REMAINDER;
+//        gbc.weightx = 1.0;
+//        gbc.weighty = 1.0;
         
-        gbc.gridy = 2;
-        saisiesPanel.add(jeuPanel,gbc);
+//        gbc.gridy = 2;
+//        saisiesPanel.add(jeuPanel,gbc);
+//        selectionPanel.add(jeuPanel,gbc);
+        
     }
+    
+    /**
+     * Change la visibilité du panel qui contient les champs de sélection 
+     * d'item.
+     * @param visible vrai pour rendre visible, faux sinon
+     */
+//    @Override
+//    public void setSelectionPanelVisible(boolean visible) {
+//        if (visible) {
+//            GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+//            gbc.gridheight = 2;
+//            this.add(selectionPanel,gbc,0);
+//        }
+//        else  {
+//            this.remove(selectionPanel);
+//        }
+//    }
     
     /**
      * Réinitialise et/ou vide les champs de saisie.
@@ -131,9 +174,18 @@ public class RunPanels extends ObjectDatabasePanels {
      */
     @Override
     public void clearFields(boolean editable, boolean empty) {
-        super.clearFields(editable, empty);
-        if (idJeuComboBox.getItemCount() == 0) {
-            nomJeuField.setText(TexteConstantes.EMPTY);
+//        super.clearFields(editable, empty);
+//        keepEmpty = empty;
+        if (idComboBox.getItemCount() > 0) {
+            idComboBox.setSelectedIndex(0);
+        }
+        else {
+            nomTextField.setText(TexteConstantes.EMPTY);
+            nouveauNomTextField.setText(TexteConstantes.EMPTY);
+        }
+        if (empty) {
+            nomTextField.setText(TexteConstantes.EMPTY);
+            nouveauNomTextField.setText(TexteConstantes.EMPTY);
         }
     }
     
@@ -141,36 +193,42 @@ public class RunPanels extends ObjectDatabasePanels {
      * Change l'état de la visibilité du bouton réinitialiser.
      * @param visible booléen, vrai pour le rendre visible, faux sinon
      */
-    @Override
-    public void setResetButtonVisible(boolean visible) {
-        if (visible){
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor  = GridBagConstraints.CENTER;
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.gridx = 0;
-            gbc.gridy = 4;
-            gbc.gridwidth = GridBagConstraints.REMAINDER;
-            gbc.gridheight = 1;
-            this.add(resetPanel,gbc);
-        }
-        else {
-            this.remove(resetPanel);
-        }
-    }
+//    @Override
+//    public void setResetButtonVisible(boolean visible) {
+//        if (visible){
+//            GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+//            gbc.gridheight = 1;
+//            gbc.gridx = 0;
+//            gbc.gridy = 4;
+//            this.add(resetPanel,gbc,this.getComponentCount() - 1);
+//        }
+//        else {
+//            this.remove(resetPanel);
+//        }
+//    }
     
     /**
      * Ajoute un jeu à la sélection possible.
      * @param idJeu l'identifiant du jeu à ajouter.
      */
     public void ajouterJeu(long idJeu) {
-        idJeuComboBox.addItem(idJeu);
+        idSuperieurComboBox.addItem(idJeu);
+    }
+    
+    
+    public void ajouterPossibleRun(long idRun) {
+        idComboBox.addItem(idRun);
+    }
+    
+    public void supprimerToutesRuns() {
+        idComboBox.removeAllItems();
     }
     
     /**
      * Supprime tous les jeux à la sélection possible.
      */
     public void supprimerTousJeux() {
-        idJeuComboBox.removeAllItems();
+        idSuperieurComboBox.removeAllItems();
     }
     
     /**
@@ -178,7 +236,7 @@ public class RunPanels extends ObjectDatabasePanels {
      * @param idJeu l'identifiant du jeu à supprimer
      */
     public void supprimerJeu(long idJeu) {
-        idJeuComboBox.removeItem(idJeu);
+        idSuperieurComboBox.removeItem(idJeu);
     }
     
     /**
@@ -186,7 +244,7 @@ public class RunPanels extends ObjectDatabasePanels {
      * @param idJeu l'identifiant du jeu à sélectionner
      */
     public void setIDJeu(long idJeu) {
-        idJeuComboBox.setSelectedItem(idJeu);
+        idSuperieurComboBox.setSelectedItem(idJeu);
     }
     
     /**
@@ -195,7 +253,7 @@ public class RunPanels extends ObjectDatabasePanels {
      * @param titre le titre à mettre dans le champ de saisie du titre
      */
     public void setTitreJeu(String titre) {
-        nomJeuField.setText(titre);
+        nomSuperieurField.setText(titre);
     }
     
     /**
@@ -205,7 +263,9 @@ public class RunPanels extends ObjectDatabasePanels {
      */
     @Override
     public void fillItem(long idItem) {
-        controler.fillRunPanel(idItem);
+//        if (!keepEmpty) {
+            controler.fillRunPanel(idItem);
+//        }
     }
     
     /**
@@ -214,7 +274,16 @@ public class RunPanels extends ObjectDatabasePanels {
      *              saisie avec ses attributs.
      */
     public void fillItemJeu(long idJeu) {
-        controler.fillRunPanelJeu(idJeu);
+//        controler.fill
+    }
+    
+    /**
+     * 
+     * @param idSuperieurItem 
+     */
+    @Override
+    public void selectionnerSuperieur(long idSuperieurItem) {
+        controler.selectJeuRunPanels(idSuperieurItem);
     }
     
     
@@ -222,16 +291,16 @@ public class RunPanels extends ObjectDatabasePanels {
     /**
      * Classe interne pour écouter les changements de sélection de jeu.
      */
-    class JeuChangeListener implements ItemListener {
-        
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                long idJeu = (long)idJeuComboBox.getSelectedItem();
-                fillItemJeu(idJeu);
-            }
-        }
-        
-    }
+//    private class JeuChangeListener implements ItemListener {
+//        
+//        @Override
+//        public void itemStateChanged(ItemEvent e) {
+//            if (e.getStateChange() == ItemEvent.SELECTED) {
+//                long idJeu = (long)idSuperieurComboBox.getSelectedItem();
+//                selectionnerSuperieur(idJeu);
+//            }
+//        }
+//        
+//    }
     
 }

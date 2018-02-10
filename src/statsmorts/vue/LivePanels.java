@@ -7,7 +7,6 @@ package statsmorts.vue;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -24,17 +23,19 @@ import statsmorts.controler.StatsMortsControler;
  * données.
  * @author Robin
  */
-public class LivePanels extends ObjectDatabasePanels {
+public class LivePanels extends ObjectDatabaseComplexPanels {
     
     //ATTRIBUTS
     //PANELS
     private JPanel runPanel;
     private JPanel idRunPanel;
     private JPanel nomRunPanel;
-    private JPanel jeuPanel;
-    private JPanel nomJeuPanel;
+//    private JPanel jeuPanel;
+//    private JPanel nomJeuPanel;
     private JPanel datesPanel;
+    private JPanel compteursPanel;
     private JPanel mortsPanel;
+    private JPanel bossPanel;
     //ENTREES UTILISATEUR
     /**
      * Le champ de saisie du nom de la run.
@@ -59,12 +60,16 @@ public class LivePanels extends ObjectDatabasePanels {
     /**
      * Compteur de morts.
      */
-    private MortsSpinner mortsSpinner;
+    private CompteurSpinner mortsSpinner;
+    /**
+     * Compteur de boss.
+     */
+    private CompteurSpinner bossSpinner;
     
     
     //CONSTRUCTEURS
     public LivePanels(StatsMortsControler controler) {
-        super(controler,TexteConstantes.LIVE);
+        super(controler,TexteConstantes.LIVE, TexteConstantes.JEU);
         this.init();
         this.setComponents();
     }
@@ -86,7 +91,7 @@ public class LivePanels extends ObjectDatabasePanels {
      */
     private void initPanels() {
         //panels pour la run
-        runPanel = new JPanel(new GridBagLayout());
+        runPanel = new JPanel(new GridLayout(0,1));
         runPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.RUN));
         
         idRunPanel = new JPanel(new BorderLayout());
@@ -96,18 +101,26 @@ public class LivePanels extends ObjectDatabasePanels {
         nomRunPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TITRE));
         
         //panels pour le jeu de la run
-        jeuPanel = new JPanel(new BorderLayout());
-        jeuPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.JEU));
-        
-        nomJeuPanel = new JPanel(new BorderLayout());
-        nomJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TITRE));
+//        jeuPanel = new JPanel(new BorderLayout());
+//        jeuPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.JEU));
+//        
+//        nomJeuPanel = new JPanel(new BorderLayout());
+//        nomJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TITRE));
         
         //panel pour les dates du live
         datesPanel = new JPanel(new GridLayout(0,1));
         datesPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.DATES));
         
+        
+        //panels pour les compteurs
+        compteursPanel = new JPanel(new GridLayout(0,1));
+        compteursPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.COMPTEURS));
+        
         mortsPanel = new JPanel(new BorderLayout());
         mortsPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.MORTS));
+        
+        bossPanel = new JPanel(new BorderLayout());
+        bossPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.BOSS));
     }
     /**
      * Initialise les champs de saisie.
@@ -128,7 +141,8 @@ public class LivePanels extends ObjectDatabasePanels {
         dateFinSpinner = new DateSpinner();
         dateFinSpinner.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.DATE_FIN));
         
-        mortsSpinner = new MortsSpinner();
+        mortsSpinner = new CompteurSpinner();
+        bossSpinner = new CompteurSpinner();
     }
     
     /**
@@ -139,57 +153,58 @@ public class LivePanels extends ObjectDatabasePanels {
         idRunPanel.add(idRunComboBox);
         nomRunPanel.add(nomRunField);
         
-        nomJeuPanel.add(nomJeuField);
-        jeuPanel.add(nomJeuPanel);
+//        nomJeuPanel.add(nomJeuField);
+//        
+//        jeuPanel.add(nomJeuPanel);
         
         datesPanel.add(dateDebutSpinner);
         datesPanel.add(dateFinSpinner);
         
         mortsPanel.add(mortsSpinner);
+        bossPanel.add(bossSpinner);
         
-        //GridBagConstraints pour le panel runPanel
-        GridBagConstraints gbc1 = new GridBagConstraints();
-        gbc1.anchor = GridBagConstraints.CENTER;
-        gbc1.fill = GridBagConstraints.BOTH;
-        gbc1.weightx = 1.0;
-        gbc1.weighty = 1.0;
-        gbc1.gridwidth = GridBagConstraints.REMAINDER;
+        compteursPanel.add(mortsPanel);
+        compteursPanel.add(bossPanel);
         
-        gbc1.gridx = 0;
-        gbc1.gridy = 0;
-        gbc1.gridheight = 1;
-        runPanel.add(idRunPanel,gbc1);
+        runPanel.add(nomRunPanel);
+        runPanel.add(idRunPanel);
         
-        gbc1.gridy = 2;
-        runPanel.add(nomRunPanel,gbc1);
+        //met les panels de sélection (de jeu, de run et de live) dans le panel selectionPanel
+        GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+        //ajoute le panel 'selectionSuperieur' (sélection jeu)
+        gbc.gridheight = 2;
+        selectionPanel.add(selectionSuperieurPanel,gbc);
+        //ajoute le panel 'runPanel' (sélection run)
+        gbc.gridy = 2;
+        selectionPanel.add(runPanel,gbc);
+        //enlève le panel 'nomPanel' du panel 'selectionCurrentPanel' car un live n'a pas de nom
+        selectionCurrentPanel.remove(nomPanel);
+        //ajoute le panel 'selectionCurrentPane' (sélection live)
+        gbc.gridy = 4;
+        selectionPanel.add(selectionCurrentPanel,gbc);
         
-        gbc1.gridy = 3;
-        gbc1.gridheight = GridBagConstraints.REMAINDER;
-        runPanel.add(jeuPanel,gbc1);
-        
-        //supprime le panel du nom qui est inutile pour un live
-        saisiesPanel.remove(nomPanel);
-        
-        //GidBagConstraints pour le panel saisiesPanel
-        GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.anchor = GridBagConstraints.CENTER;
-        gbc2.fill = GridBagConstraints.BOTH;
-        gbc2.weightx = 1.0;
-        gbc2.weighty = 1.0;
-        gbc2.gridwidth = GridBagConstraints.REMAINDER;
-        
-        gbc2.gridx = 0;
-        gbc2.gridy = 1;
-        gbc2.gridheight = 4;
-        saisiesPanel.add(runPanel,gbc2);
-        
+        //met les panels de saisies (dates,compteurs) dans le panel 'saisiesPanel'
+        GridBagConstraints gbc2 = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+        //ajoute le panel de dates
         gbc2.gridy = 5;
         gbc2.gridheight = 2;
-        saisiesPanel.add(datesPanel,gbc2);
-        
+        saisiesPanel.add(datesPanel, gbc2);
+        //ajoute le panel de compteurs
         gbc2.gridy = 7;
         gbc2.gridheight = 1;
-        saisiesPanel.add(mortsPanel,gbc2);
+        saisiesPanel.add(compteursPanel, gbc2);
+        
+//        //supprime tous les éléments ajoutés par la classe mère (ObjectDatabaseComplexPanels)
+//        this.removeAll();
+//        GridBagConstraints gbc3 = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+//        //ajoute le panel 'selectionPanel'
+//        gbc3.gridheight = 6;
+//        this.add(selectionPanel, gbc3);
+//        //ajoute le panel 'saisiePanel'
+//        gbc3.gridheight = 4;
+//        gbc3.gridy = 6;
+//        this.add(saisiesPanel, gbc3);
+
     }
     
     /**
@@ -201,39 +216,78 @@ public class LivePanels extends ObjectDatabasePanels {
      */
     @Override
     public void clearFields(boolean editable, boolean empty) {
-        super.clearFields(editable, empty);
+//        super.clearFields(editable, empty);
+//        keepEmpty = empty;
+        if (empty) {
+            nomJeuField.setText(TexteConstantes.EMPTY);
+            nouveauNomTextField.setText(TexteConstantes.EMPTY);
+        }
         if (idRunComboBox.getItemCount() == 0) {
             nomRunField.setText(TexteConstantes.EMPTY);
+            nouveauNomTextField.setText(TexteConstantes.EMPTY);
+        }
+        if (idComboBox.getItemCount() == 0) {
+            
+        }
+        if (!empty) {
+            if (idComboBox.getItemCount() > 0) {
+                fillItem((long)(idComboBox.getSelectedItem()));
+            }
+            if (idRunComboBox.getItemCount() > 0) {
+                fillItemRun((long)(idRunComboBox.getSelectedItem()));
+            }
         }
     }
+    
+//    @Override
+//    public void setSelectionCurrentPanelVisible(boolean visible) {
+//        if (visible) {
+//            GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+//            gbc.gridheight = 2;
+//            gbc.gridy = 4;
+//            selectionPanel.add(selectionCurrentPanel,gbc);
+//        }
+//        else {
+//            selectionPanel.remove(selectionCurrentPanel);
+//        }
+//    }
     
     /**
      * Change l'état de la visibilité du bouton réinitialiser.
      * @param visible booléen, vrai pour le rendre visible, faux sinon 
      */
-    @Override
-    public void setResetButtonVisible(boolean visible) {
-        if (visible){
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor  = GridBagConstraints.CENTER;
-            gbc.fill = GridBagConstraints.BOTH;
-            gbc.gridx = 0;
-            gbc.gridy = 7;
-            gbc.gridwidth = GridBagConstraints.REMAINDER;
-            gbc.gridheight = 1;
-            this.add(resetPanel,gbc);
-        }
-        else {
-            this.remove(resetPanel);
-        }
+//    @Override
+//    public void setResetButtonVisible(boolean visible) {
+//        if (visible){
+//            GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
+//            gbc.gridy = GridBagConstraints.PAGE_END;
+//            gbc.gridheight = 1;
+//            this.add(resetPanel,gbc);
+//        }
+//        else {
+//            this.remove(resetPanel);
+//        }
+//    }
+    
+    /**
+     * Ajoute un jeu à la sélection.
+     * @param idJeu l'identifiant du jeu à ajouter
+     */
+    public void ajouterJeu(long idJeu) {
+        idSuperieurComboBox.addItem(idJeu);
     }
     
     /**
      * Ajoute une run à la liste de sélection possible.
      * @param idRun l'identifiant de la run à ajouter
      */
-    public void ajouterRun(long idRun) {
+    public void ajouterPossibleRun(long idRun) {
         idRunComboBox.addItem(idRun);
+    }
+    
+    
+    public void ajouterPossibleLive(long idLive) {
+        idComboBox.addItem(idLive);
     }
     
     /**
@@ -251,12 +305,25 @@ public class LivePanels extends ObjectDatabasePanels {
         idRunComboBox.removeItem(idRun);
     }
     
+    public void supprimerTousLives() {
+        idComboBox.removeAllItems();
+    }
+    
     /**
      * Sélectionne une run dans la JComboBox.
      * @param idRun l'identifiant de la run à sélectionner.
      */
     public void setIDRun(long idRun) {
         idRunComboBox.setSelectedItem(idRun);
+    }
+    
+    /**
+     * Change le titre du jeu du live dans le champ de saisie concerné
+     * @param titreJeu le titre du jeu à mettre dans le champ de saisie
+     */
+    public void setTitreJeu(String titreJeu) {
+//        nomJeuField.setText(titreJeu);
+        nomSuperieurField.setText(titreJeu);
     }
     
     /**
@@ -268,19 +335,13 @@ public class LivePanels extends ObjectDatabasePanels {
     }
     
     /**
-     * Change le titre du jeu du live dans le champ de saisie concerné
-     * @param titreJeu le titre du jeu à mettre dans le champ de saisie
-     */
-    public void setTitreJeu(String titreJeu) {
-        nomJeuField.setText(titreJeu);
-    }
-    
-    /**
      * Change la date de début du live dans le Spinner concerné.
      * @param dateDebut la date de début à mettre dans le Spinner
      */
     public void setDateDebut(Date dateDebut) {
-        dateDebutSpinner.setDate(dateDebut);
+//        if (!keepEmpty) {
+            dateDebutSpinner.setDate(dateDebut);
+//        }
     }
     
     /**
@@ -288,7 +349,9 @@ public class LivePanels extends ObjectDatabasePanels {
      * @param dateFin la date de fin à mettre dans le Spinner
      */
     public void setDateFin(Date dateFin) {
-        dateFinSpinner.setDate(dateFin);
+//        if (!keepEmpty) {
+            dateFinSpinner.setDate(dateFin);
+//        }
     }
     
     /**
@@ -296,9 +359,16 @@ public class LivePanels extends ObjectDatabasePanels {
      * @param morts le nombre de morts à mettre dans le compteur
      */
     public void setMorts(int morts) {
-        mortsSpinner.setValue(morts);
+//        if (!keepEmpty) {
+            mortsSpinner.setValue(morts);
+//        }
     }
     
+    public void setBoss(int boss) {
+//        if (!keepEmpty) {
+            bossSpinner.setValue(boss);
+//        }
+    }
     
     /**
      * Demande au contrôleur de remplir les champs de saisie du live avec les 
@@ -307,7 +377,9 @@ public class LivePanels extends ObjectDatabasePanels {
      */
     @Override
     public void fillItem(long idItem) {
-        controler.fillLivePanel(idItem);
+//        if (keepEmpty){
+            controler.fillLivePanel(idItem);
+//        }
     }
     
     /**
@@ -316,7 +388,17 @@ public class LivePanels extends ObjectDatabasePanels {
      * @param idRun l'identifiant de la run à laquele chercher les données
      */
     public void fillItemRun(long idRun) {
-        controler.fillLivePanelRun(idRun);
+        controler.fillRunOnPanelLive(idRun);
+    }
+    
+    @Override
+    public void selectionnerSuperieur(long idSuperieurItem) {
+        controler.selectJeuLivePanels(idSuperieurItem);
+    }
+    
+    
+    public void selectionnerRun(long idRun) {
+        controler.selectRunLivePanels(idRun);
     }
     
     
@@ -324,13 +406,13 @@ public class LivePanels extends ObjectDatabasePanels {
     /**
      * Classe interne pour écouter les changements de sélection de run.
      */
-    class RunChangeListener implements ItemListener {
+    private class RunChangeListener implements ItemListener {
         
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 long idRun = (long)idRunComboBox.getSelectedItem();
-                fillItemRun(idRun);
+                selectionnerRun(idRun);
             }
         }
         
