@@ -30,8 +30,6 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
     private JPanel runPanel;
     private JPanel idRunPanel;
     private JPanel nomRunPanel;
-//    private JPanel jeuPanel;
-//    private JPanel nomJeuPanel;
     private JPanel datesPanel;
     private JPanel compteursPanel;
     private JPanel mortsPanel;
@@ -41,10 +39,6 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      * Le champ de saisie du nom de la run.
      */
     private JTextField nomRunField;
-    /**
-     * Le champ de saisie du nom du jeu.
-     */
-    private JTextField nomJeuField;
     /**
      * Une JComboBox pour sélectionner la run du live.
      */
@@ -100,13 +94,6 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
         nomRunPanel = new JPanel(new BorderLayout());
         nomRunPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TITRE));
         
-        //panels pour le jeu de la run
-//        jeuPanel = new JPanel(new BorderLayout());
-//        jeuPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.JEU));
-//        
-//        nomJeuPanel = new JPanel(new BorderLayout());
-//        nomJeuPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.TITRE));
-        
         //panel pour les dates du live
         datesPanel = new JPanel(new GridLayout(0,1));
         datesPanel.setBorder(BorderFactory.createTitledBorder(TexteConstantes.DATES));
@@ -132,9 +119,6 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
         nomRunField = new JTextField();
         nomRunField.setEditable(false);
         
-        nomJeuField = new JTextField();
-        nomJeuField.setEditable(false);
-        
         dateDebutSpinner = new DateSpinner();
         dateDebutSpinner.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.DATE_DEBUT));
         
@@ -152,10 +136,6 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
         //ajout des champs de saisie dans leur panel respectif
         idRunPanel.add(idRunComboBox);
         nomRunPanel.add(nomRunField);
-        
-//        nomJeuPanel.add(nomJeuField);
-//        
-//        jeuPanel.add(nomJeuPanel);
         
         datesPanel.add(dateDebutSpinner);
         datesPanel.add(dateFinSpinner);
@@ -216,10 +196,7 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      */
     @Override
     public void clearFields(boolean editable, boolean empty) {
-//        super.clearFields(editable, empty);
-//        keepEmpty = empty;
         if (empty) {
-            nomJeuField.setText(TexteConstantes.EMPTY);
             nouveauNomTextField.setText(TexteConstantes.EMPTY);
         }
         if (idRunComboBox.getItemCount() == 0) {
@@ -285,7 +262,10 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
         idRunComboBox.addItem(idRun);
     }
     
-    
+    /**
+     * Ajoute un live possible pour la sélection.
+     * @param idLive l'identifiant du live à ajouter
+     */
     public void ajouterPossibleLive(long idLive) {
         idComboBox.addItem(idLive);
     }
@@ -305,6 +285,9 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
         idRunComboBox.removeItem(idRun);
     }
     
+    /**
+     * Supprime tous les lives pour la sélection.
+     */
     public void supprimerTousLives() {
         idComboBox.removeAllItems();
     }
@@ -339,9 +322,7 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      * @param dateDebut la date de début à mettre dans le Spinner
      */
     public void setDateDebut(Date dateDebut) {
-//        if (!keepEmpty) {
-            dateDebutSpinner.setDate(dateDebut);
-//        }
+        dateDebutSpinner.setDate(dateDebut);
     }
     
     /**
@@ -349,9 +330,7 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      * @param dateFin la date de fin à mettre dans le Spinner
      */
     public void setDateFin(Date dateFin) {
-//        if (!keepEmpty) {
-            dateFinSpinner.setDate(dateFin);
-//        }
+        dateFinSpinner.setDate(dateFin);
     }
     
     /**
@@ -359,15 +338,11 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      * @param morts le nombre de morts à mettre dans le compteur
      */
     public void setMorts(int morts) {
-//        if (!keepEmpty) {
-            mortsSpinner.setValue(morts);
-//        }
+        mortsSpinner.setValue(morts);
     }
     
     public void setBoss(int boss) {
-//        if (!keepEmpty) {
-            bossSpinner.setValue(boss);
-//        }
+        bossSpinner.setValue(boss);
     }
     
     /**
@@ -377,9 +352,7 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      */
     @Override
     public void fillItem(long idItem) {
-//        if (keepEmpty){
-            controler.fillLivePanel(idItem);
-//        }
+        controler.fillLivePanel(idItem);
     }
     
     /**
