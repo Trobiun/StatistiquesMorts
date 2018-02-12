@@ -591,7 +591,12 @@ public class BDD {
                             + TexteConstantesSQL.NOT_NULL + ","
                         //champ jeu_AnneeSortie
                         + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + " "
-                            + TexteConstantesSQL.SQL_INTEGER + ")";
+                            + TexteConstantesSQL.SQL_INTEGER + ","
+                        //champ jeu_idStudio
+                        + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " "
+                            +  TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
+                            + TexteConstantesSQL.TABLE_STUDIOS + "(" + TexteConstantesSQL.TABLE_STUDIOS_ID
+                            + ") " + CLES_ENTRAGERES_REACTIONS + ")";
             
             //table Jeulateforme
             String requete5 = TexteConstantesSQL.CREATE_TABLE + " "
@@ -629,26 +634,8 @@ public class BDD {
                             + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU + ","
                             + TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE + "))";
             
-            //table JeuStudio
-            String requete7 = TexteConstantesSQL.CREATE_TABLE + " "
-                    + TexteConstantesSQL.TABLE_JEU_STUDIO + "("
-                        //champ js_idJeu
-                        + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + " "
-                            + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
-                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID + ") "
-                            + CLES_ENTRAGERES_REACTIONS + ","
-                        //champ js_idStudio
-                        + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO + " "
-                            + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
-                            + TexteConstantesSQL.TABLE_STUDIOS + "(" + TexteConstantesSQL.TABLE_STUDIOS_ID + ") "
-                            + CLES_ENTRAGERES_REACTIONS + ","
-                        //clé primaire
-                        + TexteConstantesSQL.PRIMARY_KEY + " " + "("
-                            + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + ","
-                            + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO + "))";
-            
             //table Runs
-            String requete8 = TexteConstantesSQL.CREATE_TABLE + " "
+            String requete7 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_RUNS + "("
                         //champ run_id clé primaire
                         + TexteConstantesSQL.TABLE_RUNS_ID + " "
@@ -665,7 +652,7 @@ public class BDD {
                         + TexteConstantesSQL.NOT_NULL + ")";
             
             //table Lives
-            String requete9 = TexteConstantesSQL.CREATE_TABLE + " "
+            String requete8 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_LIVES + "("
                         //champ liv_id clé primaire
                         + TexteConstantesSQL.TABLE_LIVES_ID + " "
@@ -686,6 +673,9 @@ public class BDD {
                             + CLES_ENTRAGERES_REACTIONS + ","
                         //champ liv_Morts
                         + TexteConstantesSQL.TABLE_LIVES_MORTS + " "
+                            + TexteConstantesSQL.SQL_INTEGER + ","
+                        //champ liv_Boss
+                        + TexteConstantesSQL.TABLE_LIVES_BOSS + " "
                             + TexteConstantesSQL.SQL_INTEGER + ")";
             
             //vue VueGlobale seulement avec SQLite
@@ -701,7 +691,6 @@ public class BDD {
             connexion.executerUpdate(requete6);
             connexion.executerUpdate(requete7);
             connexion.executerUpdate(requete8);
-            connexion.executerUpdate(requete9);
             //les basees de données Access n'acceptent pas les vues
             if (!type.equals(TypeDatabase.Access)) {
                 connexion.executerUpdate(requete10);

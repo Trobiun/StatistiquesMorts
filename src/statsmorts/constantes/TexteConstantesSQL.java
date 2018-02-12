@@ -39,10 +39,6 @@ public final class TexteConstantesSQL {
     public static final String TABLE_JEU_GENRE_ID_JEU = "jg_idJeu";
     public static final String TABLE_JEU_GENRE_ID_GENRE = "jg_idGenre";
     
-    public static final String TABLE_JEU_STUDIO = "JeuStudio";
-    public static final String TABLE_JEU_STUDIO_ID_JEU = "js_idJeu";
-    public static final String TABLE_JEU_STUDIO_ID_STUDIO = "js_idStudio";
-    
     public static final String TABLE_RUNS = "Runs";
     public static final String TABLE_RUNS_ID = "run_id";
     public static final String TABLE_RUNS_ID_JEU = "run_idJeu";
@@ -78,7 +74,6 @@ public final class TexteConstantesSQL {
     public static final String SELECT_STUDIOS = "SELECT * FROM Studios";
     public static final String SELECT_JEU_PLATEFORME = "SELECT * FROM JeuPlateforme";
     public static final String SELECT_JEU_GENRE = "SELECT * FROM JeuGenre";
-//    public static final String SELECT_JEU__STUDIO = "SELECT * FROM JeuStudio";
     public static final String SELECT_VUE_GLOBALE = "SELECT * FROM VueGlobale";
     public static final String SELECT_VUE_GLOBALE_SQL = "SELECT * FROM "
                                                          + TABLE_JEUX + " LEFT OUTER JOIN "
