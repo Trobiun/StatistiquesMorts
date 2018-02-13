@@ -48,7 +48,7 @@ public final class TexteConstantesSQL {
     public static final String TABLE_LIVES_ID = "liv_id";
     public static final String TABLE_LIVES_DATE_DEBUT = "liv_DateDebut";
     public static final String TABLE_LIVES_DATE_FIN = "liv_DateFin";
-    public static final String TABLE_LIVES_RUN = "liv_Run";
+    public static final String TABLE_LIVES_RUN = "liv_idRun";
     public static final String TABLE_LIVES_MORTS = "liv_Morts";
     public static final String TABLE_LIVES_BOSS = "liv_Boss";
     

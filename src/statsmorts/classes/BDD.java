@@ -665,7 +665,7 @@ public class BDD {
                         + TexteConstantesSQL.TABLE_LIVES_DATE_FIN + " "
                             + TexteConstantesSQL.SQL_DATETIME + " "
                             + TexteConstantesSQL.NOT_NULL + ","
-                        //champ liv_Run
+                        //champ liv_idRun
                         + TexteConstantesSQL.TABLE_LIVES_RUN + " "
                             + TexteConstantesSQL.SQL_INTEGER + " "
                             + TexteConstantesSQL.REFERENCES + " "
