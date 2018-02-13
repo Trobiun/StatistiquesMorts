@@ -17,18 +17,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * Une classe pour représenter une plateforme de jeux.
  * @author Robin
  */
-public class Plateforme implements FillDataset, Comparable<Plateforme> {
+public class Plateforme extends ObjectDatabaseWithTitle implements FillDataset, Comparable<Plateforme> {
     
     //ATTRIBUTS
-    /**
-     * L'identifiant unique de la plateforme dans la base de données, utilisé
-     * pour les maps.
-     */
-    private final long id;
-    /**
-     * Le nom de la plateforme.
-     */
-    private String nom;
     /**
      * La collection des jeux sortis sur cette plateforme.
      */
@@ -42,30 +33,12 @@ public class Plateforme implements FillDataset, Comparable<Plateforme> {
      * @param nom le nom de la plateforme
      */
     public Plateforme(long id, String nom) {
-        this.id = id;
-        this.nom = nom;
+        super(id,nom);
         jeux = new HashMap();
     }
     
     
     //ACCESSEURS
-    /**
-     * Retourne l'identifiant de la plateforme.
-     * @return l'identifiant de la plateforme
-     */
-    public long getID() {
-        return id;
-    }
-    
-    /**
-     * Retourne une chaîne de caractères représentant la plateforme.
-     * Utilisé pour l'affichage
-     * @return le nom de la plateforme
-     */
-    @Override
-    public String toString() {
-        return nom;
-    }
     
     
     //MUTATEURS
@@ -87,32 +60,16 @@ public class Plateforme implements FillDataset, Comparable<Plateforme> {
     }
     
     /**
-     * Renomme la plateforme.
-     * @param nouveauNom le nouveau nom de la plateforme
-     */
-    public void renommer(final String nouveauNom) {
-        this.nom = nouveauNom;
-    }
-    
-    /**
      * Supprime la plateforme dans les occurences des jeux auxquels la plateforme
      * est liée.
      */
     public void supprimerPlateforme() {
         Set<Entry<Long,Jeu>> setJeux = jeux.entrySet();
         for (Entry<Long,Jeu> entry : setJeux) {
-            entry.getValue().supprimerPlateforme(id);
+            entry.getValue().supprimerPlateforme(super.getID());
         }
     }
     
-    //INTERFACE FILLDATASET
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTitre() {
-        return nom;
-    }
     
     //INTERFACE FILLDATASET
     /**
@@ -120,7 +77,7 @@ public class Plateforme implements FillDataset, Comparable<Plateforme> {
      */
     @Override
     public String getTitreDataset() {
-        return nom;
+        return super.getTitre();
     }
     
     //INTERFACE FILLDATASET
@@ -153,7 +110,7 @@ public class Plateforme implements FillDataset, Comparable<Plateforme> {
      */
     @Override
     public int compareTo(Plateforme o) {
-        return this.nom.compareTo(((Plateforme)o).nom);
+        return super.getTitre().compareTo(((Plateforme)o).getTitre());
     }
     
 }

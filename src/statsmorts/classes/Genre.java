@@ -17,17 +17,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * Une classe pour représenter un genre de jeux (action, RPG etc).
  * @author Robin
  */
-public class Genre implements FillDataset, Comparable {
+public class Genre extends ObjectDatabaseWithTitle implements FillDataset, Comparable {
     
     //ATTRIBUTS
-    /**
-     * L'identifiant unique du genre dans la base de données, utilisé pour les maps.
-     */
-    private final long id;
-    /**
-     * Le nom du genre dans la base de données, utilisé pour l'affichage.
-     */
-    private String nom;
     /**
      * La collection des jeux qui ont pour genre(s) au moins l'objet courant.
      */
@@ -41,30 +33,12 @@ public class Genre implements FillDataset, Comparable {
      * @param nom le nom du genre
      */
     public Genre(final long id, final String nom) {
-        this.id = id;
-        this.nom = nom;
+        super(id,nom);
         this.jeux = new HashMap();
     }
     
     
     //ACCESSEURS
-    /**
-     * Retourne l'identifiant du genre dans la base de données.
-     * @return l'identifiant du genre dans la base de données
-     */
-    public long getID() {
-        return id;
-    }
-    
-    /**
-     * Retourne une chaîne de caractères représentant l'objet (le nom du genre
-     * pour l'affichage)
-     * @return le nom du genre
-     */
-    @Override
-    public String toString() {
-        return nom;
-    }
     
     
     //MUTATEURS
@@ -85,20 +59,12 @@ public class Genre implements FillDataset, Comparable {
     }
     
     /**
-     * Renomme le genre.
-     * @param nouveauNom le nouveau nom du genre 
-     */
-    public void renommer(final String nouveauNom) {
-        this.nom = nouveauNom;
-    }
-    
-    /**
      * Supprime le genre dans les occurences des jeux auxquels le genre est lié.
      */
     public void supprimerGenre() {
         Set<Entry<Long, Jeu>> setJeux = jeux.entrySet();
         for (Entry<Long, Jeu> entry : setJeux) {
-            entry.getValue().supprimerGenre(id);
+            entry.getValue().supprimerGenre(super.getID());
         }
     }
     
@@ -109,7 +75,7 @@ public class Genre implements FillDataset, Comparable {
      */
     @Override
     public String getTitre() {
-        return nom;
+        return super.getTitre();
     }
     
     /**
@@ -117,7 +83,7 @@ public class Genre implements FillDataset, Comparable {
      */
     @Override
     public String getTitreDataset() {
-        return nom;
+        return super.getTitre();
     }
     
     /**
@@ -149,10 +115,10 @@ public class Genre implements FillDataset, Comparable {
     @Override
     public int compareTo(Object o) {
          if (o instanceof Genre) {
-            return this.nom.compareTo(((Genre)o).nom);
+            return super.getTitre().compareTo(((Genre)o).getTitre());
         }
         else {
-            return this.nom.compareTo(o.toString());
+            return super.getTitre().compareTo(o.toString());
         }
     }
     

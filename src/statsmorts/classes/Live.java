@@ -20,7 +20,7 @@ import statsmorts.constantes.TexteConstantesFormatDate;
  * Une classe pour représenter un live.
  * @author Robin
  */
-public class Live implements FillDataset, Comparable<Live> {
+public class Live extends ObjectDatabase implements FillDataset, Comparable<Live> {
     
     //ATTRIBUTS STATIC
     public static final SimpleDateFormat DATE_FORMAT_SQL = new SimpleDateFormat(TexteConstantesFormatDate.SQL);
@@ -28,10 +28,6 @@ public class Live implements FillDataset, Comparable<Live> {
     public static final SimpleDateFormat DATE_FORMAT_LONG = new SimpleDateFormat(TexteConstantesFormatDate.LONG);
     
     //ATTRIBUTS
-    /**
-     * L'identifiant unique du live dans la base de données, utilisé pour les maps.
-     */
-    private final long id;
     /**
      * La date (date + heure) de début du live.
      */
@@ -63,7 +59,7 @@ public class Live implements FillDataset, Comparable<Live> {
      * @param boss le nombre de boss vaincus
      */
     public Live(final long id, final String dateDebutString, final String dateFinString, final int morts, final int boss) {
-        this.id = id;
+        super(id);
         try {
             this.dateDebut = DATE_FORMAT_SQL.parse(dateDebutString);
             this.dateFin = DATE_FORMAT_SQL.parse(dateFinString);
@@ -78,14 +74,6 @@ public class Live implements FillDataset, Comparable<Live> {
     
     
     //ACCESSEURS
-    /**
-     * Retourne l'identifiant du live.
-     * @return l'identifiant du live
-     */
-    public long getID() {
-        return id;
-    }
-    
     /**
      * Retourne la run durant laquelle est fait le live.
      * @return la run durant laquelle est fait le live
@@ -210,8 +198,9 @@ public class Live implements FillDataset, Comparable<Live> {
      * Supprime l'occurence de ce live dans la run liée à ce live.
      */
     public void supprimerLive() {
-        this.run.supprimerLive(id);
+        this.run.supprimerLive(super.getID());
     }
+    
     
     //INTERFACE FILLDATASET
     /**

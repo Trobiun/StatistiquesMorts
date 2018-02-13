@@ -20,17 +20,9 @@ import statsmorts.constantes.TexteConstantes;
  * Une classe pour représenter un jeu dans la base de données.
  * @author Robin
  */
-public class Jeu implements FillDataset, Comparable {
+public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Comparable {
     
     //ATTRIBUTS
-    /**
-     * L'idenfiant unique du jeu dans la base de données, utilisé pour les maps.
-     */
-    private final long id;
-    /**
-     * Le titre du jeu, utilisé pour l'affichage.
-     */
-    private String titre;
     /**
      * L'année de sortie du jeu.
      */
@@ -62,8 +54,7 @@ public class Jeu implements FillDataset, Comparable {
      * @param studio le studio de développement du jeu
      */
     public Jeu(final long id, final String titre, final int anneeSortie, final Studio studio) {
-        this.id = id;
-        this.titre = titre;
+        super(id,titre);
         this.anneeSortie = anneeSortie;
         this.studio = studio;
         plateformes = new HashMap();
@@ -73,14 +64,6 @@ public class Jeu implements FillDataset, Comparable {
     
     
     //ACCESSEURS
-    /**
-     * Retourn l'identifiant du jeu.
-     * @return l'identifiant du jeu
-     */
-    public long getID() {
-        return id;
-    }
-    
     /**
      * Retourne l'année de sortie du jeu.
      * @return l'année de sortie du jeu
@@ -286,7 +269,7 @@ public class Jeu implements FillDataset, Comparable {
         float mortsParBoss = (boss == 0) ? 0 : (float)(totalMorts) / (float)(boss);
         float heuresParBoss = (boss == 0) ? 0 : dureeTotaleHeures / (float)boss;
         float minutesParBoss = (boss == 0) ? 0 : dureeTotaleMinutes / (float)boss;
-        String res = TexteConstantes.TITRE + " : " + titre + TexteConstantes.NEW_LINE
+        String res = TexteConstantes.TITRE + " : " + super.getTitre() + TexteConstantes.NEW_LINE
                 + "" + studio.toString() + TexteConstantes.NEW_LINE
                 + "Année de sortie : " + anneeSortie + TexteConstantes.NEW_LINE
                 + plateformesToString()
@@ -311,14 +294,6 @@ public class Jeu implements FillDataset, Comparable {
     
     //MUTATEURS
     /**
-     * Renomme le jeu.
-     * @param nouveauTitre le nouveau titre du jeu
-     */
-    public void renommer(final String nouveauTitre) {
-        this.titre = nouveauTitre;
-    }
-    
-    /**
      * Change l'année de sortie du jeu.
      * @param anneeSortie la nouvelle année de sortie du jeu
      */
@@ -333,7 +308,7 @@ public class Jeu implements FillDataset, Comparable {
     public void clearPlateformes() {
         Set<Entry<Long, Plateforme>> setPlateformes = plateformes.entrySet();
         for (Entry<Long, Plateforme> entry : setPlateformes) {
-            entry.getValue().supprimerJeu(id);
+            entry.getValue().supprimerJeu(super.getID());
         }
         plateformes.clear();
     }
@@ -345,7 +320,7 @@ public class Jeu implements FillDataset, Comparable {
     public void clearGenres() {
         Set<Entry<Long, Genre>> setGenres = genres.entrySet();
         for (Entry<Long, Genre> entry : setGenres) {
-            entry.getValue().supprimerJeu(id);
+            entry.getValue().supprimerJeu(super.getID());
         }
         genres.clear();
     }
@@ -357,7 +332,7 @@ public class Jeu implements FillDataset, Comparable {
      */
     public void setStudio(final Studio studio) {
         if(null != this.studio) {
-            this.studio.supprimerJeu(id);
+            this.studio.supprimerJeu(super.getID());
         }
         this.studio = studio;
     }
@@ -376,7 +351,7 @@ public class Jeu implements FillDataset, Comparable {
      * @param idPlateforme l'identifiant de la plateforme à supprimer
      */
     public void supprimerPlateforme(final long idPlateforme) {
-        plateformes.get(idPlateforme).supprimerJeu(id);
+        plateformes.get(idPlateforme).supprimerJeu(super.getID());
         plateformes.remove(idPlateforme);
     }
     
@@ -394,7 +369,7 @@ public class Jeu implements FillDataset, Comparable {
      * @param idGenre l'identifiant du genre à supprimer
      */
     public void supprimerGenre(final long idGenre) {
-        genres.get(idGenre).supprimerJeu(id);
+        genres.get(idGenre).supprimerJeu(super.getID());
         genres.remove(idGenre);
     }
     
@@ -422,7 +397,7 @@ public class Jeu implements FillDataset, Comparable {
         clearPlateformes();
         clearGenres();
         if (null != studio) {
-            studio.supprimerJeu(id);
+            studio.supprimerJeu(super.getID());
         }
     }
     
@@ -432,16 +407,8 @@ public class Jeu implements FillDataset, Comparable {
      * @inheritDoc
      */
     @Override
-    public String getTitre() {
-        return titre;
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    @Override
     public String getTitreDataset() {
-        return titre;
+        return super.getTitre();
     }
     
     /**
@@ -498,10 +465,10 @@ public class Jeu implements FillDataset, Comparable {
     @Override
     public int compareTo(Object o) {
         if (o instanceof Jeu){
-            return this.titre.compareTo(((Jeu)o).titre);
+            return super.getTitre().compareTo(((Jeu)o).getTitre());
         }
         else {
-            return this.titre.compareTo(o.toString());
+            return super.getTitre().compareTo(o.toString());
         }
     }
     

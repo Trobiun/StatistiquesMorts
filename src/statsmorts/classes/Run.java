@@ -19,18 +19,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * Une classe pour représenter une run/partie d'un jeu.
  * @author Robin
  */
-public class Run implements FillDataset, Comparable<Run> {
+public class Run extends ObjectDatabaseWithTitle implements FillDataset, Comparable<Run> {
     
     //ATTRIBUTS
-    /**
-     * L'identifiant unique de la run dans la base de données, utilisé pour les
-     * maps.
-     */
-    private final long id;
-    /**
-     * Le titre de la run dans la base de données, utilisé pour l'affichage.
-     */
-    private String titre;
     /**
      * Le jeu sur lequel la run est jouée.
      */
@@ -48,22 +39,13 @@ public class Run implements FillDataset, Comparable<Run> {
      * @param titre le titre de la run
      */
     public Run(long id, String titre) {
-        this.id = id;
-        this.titre = titre;
+        super(id,titre);
         this.lives = new HashMap();
     }
     
     
     
     //ACCESSEURS
-    /**
-     * Retourne l'identifiant de la run.
-     * @return l'identifiant de la run
-     */
-    public long getID() {
-        return id;
-    }
-    
     /**
      * Retourne le jeu sur lequel a été fait la run.
      * @return le jeu sur lequel a été fait la run
@@ -186,7 +168,7 @@ public class Run implements FillDataset, Comparable<Run> {
         float mortsParBoss = (boss == 0) ? 0 : (float)(mortsTotales) / (float)(boss);
         float minutesParBoss = (boss == 0) ? 0 : (float)(minutes) / (float)(boss);
         float heuresParBoss = (boss == 0) ? 0 : (float)(heures) / (float)(boss);
-        String res = "Titre : " + titre + "\n"
+        String res = "Titre : " + super.getTitre() + "\n"
                 + "Nombre de lives : " + getNombreLives() + "\n\n"
                 + "Durée totale : " + heures + " heures\n"
                 + "Durée totale : " + (int)(heures) + "h" + (int)(minutes % 60) + "m\n"
@@ -249,7 +231,7 @@ public class Run implements FillDataset, Comparable<Run> {
      */
     public void supprimerRun() {
         clearLives();
-        jeu.supprimerRun(id);
+        jeu.supprimerRun(super.getID());
     }
     
     //INTERFACE FILLDATASET
@@ -257,16 +239,8 @@ public class Run implements FillDataset, Comparable<Run> {
      * {@inheritDoc}
      */
     @Override
-    public String getTitre() {
-        return titre;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getTitreDataset() {
-        return titre;
+        return super.getTitre();
     }
     
     /**
@@ -323,7 +297,7 @@ public class Run implements FillDataset, Comparable<Run> {
      */
     @Override
     public int compareTo(Run o) {
-        return this.titre.compareTo(((Run)o).titre);
+        return super.getTitre().compareTo(((Run)o).getTitre());
     }
     
 }

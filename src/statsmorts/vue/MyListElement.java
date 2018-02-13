@@ -5,7 +5,7 @@
  */
 package statsmorts.vue;
 
-import statsmorts.classes.FillDataset;
+import statsmorts.classes.ObjectDatabaseWithTitle;
 
 /**
  * Une classe pour un élément d'une JList.
@@ -21,7 +21,7 @@ public class MyListElement {
     /**
      * L'objet lié à ce MyListElement.
      */
-    private final FillDataset objet;
+    private final ObjectDatabaseWithTitle objet;
     
     
     //CONSTRUCTEUR
@@ -31,7 +31,7 @@ public class MyListElement {
      * @param id l'identifiant de l'objet
      * @param objet l'objet FillDataset
      */
-    public MyListElement(long id, FillDataset objet) {
+    public MyListElement(long id, ObjectDatabaseWithTitle objet) {
         this.id = id;
         this.objet = objet;
     }

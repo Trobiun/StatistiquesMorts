@@ -17,17 +17,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * Une classe pour représenter un studio de développement.
  * @author Robin
  */
-public class Studio implements FillDataset, Comparable<Studio> {
+public class Studio extends ObjectDatabaseWithTitle implements FillDataset, Comparable<Studio> {
     
     //ATTRIBUTS
-    /**
-     * L'identifiant unique du studio dans la base de données, utilisé pour les  maps.
-     */
-    private final long id;
-    /**
-     * Le nom du studio.
-     */
-    private String nom;
     /**
      * La collection des jeux développés par ce studio.
      */
@@ -40,21 +32,12 @@ public class Studio implements FillDataset, Comparable<Studio> {
      * @param nom le nom du studio
      */
     public Studio(final long id, final String nom) {
-        this.id = id;
-        this.nom = nom;
+        super(id, nom);
         this.jeux = new HashMap();
     }
     
     
     //ACCESSEURS
-    /**
-     * Retourne l'identifiant du studio.
-     * @return l'identifiant du studio
-     */
-    public long getID() {
-        return id;
-    }
-    
     /**
      * Retourne la collection des jeux développés par ce studio.
      * @return la collection des jeux développés par ce studio
@@ -72,7 +55,7 @@ public class Studio implements FillDataset, Comparable<Studio> {
      */
     @Override
     public String toString() {
-        return "Studio : " + nom;
+        return "Studio : " + super.getTitre();
     }
     
     
@@ -95,14 +78,6 @@ public class Studio implements FillDataset, Comparable<Studio> {
     }
     
     /**
-     * Renomme le studio.
-     * @param nouveauNom le nouveau nom du studio
-     */
-    public void renommer(final String nouveauNom) {
-        this.nom = nouveauNom;
-    }
-    
-    /**
      * Supprime tous les jeux de ce studio.
      */
     public void supprimerStudio() {
@@ -119,16 +94,8 @@ public class Studio implements FillDataset, Comparable<Studio> {
      * {@inheritDoc}
      */
     @Override
-    public String getTitre() {
-        return nom;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getTitreDataset() {
-        return nom;
+        return super.getTitre();
     }
     
     /**
@@ -157,7 +124,7 @@ public class Studio implements FillDataset, Comparable<Studio> {
      */
     @Override
     public int compareTo(Studio o) {
-        return this.nom.compareTo(((Studio)o).nom);
+        return super.getTitre().compareTo(((Studio)o).getTitre());
     }
     
 }
