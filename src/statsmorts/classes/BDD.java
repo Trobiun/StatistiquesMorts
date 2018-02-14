@@ -60,6 +60,10 @@ public class BDD {
      */
     private Map<Long,Studio> studios;
     /**
+     * La collection des tous les éditeurs de la base de données.
+     */
+    private Map<Long,Editeur> editeurs;
+    /**
      * La collection de tous les jeux de la base de données.
      */
     private Map<Long,Jeu> jeux;
@@ -141,13 +145,23 @@ public class BDD {
     }
     
     /**
-     * Retourne le studio dont l'identifiant est 'idStudio'
+     * Retourne le studio dont l'identifiant est 'idStudio'.
      * @param idStudio l'identifiant du studio à retourner
      * @return le studio dont l'identifiant est 'idStudio'
      * ou null s'il n'est pas présent
      */
-    public Studio getStudio(long idStudio) {
+    public Studio getStudio(final long idStudio) {
         return studios.get(idStudio);
+    }
+    
+    /**
+     * Retourne l'éditeru dont l'identifiant est 'idEditeur'.
+     * @param idEditeur l'identifiant de l'éditeur à retourner
+     * @return le studio dont l'identifiant est 'idEditeur'
+     * ou null s'il n'est pas présent
+     */
+    public Editeur getEditeur(final long idEditeur) {
+        return editeurs.get(idEditeur);
     }
     
     /**
@@ -164,7 +178,7 @@ public class BDD {
      * @return le jeu dont l'identifiant est 'idJeu'
      * ou null s'il n'est pas présent
      */
-    public Jeu getJeu(long idJeu) {
+    public Jeu getJeu(final long idJeu) {
         return jeux.get(idJeu);
     }
     
@@ -182,7 +196,7 @@ public class BDD {
      * @return la run dont l'identifiant est 'idRun'
      * ou null si elle n'est pas présente
      */
-    public Run getRun(long idRun) {
+    public Run getRun(final long idRun) {
         return runs.get(idRun);
     }
     
@@ -200,7 +214,7 @@ public class BDD {
      * @return le live dont l'identifiant est 'idLive'
      * ou null s'il n'est pas présent
      */
-    public Live getLive(long idLive) {
+    public Live getLive(final long idLive) {
         return lives.get(idLive);
     }
     
@@ -268,6 +282,23 @@ public class BDD {
     public void supprimerStudio(final long idStudio) {
         studios.get(idStudio).supprimerStudio();
         studios.remove(idStudio);
+    }
+    
+    /**
+     * Ajoute un éditeur à la collection des éditeurs.
+     * @param editeur l'éditeur à ajouter
+     */
+    public void ajouterEditeur(final Editeur editeur) {
+        editeurs.put(editeur.getID(),editeur);
+    }
+    
+    /**
+     * Supprime l'éditeur dont l'identifiant est 'idEditeur'.
+     * @param idEditeur l'identifiant de l'éditeur à supprimer
+     */
+    public void supprimerEditeur(final long idEditeur) {
+        editeurs.get(idEditeur).supprimerEditeur();
+        editeurs.remove(idEditeur);
     }
     
     /**
@@ -344,6 +375,7 @@ public class BDD {
         plateformes = initMap(plateformes);
         genres = initMap(genres);
         studios = initMap(studios);
+        editeurs = initMap(editeurs);
         jeux = initMap(jeux);
         runs = initMap(runs);
         lives = initMap(lives);
@@ -381,12 +413,13 @@ public class BDD {
      * @throws SQLException 
      */
     public void actualiserBDD(Connexion connexion) throws SQLException {
+        initAll();
         String requetePlateformes = TexteConstantesSQL.SELECT_PLATEFORMES;
         String requeteGenres = TexteConstantesSQL.SELECT_GENRES;
         String requeteStudios = TexteConstantesSQL.SELECT_STUDIOS;
+        String requeteEditeurs = TexteConstantesSQL.SELECT_EDITEURS;
         String requeteJeuPlateforme = TexteConstantesSQL.SELECT_JEU_PLATEFORME;
         String requeteJeuGenre = TexteConstantesSQL.SELECT_JEU_GENRE;
-//        String requeteJeuStudio = TexteConstantesSQL.SELECT_JEU__STUDIO;
         String requeteVueGlobale = TexteConstantesSQL.SELECT_VUE_GLOBALE;
         if (connexion.getType().equals(TypeDatabase.Access)) {
             requeteVueGlobale = TexteConstantesSQL.SELECT_VUE_GLOBALE_SQL;
@@ -401,7 +434,6 @@ public class BDD {
             nomPlateforme = resultsPlateformes.getString(TexteConstantesSQL.TABLE_PLATEFORMES_NOM);
             plateforme = new Plateforme(idPlateforme,nomPlateforme);
             this.ajouterPlateforme(plateforme);
-//            plateformes.put(idPlateforme,plateforme);
         }
         
         long idGenre;
@@ -413,7 +445,6 @@ public class BDD {
             nomGenre = resultsGenres.getString(TexteConstantesSQL.TABLE_GENRES_NOM);
             genre = new Genre(idGenre,nomGenre);
             this.ajouterGenre(genre);
-//            genres.put(idGenre,genre);
         }
         
         long idStudio;
@@ -425,7 +456,17 @@ public class BDD {
             nomStudio = resultsStudios.getString(TexteConstantesSQL.TABLE_STUDIOS_NOM);
             studio = new Studio(idStudio,nomStudio);
             this.ajouterStudio(studio);
-//            studios.put(idStudio, studio);
+        }
+        
+        long idEditeur;
+        String nomEditeur;
+        Editeur editeur;
+        ResultSet resultsEditeurs = connexion.executerRequete(requeteEditeurs);
+        while (resultsEditeurs.next()) {
+            idEditeur = resultsEditeurs.getLong(TexteConstantesSQL.TABLE_EDITEURS_ID);
+            nomEditeur = resultsEditeurs.getString(TexteConstantesSQL.TABLE_EDITEURS_NOM);
+            editeur = new Editeur(idEditeur,nomEditeur);
+            this.ajouterEditeur(editeur);
         }
         
         String titreJeu, titreRun, dateDebut, dateFin;
@@ -441,10 +482,12 @@ public class BDD {
             anneeSortieJeu = resultsVueGlobale.getInt(TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE);
             idStudio = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID_STUDIO);
             Studio jeuStudio = studios.get(idStudio);
+            idEditeur = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR);
+            Editeur jeuEditeur = editeurs.get(idEditeur);
             if (!jeux.containsKey(idJeu) && idJeu > 0) {
-                jeu = new Jeu(idJeu,titreJeu,anneeSortieJeu,jeuStudio);
+                jeu = new Jeu(idJeu,titreJeu,anneeSortieJeu,jeuStudio,jeuEditeur);
                 this.ajouterJeu(jeu);
-//                jeux.put(idJeu,jeu);
+                jeuStudio.ajouterJeu(jeu);
             }
             else {
                 jeu = jeux.get(idJeu);
@@ -579,9 +622,20 @@ public class BDD {
                             + TexteConstantesSQL.SQL_TEXT + " "
                             + TexteConstantesSQL.NOT_NULL + ")";
             
-            //table Jeux
+            //table Editeurs
             String requete4 = TexteConstantesSQL.CREATE_TABLE + " "
-                    + TexteConstantesSQL.TABLE_JEUX + " " + "("
+                    + TexteConstantesSQL.TABLE_EDITEURS + " ("
+                        //champ edi_id clé primaire
+                        + TexteConstantesSQL.TABLE_EDITEURS_ID + " "
+                        + AUTOINCREMENT_ADAPTE + ","
+                        //champ edi_Nom
+                        + TexteConstantesSQL.TABLE_EDITEURS_NOM + " "
+                            + TexteConstantesSQL.SQL_TEXT + " "
+                            + TexteConstantesSQL.NOT_NULL + ")";
+            
+            //table Jeux
+            String requete5 = TexteConstantesSQL.CREATE_TABLE + " "
+                    + TexteConstantesSQL.TABLE_JEUX + " ("
                         //champ jeu_id clé primaire
                         + TexteConstantesSQL.TABLE_JEUX_ID + " "
                         + AUTOINCREMENT_ADAPTE + ","
@@ -596,10 +650,15 @@ public class BDD {
                         + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " "
                             +  TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
                             + TexteConstantesSQL.TABLE_STUDIOS + "(" + TexteConstantesSQL.TABLE_STUDIOS_ID
+                            + ") " + CLES_ENTRAGERES_REACTIONS + ")"
+                        //champ jeu_idEditeur
+                        + TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR + " "
+                            + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
+                            + TexteConstantesSQL.TABLE_EDITEURS + "(" + TexteConstantesSQL.TABLE_EDITEURS_ID
                             + ") " + CLES_ENTRAGERES_REACTIONS + ")";
             
             //table Jeulateforme
-            String requete5 = TexteConstantesSQL.CREATE_TABLE + " "
+            String requete6 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_JEU_PLATEFORME + " " + "("
                         //champ idJeu
                         + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU + " "
@@ -617,7 +676,7 @@ public class BDD {
                             + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME + "))";
             
             //table JeuGenre
-            String requete6 = TexteConstantesSQL.CREATE_TABLE + " "
+            String requete7 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_JEU_GENRE + "("
                         //champ idJeu
                         + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU  + " "
@@ -635,7 +694,7 @@ public class BDD {
                             + TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE + "))";
             
             //table Runs
-            String requete7 = TexteConstantesSQL.CREATE_TABLE + " "
+            String requete8 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_RUNS + "("
                         //champ run_id clé primaire
                         + TexteConstantesSQL.TABLE_RUNS_ID + " "
@@ -652,7 +711,7 @@ public class BDD {
                         + TexteConstantesSQL.NOT_NULL + ")";
             
             //table Lives
-            String requete8 = TexteConstantesSQL.CREATE_TABLE + " "
+            String requete9 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_LIVES + "("
                         //champ liv_id clé primaire
                         + TexteConstantesSQL.TABLE_LIVES_ID + " "
@@ -691,6 +750,7 @@ public class BDD {
             connexion.executerUpdate(requete6);
             connexion.executerUpdate(requete7);
             connexion.executerUpdate(requete8);
+            connexion.executerUpdate(requete9);
             //les basees de données Access n'acceptent pas les vues
             if (!type.equals(TypeDatabase.Access)) {
                 connexion.executerUpdate(requete10);

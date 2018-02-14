@@ -25,11 +25,16 @@ public final class TexteConstantesSQL {
     public static final String TABLE_STUDIOS_ID = "stu_id";
     public static final String TABLE_STUDIOS_NOM = "stu_Nom";
     
+    public static final String TABLE_EDITEURS = "Editeurs";
+    public static final String TABLE_EDITEURS_ID = "edi_id";
+    public static final String TABLE_EDITEURS_NOM = "edi_Nom";
+    
     public static final String TABLE_JEUX = "Jeux";
     public static final String TABLE_JEUX_ID = "jeu_id";
     public static final String TABLE_JEUX_TITRE = "jeu_Titre";
     public static final String TABLE_JEUX_ANNEE_SORTIE = "jeu_AnneeSortie";
     public static final String TABLE_JEUX_ID_STUDIO = "jeu_idStudio";
+    public static final String TABLE_JEUX_ID_EDITEUR = "jeu_idEditeur";
     
     public static final String TABLE_JEU_PLATEFORME = "JeuPlateforme";
     public static final String TABLE_JEU_PLATEFORME_ID_JEU = "jp_idJeu";
@@ -72,6 +77,7 @@ public final class TexteConstantesSQL {
     public static final String SELECT_PLATEFORMES = "SELECT * FROM Plateformes";
     public static final String SELECT_GENRES = "SELECT * FROM Genres";
     public static final String SELECT_STUDIOS = "SELECT * FROM Studios";
+    public static final String SELECT_EDITEURS = "SELECT * FROM Editeurs";
     public static final String SELECT_JEU_PLATEFORME = "SELECT * FROM JeuPlateforme";
     public static final String SELECT_JEU_GENRE = "SELECT * FROM JeuGenre";
     public static final String SELECT_VUE_GLOBALE = "SELECT * FROM VueGlobale";
