@@ -32,6 +32,10 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
      */
     private Studio studio;
     /**
+     * L'éditeur du jeu.
+     */
+    private Editeur editeur;
+    /**
      * La collection des plateformes sur lesquelles est sorti le jeu.
      */
     private final HashMap<Long,Plateforme> plateformes;
@@ -53,10 +57,11 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
      * @param anneeSortie l'année de sortie du jeu
      * @param studio le studio de développement du jeu
      */
-    public Jeu(final long id, final String titre, final int anneeSortie, final Studio studio) {
+    public Jeu(final long id, final String titre, final int anneeSortie, final Studio studio, final Editeur editeur) {
         super(id,titre);
         this.anneeSortie = anneeSortie;
         this.studio = studio;
+        this.editeur = editeur;
         plateformes = new HashMap();
         genres = new HashMap();
         runs = new HashMap();
@@ -78,6 +83,14 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
      */
     public Studio getStudio() {
         return studio;
+    }
+    
+    /**
+     * Retourne l'édteur qui a édité le jeu.
+     * @return l'éditeur qui a édité le jeu
+     */
+    public Editeur getEditeur() {
+        return editeur;
     }
     
     /**
@@ -338,6 +351,18 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
     }
     
     /**
+     * Supprime l'occurrence de ce jeu dans l'éditeur du jeu, puis change l'éditeur
+     * du jeu par l'éditeur 'editeur'.
+     * @param editeur le nouvel éditeur du jeu
+     */
+    public void setEditeur(final Editeur editeur) {
+        if(null != this.editeur) {
+            this.editeur.supprimerJeu(super.getID());
+        }
+        this.editeur = editeur;
+    }
+    
+    /**
      * Ajoute une plateforme à la map des plateformes de ce jeu.
      * @param plateforme la plateforme à ajouter
      */
@@ -388,6 +413,7 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
     public void supprimerRun(final long idRun) {
         runs.remove(idRun);
     }
+    
     
     /**
      * Supprime toutes les occurrences de ce jeu dans tous les plateformes, genres
