@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 import org.jfree.data.category.DefaultCategoryDataset;
 import statsmorts.classes.BDD;
 import statsmorts.classes.Connexion;
+import statsmorts.classes.Editeur;
 import statsmorts.classes.FillDataset;
 import statsmorts.classes.Genre;
 import statsmorts.classes.Jeu;
@@ -262,10 +263,10 @@ public class StatsMortsModele implements Observable {
      * @param id l'identifiant de l'objet à modifier
      */
     public void supprimerBasicInputs(TypeBasicInputs typeBasicInputs, long id) {
-        if(typeBasicInputs.equals(TypeBasicInputs.STUDIOS)) {
-            supprimerStudio(id);
-            return;
-        }
+//        if(typeBasicInputs.equals(TypeBasicInputs.STUDIOS)) {
+//            supprimerStudio(id);
+//            return;
+//        }
         String table = null;
         String table_id = null;
         switch (typeBasicInputs) {
@@ -277,10 +278,10 @@ public class StatsMortsModele implements Observable {
                 table = TexteConstantesSQL.TABLE_GENRES;
                 table_id = TexteConstantesSQL.TABLE_GENRES_ID;
                 break;
-//            case STUDIOS:
-//                table = TexteConstantesSQL.TABLE_STUDIOS;
-//                table_id = TexteConstantesSQL.TABLE_STUDIOS_ID;
-//                break;
+            case STUDIOS:
+                table = TexteConstantesSQL.TABLE_STUDIOS;
+                table_id = TexteConstantesSQL.TABLE_STUDIOS_ID;
+                break;
             default:
         }
         if (null != table) {
@@ -297,8 +298,8 @@ public class StatsMortsModele implements Observable {
                         bdd.supprimerGenre(id);
                         notifyRemoveGenre(id);
                         break;
-//                    case STUDIOS:
-//                        long start = System.currentTimeMillis();
+                    case STUDIOS:
+                        long start = System.currentTimeMillis();
 //                        String requeteSupprJeux = TexteConstantesSQL.DELETE_FROM + " "
 //                                + TexteConstantesSQL.TABLE_JEUX + " " + TexteConstantesSQL.INNER_JOIN
 //                                + " " + TexteConstantesSQL.TABLE_JEU_STUDIO + " "
@@ -308,18 +309,31 @@ public class StatsMortsModele implements Observable {
 //                                + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO + " = ?";
 //                        System.out.println(requeteSupprJeux);
 //                        connexion.executerPreparedUpdate(requeteSupprJeux, "(long)" + id);
-//                        Set<Entry<Long,Jeu>> setJeux = bdd.getStudio(id).getJeux().entrySet();
-//                        Iterator<Entry<Long,Jeu>> it = setJeux.iterator();
-//                        while (it.hasNext()) {
-//                            Entry<Long,Jeu> entry = it.next();
-//                            it.remove();
-////                            supprimerJeu(entry.getKey());
-//                        }
-//                        bdd.supprimerStudio(id);
-//                        notifyRemoveStudio(id);
-//                        long end = System.currentTimeMillis();
-//                        System.out.println((end - start) + "ms");
-//                        break;
+                        Set<Entry<Long, Jeu>> setJeux = bdd.getStudio(id).getJeux().entrySet();
+//                        System.out.println(bdd.getStudio(id));
+//                        System.out.println(bdd.getStudio(id).getTitre());
+//                        System.out.println(bdd.getStudio(id).getJeux().size());
+//                        System.out.println(bdd.getStudio(id).getLivesList().size());
+                        Iterator<Entry<Long, Jeu>> it = setJeux.iterator();
+//                        SwingUtilities.invokeLater(new Runnable() {
+//                            @Override
+//                            public void run() {
+                                while (it.hasNext()) {
+                                    Entry<Long, Jeu> entry = it.next();
+                                    it.remove();
+                                    bdd.supprimerJeu(entry.getKey());
+                                    notifyRemoveJeu(entry.getKey());
+//                            supprimerJeu(entry.getKey());
+                                }
+                                bdd.supprimerStudio(id);
+                                notifyRemoveStudio(id);
+//                            }
+//                        });
+                        
+                        
+                        long end = System.currentTimeMillis();
+                        System.out.println((end - start) + "ms");
+                        break;
                     default:
                 }
             }
@@ -333,22 +347,21 @@ public class StatsMortsModele implements Observable {
     public void supprimerStudio(long idStudio) {
         long start = System.currentTimeMillis();
         String idStudioRequete = TexteConstantesConnexion.LONG + idStudio;
+        //on supprime d'abord les jeux liés au studio
         String requeteSupprJeux = TexteConstantesSQL.DELETE_FROM + " "
                 + TexteConstantesSQL.TABLE_JEUX + " " + TexteConstantesSQL.WHERE
-                + " " + TexteConstantesSQL.TABLE_JEUX_ID + " " + TexteConstantesSQL.IN
-                + " (" + TexteConstantesSQL.SELECT + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU
-                + " " + TexteConstantesSQL.FROM + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
-                + " " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
-                + " = ?)";
+                + " " + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " = ?";
         connexion.executerPreparedUpdate(requeteSupprJeux, idStudioRequete);
         Set<Entry<Long, Jeu>> setJeux = bdd.getStudio(idStudio).getJeux().entrySet();
         Iterator<Entry<Long, Jeu>> it = setJeux.iterator();
+        System.out.println(setJeux);
         while (it.hasNext()) {
             Entry<Long, Jeu> entry = it.next();
             it.remove();
             bdd.supprimerJeu(entry.getKey());
             notifyRemoveJeu(entry.getKey());
         }
+        //on supprime le studio en lui-même
         String requeteSupprStudio = TexteConstantesSQL.DELETE_FROM + " "
                 + TexteConstantesSQL.TABLE_STUDIOS + " " + TexteConstantesSQL.WHERE
                 + " " + TexteConstantesSQL.TABLE_STUDIOS_ID + " = ?";
@@ -366,21 +379,25 @@ public class StatsMortsModele implements Observable {
      * @param listPlateformes la liste des plateformes à lier au jeu
      * @param listGenres la liste des genres à lier au jeu
      * @param idStudio le studio à lier au jeu
+     * @param idEditeur l'éditeur à lier au jeu
      */
-    public void ajouterJeu(String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
+    public void ajouterJeu(String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio, long idEditeur) {
         String requete = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEUX
                 + "(" + TexteConstantesSQL.TABLE_JEUX_TITRE + "," + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE
                 + "," + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO
-                + ") " + TexteConstantesSQL.VALUES + "(?,?,?)";
+                + "," + TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR
+                + ") " + TexteConstantesSQL.VALUES + "(?,?,?,?)";
         int rowsInserted = connexion.executerPreparedUpdate(requete, titre,
                 TexteConstantesConnexion.INT + anneeSortie,
-                TexteConstantesConnexion.LONG + idStudio);
+                TexteConstantesConnexion.LONG + idStudio,
+                TexteConstantesConnexion.LONG + idEditeur);
         try {
             ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
             if (resultID.next()) {
                 long idJeu = resultID.getInt(1);
                 Studio studio = bdd.getStudio(idStudio);
-                Jeu jeu = new Jeu(idJeu,titre,anneeSortie,studio);
+                Editeur editeur = bdd.getEditeur(idEditeur);
+                Jeu jeu = new Jeu(idJeu,titre,anneeSortie,studio,editeur);
                 int rows;
                 //ajout des plateformes au jeu et fait le lien dans la base de données
                 String requetePlateformes = TexteConstantesSQL.INSERT_INTO + " "
@@ -406,16 +423,9 @@ public class StatsMortsModele implements Observable {
                         bdd.getGenre(idGenre).ajouterJeu(jeu);
                     }
                 }
-//                //ajoute le studio au jeu et fait el lien dans la base de données
-//                String requeteStudio = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
-//                        + "(" + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU + "," + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
-//                        + ")" + TexteConstantesSQL.VALUES + "(?,?)";
-//                rows = connexion.executerPreparedUpdate(requeteStudio, TexteConstantesConnexion.LONG + idJeu, TexteConstantesConnexion.LONG + idStudio);
-//                if (rows > 0) {
-////                    jeu.setStudio(bdd.getStudio(idStudio));
-//                    bdd.getStudio(idStudio).ajouterJeu(jeu);
-//                }
                 if (rowsInserted > 0) {
+                    jeu.setStudio(bdd.getStudio(idStudio));
+                    bdd.getStudio(idStudio).ajouterJeu(jeu);
                     bdd.ajouterJeu(jeu);
                     notifyAddJeu(jeu);
                 }
@@ -442,10 +452,14 @@ public class StatsMortsModele implements Observable {
      * @param anneeSortie la nouvelle année de sortie du jeu
      * @param listPlateformes la nouvelle liste de plateformes à lier au jeu
      * @param listGenres la nouvelle liste des genres à lier au jeu
-     * @param idStudio le nouveau studio à lier au eju
+     * @param idStudio le nouveau studio à lier au jeu
+     * @param idEditeur le nouvel éditeur à lier au jeu
      */
-    public void modifierJeu(long idJeu, String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio) {
+    public void modifierJeu(final long idJeu, final String titre, final int anneeSortie, final List<Long> listPlateformes,
+            final List<Long> listGenres, final long idStudio, final long idEditeur) {
         Jeu jeu = bdd.getJeu(idJeu);
+        String idStudioRequete = TexteConstantesConnexion.LONG + idStudio;
+        String idEditeurRequete = TexteConstantesConnexion.LONG + idEditeur;
         String idJeuRequete = TexteConstantesConnexion.LONG + idJeu;
         //modifie les champs directs du jeu
         String requete = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_JEUX
@@ -453,11 +467,14 @@ public class StatsMortsModele implements Observable {
                 + TexteConstantesSQL.TABLE_JEUX_TITRE + " = ? , "
                 + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + " = ? , "
                 + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " = ? "
+                + TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR + " = ? "
                 + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEUX_ID + " = ?";
-        int rows = connexion.executerPreparedUpdate(requete, titre, TexteConstantesConnexion.INT + anneeSortie, idJeuRequete);
+        int rows = connexion.executerPreparedUpdate(requete, titre, TexteConstantesConnexion.INT + anneeSortie, idStudioRequete, idEditeurRequete, idJeuRequete);
         if (rows > 0) {
             jeu.renommer(titre);
             jeu.setAnneeSortie(anneeSortie);
+            jeu.setStudio(bdd.getStudio(idStudio));
+            jeu.setEditeur(bdd.getEditeur(idEditeur));
             
             //suppression de toutes les occurences du jeu dans JeuPlateforme
             String requeteClearJeuPlateforme = getClearRequete(TexteConstantesSQL.TABLE_JEU_PLATEFORME, TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU);
@@ -493,15 +510,7 @@ public class StatsMortsModele implements Observable {
                     jeu.ajouterGenre(bdd.getGenre(idGenre));
                 }
             }
-//            //changement du studio dans la table JeuStudio
-//            String requeteChangeStudio = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_JEU_STUDIO
-//                    + " " + TexteConstantesSQL.SET + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_STUDIO
-//                    + " = ? " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEU_STUDIO_ID_JEU
-//                    + " = ?";
-//            rows = connexion.executerPreparedUpdate(requeteChangeStudio, TexteConstantesConnexion.LONG + idStudio, idJeuRequete);
-//            if (rows > 0) {
-//                jeu.setStudio(bdd.getStudio(idStudio));
-//            }
+            
             notifyRemoveJeu(idJeu);
             notifyAddJeu(jeu);
         }
@@ -704,6 +713,49 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    public void actualiserAffichage() {
+        if (hasObserver()) {
+            SwingUtilities.invokeLater(new Runnable(){
+                @Override
+                public void run() {
+                    observer.clear(typeGroup);
+                    Set<Entry<Long, Plateforme>> plateformes = bdd.getPlateformes().entrySet();
+                    for (Entry<Long, Plateforme> entryPlateforme : plateformes) {
+                        Plateforme plateforme = entryPlateforme.getValue();
+                        notifyAddPlateforme(plateforme);
+                    }
+                    Set<Entry<Long, Genre>> genres = bdd.getGenres().entrySet();
+                    for (Entry<Long, Genre> entryGenre : genres) {
+                        Genre genre = entryGenre.getValue();
+                        notifyAddGenre(genre);
+                    }
+                    Set<Entry<Long, Studio>> studios = bdd.getStudios().entrySet();
+                    for (Entry<Long, Studio> entryStudio : studios) {
+                        Studio studio = entryStudio.getValue();
+                        notifyAddStudio(studio);
+                    }
+                    Set<Entry<Long, Jeu>> set = bdd.getJeux().entrySet();
+                    for (Entry<Long, Jeu> entryJeu : set) {
+                        Jeu jeu = entryJeu.getValue();
+                        notifyAddJeu(jeu);
+//                Map<Long, Run> runsMap = jeu.getRuns();
+//                Set<Entry<Long, Run>> runsSet = runsMap.entrySet();
+//                for (Entry<Long, Run> runEntry : runsSet) {
+//                    Run run = runEntry.getValue();
+//                    notifyAddRun(run);
+//                    Map<Long, Live> livesMap = run.getLives();
+//                    Set<Entry<Long, Live>> livesSet = livesMap.entrySet();
+//                    for (Entry<Long, Live> liveEntry : livesSet) {
+//                        Live live = liveEntry.getValue();
+//                        notifyAddLive(live);
+//                    }
+//                }
+                    }
+                }
+            });
+        }
+    }
+    
     /**
      * Remplit le Plate
      * @param idPlateforme 
@@ -862,7 +914,7 @@ public class StatsMortsModele implements Observable {
     @Override
     public void setGroup(final TypeGroup type) {
         this.typeGroup = type;
-        this.actualiser();
+        this.actualiserAffichage();
     }
     
     /**
@@ -871,7 +923,13 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyAddPlateforme(final Plateforme plateforme) {
         if (hasObserver()) {
-            observer.addPlateforme(plateforme);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    observer.addPlateforme(plateforme);
+                }
+            });
+            
         }
     }
     
@@ -881,7 +939,12 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyAddGenre(final Genre genre) {
         if(hasObserver()) {
-            observer.addGenre(genre);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    observer.addGenre(genre);
+                }
+            });
         }
     }
     
@@ -891,7 +954,12 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyAddStudio(final Studio studio) {
         if (hasObserver()) {
-            observer.addStudio(studio);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    observer.addStudio(studio);
+                }
+            });
         }
     }
     
@@ -901,19 +969,24 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyAddJeu(final Jeu jeu) {
         if (hasObserver()) {
-            observer.addJeu(jeu);
-            Map<Long, Run> runsMap = jeu.getRuns();
-            Set<Entry<Long, Run>> runsSet = runsMap.entrySet();
-            for (Entry<Long, Run> runEntry : runsSet) {
-                Run run = runEntry.getValue();
-                notifyAddRun(run);
-                Map<Long, Live> livesMap = run.getLives();
-                Set<Entry<Long, Live>> livesSet = livesMap.entrySet();
-                for (Entry<Long, Live> liveEntry : livesSet) {
-                    Live live = liveEntry.getValue();
-                    notifyAddLive(live);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    observer.addJeu(jeu);
+                    Map<Long, Run> runsMap = jeu.getRuns();
+                    Set<Entry<Long, Run>> runsSet = runsMap.entrySet();
+                    for (Entry<Long, Run> runEntry : runsSet) {
+                        Run run = runEntry.getValue();
+                        notifyAddRun(run);
+                        Map<Long, Live> livesMap = run.getLives();
+                        Set<Entry<Long, Live>> livesSet = livesMap.entrySet();
+                        for (Entry<Long, Live> liveEntry : livesSet) {
+                            Live live = liveEntry.getValue();
+                            notifyAddLive(live);
+                        }
+                    }
                 }
-            }
+            });
         }
     }
     
@@ -980,7 +1053,14 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyRemoveJeu(final long idJeu) {
         if (hasObserver()) {
-            observer.removeJeu(idJeu);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    observer.removeJeu(idJeu);
+                }
+                
+            });
+            
         }
     }
     
@@ -990,7 +1070,13 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyRemoveRun(final long idRun) {
         if (hasObserver()) {
-            observer.removeRun(idRun);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                     observer.removeRun(idRun);
+                }
+            });
+           
         }
     }
     
@@ -1000,7 +1086,13 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyRemoveLive(final long idLive) {
         if (hasObserver()) {
-            observer.removeLive(idLive);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                     observer.removeLive(idLive);
+                }
+            });
+            
         }
     }
     

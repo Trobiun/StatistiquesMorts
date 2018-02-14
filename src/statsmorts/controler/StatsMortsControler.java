@@ -277,9 +277,10 @@ public class StatsMortsControler {
      * @param idStudio l'identifiant du studio à lier au jeu
      */
     public void ajouterJeu(final String titreJeu, final int anneeSortie,
-            final List<Long> listPlateformes, final List<Long> listGenres, final long idStudio) {
+            final List<Long> listPlateformes, final List<Long> listGenres,
+            final long idStudio, final long idEditeur) {
         if (null != titreJeu && !titreJeu.isEmpty() && anneeSortie > 0 && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
-            modele.ajouterJeu(titreJeu, anneeSortie, listPlateformes, listGenres, idStudio);
+            modele.ajouterJeu(titreJeu, anneeSortie, listPlateformes, listGenres, idStudio, idEditeur);
         }
     }
     
@@ -293,9 +294,9 @@ public class StatsMortsControler {
      * @param idStudio l'identifiant du studio à lier au jeu
      */
     public void modifierJeu(final long idJeu, final String nouveauTitre, final int anneeSortie,
-            final List<Long> listPlateformes, final List<Long> listGenres, final long idStudio) {
+            final List<Long> listPlateformes, final List<Long> listGenres, final long idStudio, final long idEditeur) {
         if (idJeu > 0 && null != nouveauTitre && !nouveauTitre.isEmpty() && anneeSortie > 0 && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
-            modele.modifierJeu(idJeu, nouveauTitre, anneeSortie, listPlateformes, listGenres, idStudio);
+            modele.modifierJeu(idJeu, nouveauTitre, anneeSortie, listPlateformes, listGenres, idStudio, idEditeur);
         }
     }
     
