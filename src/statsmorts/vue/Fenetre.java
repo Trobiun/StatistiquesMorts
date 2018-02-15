@@ -125,6 +125,10 @@ public class Fenetre extends JFrame implements Observer {
      */
     private HashMap<Long, SortableTreeNode> mapStudios;
     /**
+     * La collection des nœuds des éditeurs.
+     */
+    private HashMap<Long, SortableTreeNode> mapEditeurs;
+    /**
      * La collection des nœuds des jeux. Utilisation d'ArrayList 
      */
     private HashMap<Long, ArrayList<SortableTreeNode>> mapJeux;
@@ -169,6 +173,7 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem ajouterPlateformeMenuItem;
     private JMenuItem ajouterGenreMenuItem;
     private JMenuItem ajouterStudioMenuItem;
+    private JMenuItem ajouterEditeurMenuItem;
     private JMenuItem ajouterJeuMenuItem;
     private JMenuItem ajouterRunMenuItem;
     private JMenuItem ajouterLiveMenuItem;
@@ -177,6 +182,7 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem modifierPlateformeMenuItem;
     private JMenuItem modifierGenreMenuItem;
     private JMenuItem modifierStudioMenuItem;
+    private JMenuItem modifierEditeurMenuItem;
     private JMenuItem modifierJeuMenuItem;
     private JMenuItem modifierRunMenuItem;
     private JMenuItem modifierLiveMenuItem;
@@ -185,6 +191,7 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem supprimerPlateformeMenuItem;
     private JMenuItem supprimerGenreMenuItem;
     private JMenuItem supprimerStudioMenuItem;
+    private JMenuItem supprimerEditeurMenuItem;
     private JMenuItem supprimerJeuMenuItem;
     private JMenuItem supprimerRunMenuItem;
     private JMenuItem supprimerLiveMenuItem;
@@ -197,8 +204,9 @@ public class Fenetre extends JFrame implements Observer {
     private JMenu affichageMenu;
     private JMenu affichageRacineSousMenu;
     private JRadioButtonMenuItem plateformesAffichageRacineMenuItem;
-    private JRadioButtonMenuItem studiosAffichageRacineMenuItem;
     private JRadioButtonMenuItem genresAffichageRacineMenuItem;
+    private JRadioButtonMenuItem studiosAffichageRacineMenuItem;
+    private JRadioButtonMenuItem editeursAffichageRacineMenuItem;
     private JRadioButtonMenuItem jeuxAffichageRacineMenuItem;
     private ButtonGroup racineAffichageGroup;
     private JMenu affichageTempsSousMenu;
@@ -213,6 +221,7 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem ajouterPlateformePopupMenuItem;
     private JMenuItem ajouterGenrePopupMenuItem;
     private JMenuItem ajouterStudioPopupMenuItem;
+    private JMenuItem ajouterEditeurPopupMenuItem;
     private JMenuItem ajouterJeuPopupMenuItem;
     private JMenuItem ajouterRunPopupMenuItem;
     private JMenuItem ajouterLivePopupMenuItem;
@@ -221,6 +230,7 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem modifierPlateformePopupMenuItem;
     private JMenuItem modifierGenrePopupMenuItem;
     private JMenuItem modifierStudioPopupMenuItem;
+    private JMenuItem modifierEditeurPopupMenuItem;
     private JMenuItem modifierJeuPopupMenuItem;
     private JMenuItem modifierRunPopupMenuItem;
     private JMenuItem modifierLivePopupMenuItem;
@@ -229,6 +239,7 @@ public class Fenetre extends JFrame implements Observer {
     private JMenuItem supprimerPlateformePopupMenuItem;
     private JMenuItem supprimerGenrePopupMenuItem;
     private JMenuItem supprimerStudioPopupMenuItem;
+    private JMenuItem supprimerEditeurPopupMenuItem;
     private JMenuItem supprimerJeuPopupMenuItem;
     private JMenuItem supprimerRunPopupMenuItem;
     private JMenuItem supprimerLivePopupMenuItem;
@@ -326,6 +337,7 @@ public class Fenetre extends JFrame implements Observer {
         ajouterSousMenu.add(ajouterPlateformeMenuItem);
         ajouterSousMenu.add(ajouterGenreMenuItem);
         ajouterSousMenu.add(ajouterStudioMenuItem);
+        ajouterSousMenu.add(ajouterEditeurMenuItem);
         ajouterSousMenu.add(ajouterJeuMenuItem);
         ajouterSousMenu.add(ajouterRunMenuItem);
         ajouterSousMenu.add(ajouterLiveMenuItem);
@@ -334,6 +346,7 @@ public class Fenetre extends JFrame implements Observer {
         modifierSousMenu.add(modifierPlateformeMenuItem);
         modifierSousMenu.add(modifierGenreMenuItem);
         modifierSousMenu.add(modifierStudioMenuItem);
+        modifierSousMenu.add(modifierEditeurMenuItem);
         modifierSousMenu.add(modifierJeuMenuItem);
         modifierSousMenu.add(modifierRunMenuItem);
         modifierSousMenu.add(modifierLiveMenuItem);
@@ -342,6 +355,7 @@ public class Fenetre extends JFrame implements Observer {
         supprimerSousMenu.add(supprimerPlateformeMenuItem);
         supprimerSousMenu.add(supprimerGenreMenuItem);
         supprimerSousMenu.add(supprimerStudioMenuItem);
+        supprimerSousMenu.add(supprimerEditeurMenuItem);
         supprimerSousMenu.add(supprimerJeuMenuItem);
         supprimerSousMenu.add(supprimerRunMenuItem);
         supprimerSousMenu.add(supprimerLiveMenuItem);
@@ -354,6 +368,7 @@ public class Fenetre extends JFrame implements Observer {
         affichageRacineSousMenu.add(plateformesAffichageRacineMenuItem);
         affichageRacineSousMenu.add(genresAffichageRacineMenuItem);
         affichageRacineSousMenu.add(studiosAffichageRacineMenuItem);
+        affichageRacineSousMenu.add(editeursAffichageRacineMenuItem);
         affichageRacineSousMenu.add(jeuxAffichageRacineMenuItem);
         
         //AJOUT DES MENU ITEMS DE L'AFFICHAGE TEMPS
@@ -378,6 +393,7 @@ public class Fenetre extends JFrame implements Observer {
         ajouterSousPopupMenu.add(ajouterPlateformePopupMenuItem);
         ajouterSousPopupMenu.add(ajouterGenrePopupMenuItem);
         ajouterSousPopupMenu.add(ajouterStudioPopupMenuItem);
+        ajouterSousPopupMenu.add(ajouterEditeurPopupMenuItem);
         ajouterSousPopupMenu.add(ajouterJeuPopupMenuItem);
         ajouterSousPopupMenu.add(ajouterRunPopupMenuItem);
         ajouterSousPopupMenu.add(ajouterLivePopupMenuItem);
@@ -385,6 +401,7 @@ public class Fenetre extends JFrame implements Observer {
         modifierSousPopupMenu.add(modifierPlateformePopupMenuItem);
         modifierSousPopupMenu.add(modifierGenrePopupMenuItem);
         modifierSousPopupMenu.add(modifierStudioPopupMenuItem);
+        modifierSousPopupMenu.add(modifierEditeurPopupMenuItem);
         modifierSousPopupMenu.add(modifierJeuPopupMenuItem);
         modifierSousPopupMenu.add(modifierRunPopupMenuItem);
         modifierSousPopupMenu.add(modifierLivePopupMenuItem);
@@ -392,6 +409,7 @@ public class Fenetre extends JFrame implements Observer {
         supprimerSousPopupMenu.add(supprimerPlateformePopupMenuItem);
         supprimerSousPopupMenu.add(supprimerGenrePopupMenuItem);
         supprimerSousPopupMenu.add(supprimerStudioPopupMenuItem);
+        supprimerSousPopupMenu.add(supprimerEditeurPopupMenuItem);
         supprimerSousPopupMenu.add(supprimerJeuPopupMenuItem);
         supprimerSousPopupMenu.add(supprimerRunPopupMenuItem);
         supprimerSousPopupMenu.add(supprimerLivePopupMenuItem);
@@ -443,6 +461,7 @@ public class Fenetre extends JFrame implements Observer {
         mapPlateformes = new HashMap();
         mapGenres = new HashMap();
         mapStudios = new HashMap();
+        mapEditeurs = new HashMap();
         mapJeux = new HashMap();
         mapRuns = new HashMap();
     }
@@ -480,6 +499,8 @@ public class Fenetre extends JFrame implements Observer {
         ajouterGenreMenuItem.addActionListener(gestionListener);
         ajouterStudioMenuItem = new JMenuItem(TexteConstantes.STUDIO);
         ajouterStudioMenuItem.addActionListener(gestionListener);
+        ajouterEditeurMenuItem = new JMenuItem(TexteConstantes.EDITEURS);
+        ajouterEditeurMenuItem.addActionListener(gestionListener);
         ajouterJeuMenuItem = new JMenuItem(TexteConstantes.JEU);
         ajouterJeuMenuItem.addActionListener(gestionListener);
         ajouterRunMenuItem = new JMenuItem(TexteConstantes.RUN);
@@ -494,6 +515,8 @@ public class Fenetre extends JFrame implements Observer {
         modifierGenreMenuItem.addActionListener(gestionListener);
         modifierStudioMenuItem = new JMenuItem(TexteConstantes.STUDIO);
         modifierStudioMenuItem.addActionListener(gestionListener);
+        modifierEditeurMenuItem = new JMenuItem(TexteConstantes.EDITEURS);
+        modifierEditeurMenuItem.addActionListener(gestionListener);
         modifierJeuMenuItem = new JMenuItem(TexteConstantes.JEU);
         modifierJeuMenuItem.addActionListener(gestionListener);
         modifierRunMenuItem = new JMenuItem(TexteConstantes.RUN);
@@ -508,6 +531,8 @@ public class Fenetre extends JFrame implements Observer {
         supprimerGenreMenuItem.addActionListener(gestionListener);
         supprimerStudioMenuItem = new JMenuItem(TexteConstantes.STUDIO);
         supprimerStudioMenuItem.addActionListener(gestionListener);
+        supprimerEditeurMenuItem = new JMenuItem(TexteConstantes.EDITEURS);
+        supprimerEditeurMenuItem.addActionListener(gestionListener);
         supprimerJeuMenuItem = new JMenuItem(TexteConstantes.JEU);
         supprimerJeuMenuItem.addActionListener(gestionListener);
         supprimerRunMenuItem = new JMenuItem(TexteConstantes.RUN);
@@ -531,13 +556,12 @@ public class Fenetre extends JFrame implements Observer {
         //RADIO BUTTONS RACINE
         plateformesAffichageRacineMenuItem = new JRadioButtonMenuItem(TexteConstantes.PLATEFORMES);
         plateformesAffichageRacineMenuItem.addItemListener(listenerRacine);
-        
         genresAffichageRacineMenuItem = new JRadioButtonMenuItem(TexteConstantes.GENRES);
         genresAffichageRacineMenuItem.addItemListener(listenerRacine);
-        
         studiosAffichageRacineMenuItem = new JRadioButtonMenuItem(TexteConstantes.STUDIOS);
         studiosAffichageRacineMenuItem.addItemListener(listenerRacine);
-        
+        editeursAffichageRacineMenuItem = new JRadioButtonMenuItem(TexteConstantes.EDITEURS);
+        editeursAffichageRacineMenuItem.addItemListener(listenerRacine);
         jeuxAffichageRacineMenuItem = new JRadioButtonMenuItem(TexteConstantes.JEUX);
         jeuxAffichageRacineMenuItem.addItemListener(listenerRacine);
         
@@ -546,6 +570,7 @@ public class Fenetre extends JFrame implements Observer {
         racineAffichageGroup.add(plateformesAffichageRacineMenuItem);
         racineAffichageGroup.add(genresAffichageRacineMenuItem);
         racineAffichageGroup.add(studiosAffichageRacineMenuItem);
+        racineAffichageGroup.add(editeursAffichageRacineMenuItem);
         racineAffichageGroup.add(jeuxAffichageRacineMenuItem);
         racineAffichageGroup.clearSelection();
         switch (typeGroup) {
@@ -560,6 +585,9 @@ public class Fenetre extends JFrame implements Observer {
                 break;
             case JEUX:
                 jeuxAffichageRacineMenuItem.setSelected(true);
+                break;
+            case EDITEURS:
+                editeursAffichageRacineMenuItem.setSelected(true);
                 break;
             default:
                 jeuxAffichageRacineMenuItem.setSelected(true);
@@ -598,6 +626,7 @@ public class Fenetre extends JFrame implements Observer {
         ajouterPlateformePopupMenuItem = new JMenuItem(TexteConstantes.PLATEFORME);
         ajouterGenrePopupMenuItem = new JMenuItem(TexteConstantes.GENRE);
         ajouterStudioPopupMenuItem = new JMenuItem(TexteConstantes.STUDIO);
+        ajouterEditeurPopupMenuItem = new JMenuItem(TexteConstantes.EDITEUR);
         ajouterJeuPopupMenuItem = new JMenuItem(TexteConstantes.JEU);
         ajouterRunPopupMenuItem = new JMenuItem(TexteConstantes.RUN);
         ajouterLivePopupMenuItem = new JMenuItem(TexteConstantes.LIVE);
@@ -607,6 +636,7 @@ public class Fenetre extends JFrame implements Observer {
         modifierPlateformePopupMenuItem = new JMenuItem(TexteConstantes.PLATEFORME);
         modifierGenrePopupMenuItem = new JMenuItem(TexteConstantes.GENRE);
         modifierStudioPopupMenuItem = new JMenuItem(TexteConstantes.STUDIO);
+        modifierEditeurPopupMenuItem = new JMenuItem(TexteConstantes.EDITEUR);
         modifierJeuPopupMenuItem = new JMenuItem(TexteConstantes.JEU);
         modifierRunPopupMenuItem = new JMenuItem(TexteConstantes.RUN);
         modifierLivePopupMenuItem = new JMenuItem(TexteConstantes.LIVE);
@@ -616,6 +646,7 @@ public class Fenetre extends JFrame implements Observer {
         supprimerPlateformePopupMenuItem = new JMenuItem(TexteConstantes.PLATEFORME);
         supprimerGenrePopupMenuItem = new JMenuItem(TexteConstantes.GENRE);
         supprimerStudioPopupMenuItem = new JMenuItem(TexteConstantes.STUDIO);
+        supprimerEditeurPopupMenuItem = new JMenuItem(TexteConstantes.EDITEUR);
         supprimerJeuPopupMenuItem = new JMenuItem(TexteConstantes.JEU);
         supprimerRunPopupMenuItem = new JMenuItem(TexteConstantes.RUN);
         supprimerLivePopupMenuItem = new JMenuItem(TexteConstantes.LIVE);
@@ -640,6 +671,8 @@ public class Fenetre extends JFrame implements Observer {
             case JEUX :
                 jeuxAffichageRacineMenuItem.setSelected(true);
                 break;
+            case EDITEURS:
+                editeursAffichageRacineMenuItem.setSelected(true);
             default :
                 jeuxAffichageRacineMenuItem.setSelected(true);
         }
@@ -723,7 +756,15 @@ public class Fenetre extends JFrame implements Observer {
     
     @Override
     public void addEditeur(Editeur editeur) {
-        
+        SortableTreeNode nodeEditeur = new SortableTreeNode(editeur);
+        mapEditeurs.put(editeur.getID(), nodeEditeur);
+        if (typeGroup.equals(TypeGroup.EDITEURS)) {
+            rootTree.add(nodeEditeur);
+            rootTree.sort();
+            ((DefaultTreeModel)treeJeux.getModel()).reload();
+        }
+        editeurPanels.ajouterItem(editeur.getID());
+        jeuPanels.addEditeur(editeur);
     }
     
     @Override
@@ -770,6 +811,16 @@ public class Fenetre extends JFrame implements Observer {
                 SortableTreeNode parent = mapStudios.get(jeu.getStudio().getID());
                 parent.add(nodeJeu);
 //                mapStudios.get(jeu.getStudio().getID()).add(nodeJeu);
+                ((DefaultTreeModel)treeJeux.getModel()).reload(parent);
+            }
+        }
+        if (typeGroup.equals(TypeGroup.EDITEURS)) {
+            SortableTreeNode nodeJeu = new SortableTreeNode(jeu);
+            mapJeux.putIfAbsent(jeu.getID(), new ArrayList());
+            mapJeux.get(jeu.getID()).add(nodeJeu);
+            if (null != jeu.getEditeur()) {
+                SortableTreeNode parent = mapEditeurs.get(jeu.getEditeur().getID());
+                parent.add(nodeJeu);
                 ((DefaultTreeModel)treeJeux.getModel()).reload(parent);
             }
         }
@@ -916,6 +967,16 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
+    public void removeEditeur(long idEditeur) {
+        if (typeGroup.equals(TypeGroup.EDITEURS)) {
+            ((DefaultTreeModel)treeJeux.getModel()).removeNodeFromParent(mapEditeurs.get(idEditeur));
+        }
+        mapEditeurs.remove(idEditeur);
+        editeurPanels.supprimerItem(idEditeur);
+        jeuPanels.removeEditeur(idEditeur);
+    }
+    
+    @Override
     public void removeJeu(long idJeu) {
 //        Set<Entry<Long, SortableTreeNode>> setStudios = mapStudios.entrySet();
 //        for (Entry<Long, SortableTreeNode> entry : setStudios) {
@@ -1049,6 +1110,9 @@ public class Fenetre extends JFrame implements Observer {
                 break;
             case STUDIOS :
                 inputs = studioPanels;
+                break;
+            case EDITEURS :
+                inputs = editeurPanels;
                 break;
             default :
                 inputs = null;
@@ -1453,61 +1517,73 @@ public class Fenetre extends JFrame implements Observer {
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
             //GESTION AJOUTER
+            ModeGestion modeGestion = ModeGestion.AJOUTER;
             if (src.equals(ajouterPlateformeMenuItem)) {
-                gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.PLATEFORMES);
+                gererBasicInputs(modeGestion, TypeBasicInputs.PLATEFORMES);
             }
             if (src.equals(ajouterGenreMenuItem)) {
-                gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.GENRES);
+                gererBasicInputs(modeGestion, TypeBasicInputs.GENRES);
             }
             if (src.equals(ajouterStudioMenuItem)) {
-                gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.STUDIOS);
+                gererBasicInputs(modeGestion, TypeBasicInputs.STUDIOS);
+            }
+            if (src.equals(ajouterEditeurMenuItem)) {
+                gererBasicInputs(modeGestion, TypeBasicInputs.EDITEURS);
             }
             if (src.equals(ajouterJeuMenuItem)) {
-                gererJeuxInputs(ModeGestion.AJOUTER);
+                gererJeuxInputs(modeGestion);
             }
             if (src.equals(ajouterRunMenuItem)) {
-                gererRunsInputs(ModeGestion.AJOUTER);
+                gererRunsInputs(modeGestion);
             }
             if (src.equals(ajouterLiveMenuItem)) {
-                gererLivesInputs(ModeGestion.AJOUTER);
+                gererLivesInputs(modeGestion);
             }
             //GESTION MODIFIER
+            modeGestion = ModeGestion.MODIFIER;
             if (src.equals(modifierPlateformeMenuItem)) {
-                gererBasicInputs(ModeGestion.MODIFIER, TypeBasicInputs.PLATEFORMES);
+                gererBasicInputs(modeGestion, TypeBasicInputs.PLATEFORMES);
             }
             if (src.equals(modifierGenreMenuItem)) {
-                gererBasicInputs(ModeGestion.MODIFIER, TypeBasicInputs.GENRES);
+                gererBasicInputs(modeGestion, TypeBasicInputs.GENRES);
             }
             if (src.equals(modifierStudioMenuItem)) {
-                gererBasicInputs(ModeGestion.MODIFIER, TypeBasicInputs.STUDIOS);
+                gererBasicInputs(modeGestion, TypeBasicInputs.STUDIOS);
+            }
+            if (src.equals(modifierEditeurMenuItem)) {
+                gererBasicInputs(modeGestion, TypeBasicInputs.EDITEURS);
             }
             if (src.equals(modifierJeuMenuItem)) {
-                gererJeuxInputs(ModeGestion.MODIFIER);
+                gererJeuxInputs(modeGestion);
             }
             if (src.equals(modifierRunMenuItem)) {
-                gererRunsInputs(ModeGestion.MODIFIER);
+                gererRunsInputs(modeGestion);
             }
             if (src.equals(modifierLiveMenuItem)) {
-                gererLivesInputs(ModeGestion.MODIFIER);
+                gererLivesInputs(modeGestion);
             }
             //GESTION SUPPRIMER
+            modeGestion = ModeGestion.SUPPRIMER;
             if (src.equals(supprimerPlateformeMenuItem)) {
-                gererBasicInputs(ModeGestion.SUPPRIMER, TypeBasicInputs.PLATEFORMES);
+                gererBasicInputs(modeGestion, TypeBasicInputs.PLATEFORMES);
             }
             if (src.equals(supprimerGenreMenuItem)) {
-                gererBasicInputs(ModeGestion.SUPPRIMER, TypeBasicInputs.GENRES);
+                gererBasicInputs(modeGestion, TypeBasicInputs.GENRES);
             }
             if (src.equals(supprimerStudioMenuItem)) {
-                gererBasicInputs(ModeGestion.SUPPRIMER, TypeBasicInputs.STUDIOS);
+                gererBasicInputs(modeGestion, TypeBasicInputs.STUDIOS);
+            }
+            if (src.equals(supprimerEditeurMenuItem)) {
+                gererBasicInputs(modeGestion, TypeBasicInputs.EDITEURS);
             }
             if (src.equals(supprimerJeuMenuItem)) {
-                gererJeuxInputs(ModeGestion.SUPPRIMER);
+                gererJeuxInputs(modeGestion);
             }
             if (src.equals(supprimerRunMenuItem)) {
-                gererRunsInputs(ModeGestion.SUPPRIMER);
+                gererRunsInputs(modeGestion);
             }
             if (src.equals(supprimerLiveMenuItem)) {
-                gererLivesInputs(ModeGestion.SUPPRIMER);
+                gererLivesInputs(modeGestion);
             }
         }
         
@@ -1607,6 +1683,9 @@ public class Fenetre extends JFrame implements Observer {
                 }
                 if (item.equals(studiosAffichageRacineMenuItem)) {
                     typeGroup = TypeGroup.STUDIOS;
+                }
+                if (item.equals(editeursAffichageRacineMenuItem)) {
+                    typeGroup = TypeGroup.EDITEURS;
                 }
                 if (item.equals(jeuxAffichageRacineMenuItem)) {
                     typeGroup = TypeGroup.JEUX;
