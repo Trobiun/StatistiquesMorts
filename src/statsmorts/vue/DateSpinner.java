@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 import statsmorts.constantes.TexteConstantes;
-import statsmorts.constantes.TexteConstantesFormatDate;
 
 /**
  * Une classe pour gérer un JSpinner pour une date.
@@ -41,10 +40,11 @@ public class DateSpinner extends JPanel {
     //CONSTRUCTEUR
     /**
      * Crée un DateSpinner.
+     * @param dateFormatPattern
      */
-    public DateSpinner() {
+    public DateSpinner(final String dateFormatPattern) {
         super(new GridLayout(1,0,10,10));
-        init();
+        init(dateFormatPattern);
         setComponents();
     }
     
@@ -63,10 +63,10 @@ public class DateSpinner extends JPanel {
     /**
      * Initialise tous les composants graphiques.
      */
-    private void init() {
+    private void init(String dateFromatPattern) {
         modelSpinner = new SpinnerDateModel();
         spinner = new JSpinner(modelSpinner);
-        spinner.setEditor(new JSpinner.DateEditor(spinner,TexteConstantesFormatDate.LONG));
+        spinner.setEditor(new JSpinner.DateEditor(spinner,dateFromatPattern));
         insererMaintenant = new JButton(TexteConstantes.INSERER_MAINTENANT);
         insererMaintenant.addActionListener(new BoutonMaintenantListener());
     }
