@@ -28,6 +28,10 @@ public enum TypeGroup {
      */
     STUDIOS(TexteConstantes.STUDIOS),
     /**
+     * Pour grouper les jeux par éditeurs.
+     */
+    EDITEURS(TexteConstantes.EDITEURS),
+    /**
      * Pour grouper les jeux par jeux. (aucun regroupement)
      */
     JEUX(TexteConstantes.JEUX);
