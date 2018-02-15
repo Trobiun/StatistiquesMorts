@@ -155,6 +155,14 @@ public class BDD {
     }
     
     /**
+     * Retourne la collection des éditeurs.
+     * @return la collection des éditeurs
+     */
+    public Map<Long,Editeur> getEditeurs() {
+        return editeurs;
+    }
+    
+    /**
      * Retourne l'éditeru dont l'identifiant est 'idEditeur'.
      * @param idEditeur l'identifiant de l'éditeur à retourner
      * @return le studio dont l'identifiant est 'idEditeur'
