@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerDateModel;
 import statsmorts.classes.Genre;
@@ -38,7 +37,7 @@ public class JeuPanels extends ObjectDatabasePanels {
     private JPanel plateformesPanel;
     private JPanel genresPanel;
     private JPanel studioPanel;
-    private JPanel anneeSortiePanel;
+    private JPanel dateSortiePanel;
     //ENTREES UTILISATEUR
     /**
      * La ScrollableJList des plateformes.
@@ -55,8 +54,7 @@ public class JeuPanels extends ObjectDatabasePanels {
     /**
      * Le JSpinner pour saisir la date de sortie du jeu.
      */
-    private JSpinner anneeSortieSpinner;
-    
+    private DateSpinner dateSortieSpinner;
     /**
      * Un SimpleDateFormat pour l'année de sortie.
      */
@@ -76,8 +74,9 @@ public class JeuPanels extends ObjectDatabasePanels {
      * Retourne l'année de sortie d'un jeu en entier.
      * @return 
      */
-    public int getAnneeSortie() {
-        return Integer.parseInt(dateFormat.format(anneeSortieSpinner.getValue()));
+    public String getDateSortie() {
+//        return dat.parseInt(dateFormat.format(dateSortieSpinner.getValue()));
+        return dateFormat.format(dateSortieSpinner.getDate());
     }
     
     /**
@@ -136,12 +135,11 @@ public class JeuPanels extends ObjectDatabasePanels {
      * Initialise les champs de saisie.
      */
     private void initFields() {
-        dateFormat = new SimpleDateFormat(TexteConstantesFormatDate.YEAR_ONLY);
+        dateFormat = new SimpleDateFormat(TexteConstantesFormatDate.SHORT);
         SpinnerDateModel model = new SpinnerDateModel();
-        anneeSortieSpinner = new JSpinner(model);
-        anneeSortieSpinner.setEditor(new JSpinner.DateEditor(anneeSortieSpinner,dateFormat.toPattern()));
-        anneeSortiePanel = new JPanel(new BorderLayout());
-        anneeSortiePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.ANNEE_SORTIE));
+        dateSortieSpinner = new DateSpinner(TexteConstantesFormatDate.SHORT);
+        dateSortiePanel = new JPanel(new BorderLayout());
+        dateSortiePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.DATE_SORTIE));
         
         listPlateformes = new ScrollableJList();
         listPlateformes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -157,7 +155,7 @@ public class JeuPanels extends ObjectDatabasePanels {
      */
     private void setComponents() {
         //ajout des champs de saisie dans leur panel respectif
-        anneeSortiePanel.add(anneeSortieSpinner);
+        dateSortiePanel.add(dateSortieSpinner);
         plateformesPanel.add(listPlateformes);
         genresPanel.add(listGenres);
         studioPanel.add(listStudios);
@@ -167,7 +165,7 @@ public class JeuPanels extends ObjectDatabasePanels {
         gbc.gridx = 0;
         gbc.gridy = 2 ;
         gbc.gridheight = 1;
-        saisiesPanel.add(anneeSortiePanel,gbc);
+        saisiesPanel.add(dateSortiePanel,gbc);
         
         gbc.gridy = 3;
         gbc.gridheight = 4;
@@ -268,10 +266,10 @@ public class JeuPanels extends ObjectDatabasePanels {
                 listPlateformes.clearSelection();
                 listGenres.clearSelection();
                 listStudios.clearSelection();
-                anneeSortieSpinner.setValue(new Date(System.currentTimeMillis()));
+                dateSortieSpinner.setDate(new Date(System.currentTimeMillis()));
             }
         }
-        anneeSortieSpinner.setEnabled(editable);
+        dateSortieSpinner.setEnabled(editable);
         listPlateformes.setEditable(editable);
         listGenres.setEditable(editable);
         listStudios.setEditable(editable);
@@ -279,11 +277,11 @@ public class JeuPanels extends ObjectDatabasePanels {
     
     /**
      * Change l'année de sortie dans le champ de saisie concerné.
-     * @param anneeSortie l'année de sortie à mettre
+     * @param dateSortieString l'année de sortie à mettre
      */
-    public void setAnneeSortie(int anneeSortie) {
+    public void setDateSortie(String dateSortieString) {
         try {
-            anneeSortieSpinner.setValue(dateFormat.parse(TexteConstantes.EMPTY + anneeSortie));
+            dateSortieSpinner.setDate(dateFormat.parse(/*TexteConstantes.EMPTY + */dateSortieString));
         } catch (ParseException ex) {
             Logger.getLogger(JeuPanels.class.getName()).log(Level.SEVERE, null, ex);
         }
