@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import statsmorts.constantes.TexteConstantes;
+import statsmorts.constantes.TexteConstantesFormatDate;
 import statsmorts.controler.StatsMortsControler;
 
 /**
@@ -54,11 +55,11 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
     /**
      * Compteur de morts.
      */
-    private CompteurSpinner mortsSpinner;
+    private CompteurSpinner mortsCompteur;
     /**
      * Compteur de boss.
      */
-    private CompteurSpinner bossSpinner;
+    private CompteurSpinner bossCompteur;
     
     
     //CONSTRUCTEURS
@@ -119,14 +120,14 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
         nomRunField = new JTextField();
         nomRunField.setEditable(false);
         
-        dateDebutSpinner = new DateSpinner();
+        dateDebutSpinner = new DateSpinner(TexteConstantesFormatDate.LONG);
         dateDebutSpinner.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.DATE_DEBUT));
         
-        dateFinSpinner = new DateSpinner();
+        dateFinSpinner = new DateSpinner(TexteConstantesFormatDate.LONG);
         dateFinSpinner.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.DATE_FIN));
         
-        mortsSpinner = new CompteurSpinner();
-        bossSpinner = new CompteurSpinner();
+        mortsCompteur = new CompteurSpinner();
+        bossCompteur = new CompteurSpinner();
     }
     
     /**
@@ -140,8 +141,8 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
         datesPanel.add(dateDebutSpinner);
         datesPanel.add(dateFinSpinner);
         
-        mortsPanel.add(mortsSpinner);
-        bossPanel.add(bossSpinner);
+        mortsPanel.add(mortsCompteur);
+        bossPanel.add(bossCompteur);
         
         compteursPanel.add(mortsPanel);
         compteursPanel.add(bossPanel);
@@ -196,9 +197,6 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      */
     @Override
     public void clearFields(boolean editable, boolean empty) {
-        if (empty) {
-            nouveauNomTextField.setText(TexteConstantes.EMPTY);
-        }
         if (idRunComboBox.getItemCount() == 0) {
             nomRunField.setText(TexteConstantes.EMPTY);
             nouveauNomTextField.setText(TexteConstantes.EMPTY);
@@ -206,7 +204,14 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
         if (idComboBox.getItemCount() == 0) {
             
         }
-        if (!empty) {
+        if (empty) {
+            Date now = new Date(System.currentTimeMillis());
+            dateDebutSpinner.setDate(now);
+            dateFinSpinner.setDate(now);
+            mortsCompteur.setValue(0);
+            bossCompteur.setValue(0);
+        }
+        else {
             if (idComboBox.getItemCount() > 0) {
                 fillItem((long)(idComboBox.getSelectedItem()));
             }
@@ -306,7 +311,7 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      */
     public void setTitreJeu(String titreJeu) {
 //        nomJeuField.setText(titreJeu);
-        nomSuperieurField.setText(titreJeu);
+        nomSuperieurTextField.setText(titreJeu);
     }
     
     /**
@@ -338,11 +343,15 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      * @param morts le nombre de morts à mettre dans le compteur
      */
     public void setMorts(int morts) {
-        mortsSpinner.setValue(morts);
+        mortsCompteur.setValue(morts);
     }
     
+    /**
+     * Met le nombre de boss vaincus dans le compteur de boss.
+     * @param boss le nombre de boss vaincus à mettre dans le compteur
+     */
     public void setBoss(int boss) {
-        bossSpinner.setValue(boss);
+        bossCompteur.setValue(boss);
     }
     
     /**
@@ -364,12 +373,18 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
         controler.fillRunOnPanelLive(idRun);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void selectionnerSuperieur(long idSuperieurItem) {
         controler.selectJeuLivePanels(idSuperieurItem);
     }
     
-    
+    /**
+     * Sélectionne une run.
+     * @param idRun l'identifiant de la run à sélectionner.
+     */
     public void selectionnerRun(long idRun) {
         controler.selectRunLivePanels(idRun);
     }
