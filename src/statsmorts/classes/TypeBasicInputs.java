@@ -25,7 +25,11 @@ public enum TypeBasicInputs {
     /**
      * Type studios pour les saisies utilisateur sur les studios.
      */
-    STUDIOS("studio");
+    STUDIOS("studio"),
+    /**
+     * Type éditeurs pour les saisies utilisateur sur les éditeurs.
+     */
+    EDITEURS("éditeur");
     
     //ATTRIBUTS
     /**
