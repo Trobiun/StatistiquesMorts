@@ -94,6 +94,11 @@ public interface Observer {
      */
     void removeStudio(long idStudio);
     /**
+     * Supprime un éditeur de l'affichage.
+     * @param idEditeur l'identifiant de l'éditeur à supprimer de la vue
+     */
+    void removeEditeur(long idEditeur);
+    /**
      * Supprime un jeu de l'affichage.
      * @param idJeu l'identifiant du jeu à supprimer de la vue
      */
@@ -151,14 +156,20 @@ public interface Observer {
      */
     void fillStudio(String nomStudio);
     /**
+     * Remplit les panels de saisies utilisateur pour les éditeurs.
+     * @param nomEditeur le nom de l'éditeur
+     */
+    void fillEditeur(String nomEditeur);
+    /**
      * Remplit les panels de saisies utilisateur pour les jeux.
      * @param titreJeu le titre du jeu
      * @param dateSortieString l'année de sortie du jeu
      * @param listPlateformes la liste des identifiants des plateformes à présélectionner
      * @param listGenres la liste des identifiants des genres à présélectionner
      * @param idStudio l'identifiant du studio à présélectionner
+     * @param idEditeur l'identifiant de l'éditeur à présélectionner
      */
-    void fillJeu(String titreJeu, String dateSortieString, Long[] listPlateformes, Long[] listGenres, long idStudio);
+    void fillJeu(String titreJeu, String dateSortieString, Long[] listPlateformes, Long[] listGenres, long idStudio, long idEditeur);
     /**
      * Remplit les panels de saisies utilisateur pour les runs.
      * Remplit les champs de saisies directement liés à la run.

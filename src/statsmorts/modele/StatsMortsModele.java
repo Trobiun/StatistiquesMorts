@@ -172,6 +172,10 @@ public class StatsMortsModele implements Observable {
                 table = TexteConstantesSQL.TABLE_STUDIOS;
                 table_nom = TexteConstantesSQL.TABLE_STUDIOS_NOM;
                 break;
+            case EDITEURS:
+                table = TexteConstantesSQL.TABLE_EDITEURS;
+                table_nom = TexteConstantesSQL.TABLE_EDITEURS_NOM;
+                break;
             default:
         }
         if (null != table && null != table_nom) {
@@ -196,6 +200,11 @@ public class StatsMortsModele implements Observable {
                             Studio studio = new Studio(resultID.getInt(1), nom);
                             bdd.ajouterStudio(studio);
                             notifyAddStudio(studio);
+                            break;
+                        case EDITEURS:
+                            Editeur editeur = new Editeur(resultID.getInt(1),nom);
+                            bdd.ajouterEditeur(editeur);
+                            notifyAddEditeur(editeur);
                             break;
                         default:
                     }
@@ -232,6 +241,11 @@ public class StatsMortsModele implements Observable {
                 table_id = TexteConstantesSQL.TABLE_STUDIOS_ID;
                 table_nom = TexteConstantesSQL.TABLE_STUDIOS_NOM;
                 break;
+            case EDITEURS:
+                table = TexteConstantesSQL.TABLE_EDITEURS;
+                table_id = TexteConstantesSQL.TABLE_EDITEURS_ID;
+                table_nom = TexteConstantesSQL.TABLE_EDITEURS_NOM;
+                break;
             default:
         }
         if (null != table && null != table_nom) {
@@ -249,6 +263,9 @@ public class StatsMortsModele implements Observable {
                         break;
                     case STUDIOS:
                         bdd.getStudio(id).renommer(nom);
+                        break;
+                    case EDITEURS:
+                        bdd.getEditeur(id).renommer(nom);
                         break;
                     default:
                 }
@@ -658,6 +675,11 @@ public class StatsMortsModele implements Observable {
                         Studio studio = entryStudio.getValue();
                         notifyAddStudio(studio);
                     }
+                    Set<Entry<Long, Editeur>> editeurs = bdd.getEditeurs().entrySet();
+                    for (Entry<Long, Editeur> entryEditeur : editeurs) {
+                        Editeur editeur = entryEditeur.getValue();
+                        notifyAddEditeur(editeur);
+                    }
                     Set<Entry<Long, Jeu>> set = bdd.getJeux().entrySet();
                     for (Entry<Long, Jeu> entryJeu : set) {
                         Jeu jeu = entryJeu.getValue();
@@ -734,6 +756,11 @@ public class StatsMortsModele implements Observable {
                         Studio studio = entryStudio.getValue();
                         notifyAddStudio(studio);
                     }
+                    Set<Entry<Long, Editeur>> editeurs = bdd.getEditeurs().entrySet();
+                    for (Entry<Long, Editeur> entryEditeur : editeurs) {
+                        Editeur editeur = entryEditeur.getValue();
+                        notifyAddEditeur(editeur);
+                    }
                     Set<Entry<Long, Jeu>> set = bdd.getJeux().entrySet();
                     for (Entry<Long, Jeu> entryJeu : set) {
                         Jeu jeu = entryJeu.getValue();
@@ -778,6 +805,10 @@ public class StatsMortsModele implements Observable {
      */
     public void fillStudiPanel(long idStudio) {
         notifyFillStudio(idStudio);
+    }
+    
+    public void fillEditeurPanel(long idEditeur) {
+        notifyFillEditeur(idEditeur);
     }
     
     /**
@@ -923,12 +954,12 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyAddPlateforme(final Plateforme plateforme) {
         if (hasObserver()) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
+//            SwingUtilities.invokeLater(new Runnable() {
+//                @Override
+//                public void run() {
                     observer.addPlateforme(plateforme);
-                }
-            });
+//                }
+//            });
             
         }
     }
@@ -939,12 +970,12 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyAddGenre(final Genre genre) {
         if(hasObserver()) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
+//            SwingUtilities.invokeLater(new Runnable() {
+//                @Override
+//                public void run() {
                     observer.addGenre(genre);
-                }
-            });
+//                }
+//            });
         }
     }
     
@@ -954,12 +985,22 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyAddStudio(final Studio studio) {
         if (hasObserver()) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
+//            SwingUtilities.invokeLater(new Runnable() {
+//                @Override
+//                public void run() {
                     observer.addStudio(studio);
-                }
-            });
+//                }
+//            });
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void notifyAddEditeur(Editeur editeur) {
+        if (hasObserver()) {
+            observer.addEditeur(editeur);
         }
     }
     
@@ -1044,6 +1085,16 @@ public class StatsMortsModele implements Observable {
     public void notifyRemoveStudio(final long idStudio) {
         if (hasObserver()) {
             observer.removeStudio(idStudio);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void notifyRemoveEditeur(long idEditeur) {
+        if (hasObserver()) {
+            observer.removeEditeur(idEditeur);
         }
     }
     
@@ -1138,13 +1189,25 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyFillStudio(final long idStudio) {
         if (hasObserver()) {
-            final Studio studio = bdd.getStudios().get(idStudio);
+            final Studio studio = bdd.getStudio(idStudio);
             if (null != studio) { 
                 observer.fillStudio(studio.getTitre());
             }
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void notifyFillEditeur(long idEditeur) {
+        if (hasObserver()) {
+            final Editeur editeur = bdd.getEditeur(idEditeur);
+            if (null != editeur) {
+                observer.fillEditeur(editeur.getTitre());
+            }
+        }
+    }
     /**
      * {@inheritDoc} 
      */
@@ -1153,7 +1216,8 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Jeu jeu = bdd.getJeux().get(idJeu);
             if (null != jeu && jeu.getStudio() != null) {
-                observer.fillJeu(jeu.getTitre(),jeu.getDateSortie(),jeu.getPlateformesID(),jeu.getGenresID(),jeu.getStudio().getID());
+                observer.fillJeu(jeu.getTitre(), jeu.getDateSortie(), jeu.getPlateformesID(),
+                        jeu.getGenresID(), jeu.getStudio().getID(), jeu.getEditeur().getID());
             }
         }
     }

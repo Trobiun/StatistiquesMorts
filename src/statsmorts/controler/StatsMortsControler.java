@@ -110,7 +110,7 @@ public class StatsMortsControler {
     
     public void fillEditeurPanel(final long idEditeur) {
         if (idEditeur > 0) {
-            
+            modele.fillEditeurPanel(idEditeur);
         }
     }
     

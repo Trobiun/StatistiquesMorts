@@ -70,8 +70,6 @@ public abstract class ObjectDatabasePanels extends JPanel {
      */
     JButton resetButton;
     
-//    boolean keepEmpty;
-    
     /**
      * Le controleur pour demander au modèle de remplir les champs de saisie.
      */
@@ -140,6 +138,7 @@ public abstract class ObjectDatabasePanels extends JPanel {
     public String getNouveauNom() {
         return nouveauNomTextField.getText();
     }
+    
     
     //MUTATEURS
     /**

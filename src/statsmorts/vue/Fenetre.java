@@ -450,6 +450,7 @@ public class Fenetre extends JFrame implements Observer {
         jeuPanels.addPlateformesActionListener(new PlateformesActionListener());
         jeuPanels.addGenresActionListener(new GenresActionListener());
         jeuPanels.addStudiosActionListener(new StudiosActionListener());
+        jeuPanels.addEditeursActionListener(new EditeursActionListener());
         runPanels = new RunPanels(controler);
         livePanels = new LivePanels(controler);
     }
@@ -1052,12 +1053,18 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void fillJeu(String titreJeu, String dateSortieString, Long[] listPlateformesID, Long[] listGenresID, long idStudio) {
+    public void fillEditeur(String nomEditeur) {
+        editeurPanels.setNom(nomEditeur);
+    }
+    
+    @Override
+    public void fillJeu(String titreJeu, String dateSortieString, Long[] listPlateformesID, Long[] listGenresID, long idStudio, long idEditeur) {
         jeuPanels.setNom(titreJeu);
         jeuPanels.setDateSortie(dateSortieString);
         jeuPanels.setPlateformesSelection(listPlateformesID);
         jeuPanels.setGenresSelection(listGenresID);
         jeuPanels.setStudioSelection(idStudio);
+        jeuPanels.setEditeurSelection(idEditeur);
     }
     
     @Override
@@ -1746,6 +1753,15 @@ public class Fenetre extends JFrame implements Observer {
             if (e.getActionCommand().equals(TexteConstantes.AJOUTER)) {
                 gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.STUDIOS);
             }
+        }
+        
+    }
+    
+    class EditeursActionListener implements ActionListener {
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            gererBasicInputs(ModeGestion.AJOUTER, TypeBasicInputs.EDITEURS);
         }
         
     }

@@ -8,6 +8,7 @@ package statsmorts.vue;
 import statsmorts.constantes.TexteConstantes;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,7 +19,7 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerDateModel;
+import statsmorts.classes.Editeur;
 import statsmorts.classes.Genre;
 import statsmorts.classes.Plateforme;
 import statsmorts.classes.Studio;
@@ -37,6 +38,8 @@ public class JeuPanels extends ObjectDatabasePanels {
     private JPanel plateformesPanel;
     private JPanel genresPanel;
     private JPanel studioPanel;
+    private JPanel editeurPanel;
+    private JPanel scrollableJListPanel;
     private JPanel dateSortiePanel;
     //ENTREES UTILISATEUR
     /**
@@ -51,6 +54,10 @@ public class JeuPanels extends ObjectDatabasePanels {
      * La ScrollableJList des studios.
      */
     private ScrollableJList listStudios;
+    /**
+     * La ScrollableJList des éditeurs.
+     */
+    private ScrollableJList listEditeurs;
     /**
      * Le JSpinner pour saisir la date de sortie du jeu.
      */
@@ -122,6 +129,8 @@ public class JeuPanels extends ObjectDatabasePanels {
      * Initialise les JPanels.
      */
     private void initPanels() {
+        scrollableJListPanel = new JPanel(new GridLayout(2,2));
+        
         plateformesPanel = new JPanel(new BorderLayout());
         plateformesPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.PLATEFORMES));
         
@@ -130,13 +139,16 @@ public class JeuPanels extends ObjectDatabasePanels {
         
         studioPanel = new JPanel(new BorderLayout());
         studioPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.STUDIO));
+        
+        editeurPanel = new JPanel(new BorderLayout());
+        editeurPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), TexteConstantes.EDITEUR));
+        
     }
     /**
      * Initialise les champs de saisie.
      */
     private void initFields() {
         dateFormat = new SimpleDateFormat(TexteConstantesFormatDate.SHORT);
-        SpinnerDateModel model = new SpinnerDateModel();
         dateSortieSpinner = new DateSpinner(TexteConstantesFormatDate.SHORT);
         dateSortiePanel = new JPanel(new BorderLayout());
         dateSortiePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),TexteConstantes.DATE_SORTIE));
@@ -148,6 +160,8 @@ public class JeuPanels extends ObjectDatabasePanels {
         listGenres.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         listStudios = new ScrollableJList();
         listStudios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listEditeurs = new ScrollableJList();
+        listEditeurs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
     
     /**
@@ -159,6 +173,7 @@ public class JeuPanels extends ObjectDatabasePanels {
         plateformesPanel.add(listPlateformes);
         genresPanel.add(listGenres);
         studioPanel.add(listStudios);
+        editeurPanel.add(listEditeurs);
         
         GridBagConstraints gbc = GridBagConstraintsSimpleFactory.getNewGridBagConstraints();
         
@@ -167,15 +182,27 @@ public class JeuPanels extends ObjectDatabasePanels {
         gbc.gridheight = 1;
         saisiesPanel.add(dateSortiePanel,gbc);
         
+        scrollableJListPanel.add(plateformesPanel);
+        scrollableJListPanel.add(genresPanel);
+        scrollableJListPanel.add(studioPanel);
+        scrollableJListPanel.add(editeurPanel);
+        
         gbc.gridy = 3;
         gbc.gridheight = 4;
-        saisiesPanel.add(plateformesPanel,gbc);
+        saisiesPanel.add(scrollableJListPanel,gbc);
         
-        gbc.gridy = 7;
-        saisiesPanel.add(genresPanel,gbc);
-        
-        gbc.gridy = 11;
-        saisiesPanel.add(studioPanel,gbc);
+//        gbc.gridy = 3;
+//        gbc.gridheight = 4;
+//        saisiesPanel.add(plateformesPanel,gbc);
+//        
+//        gbc.gridy = 7;
+//        saisiesPanel.add(genresPanel,gbc);
+//        
+//        gbc.gridy = 11;
+//        saisiesPanel.add(studioPanel,gbc);
+//        
+//        gbc.gridy = 15;
+//        saisiesPanel.add(editeurPanel,gbc);
     }
     
     /**
@@ -201,6 +228,7 @@ public class JeuPanels extends ObjectDatabasePanels {
         listPlateformes.removeAllElements();
         listGenres.removeAllElements();
         listStudios.removeAllElements();
+        listEditeurs.removeAllElements();
     }
     
     /**
@@ -220,11 +248,19 @@ public class JeuPanels extends ObjectDatabasePanels {
     }
     
     /**
-     * Ajout un studio dans la liste de sélection possible des studios.
+     * Ajoute un studio dans la liste de sélection possible des studios.
      * @param studio le studio à ajouter dans la liste de sélection des studios
      */
     public void addStudio(Studio studio) {
         listStudios.addElement(new MyListElement(studio.getID(),studio));
+    }
+    
+    /**
+     * Ajoute un éditeur dans la liste de sélection possible des éditeurs.
+     * @param editeur l'éditeur à ajouter dans la liste de sélection des éditeurs
+     */
+    public void addEditeur(Editeur editeur) {
+        listEditeurs.addElement(new MyListElement(editeur.getID(), editeur));
     }
     
     /**
@@ -252,6 +288,14 @@ public class JeuPanels extends ObjectDatabasePanels {
     }
     
     /**
+     * 
+     * @param idEditeur 
+     */
+    public void removeEditeur(long idEditeur) {
+        listEditeurs.removeElement(new MyListElement(idEditeur,null));
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -262,6 +306,7 @@ public class JeuPanels extends ObjectDatabasePanels {
                 listPlateformes.clearSelection();
                 listGenres.clearSelection();
                 listStudios.clearSelection();
+                listEditeurs.clearSelection();
                 dateSortieSpinner.setDate(new Date(System.currentTimeMillis()));
             }
         }
@@ -269,6 +314,7 @@ public class JeuPanels extends ObjectDatabasePanels {
         listPlateformes.setEditable(editable);
         listGenres.setEditable(editable);
         listStudios.setEditable(editable);
+        listEditeurs.setEditable(editable);
     }
     
     /**
@@ -300,12 +346,21 @@ public class JeuPanels extends ObjectDatabasePanels {
     }
     
     /**
-     * Sélectionne les studios en fonction de leur identifiant.
-     * @param idStudio le tableau des identifiants des studios à sélectionner
+     * Sélectionne le studio en fonction de son identifiant.
+     * @param idStudio l'identifiant du studio à sélectionner
      */
     public void setStudioSelection(long idStudio) {
         Long[] studios = { idStudio };
         listStudios.setSelection(studios);
+    }
+    
+    /**
+     * Sélectionne l'éditeur en fonction de son identifiant.
+     * @param idEditeur l'identifiant de l'éditeur à sélectionner
+     */
+    public void setEditeurSelection(long idEditeur) {
+        Long[] editeurs = { idEditeur };
+        listEditeurs.setSelection(editeurs);
     }
     
     /**
@@ -329,4 +384,9 @@ public class JeuPanels extends ObjectDatabasePanels {
     public void addStudiosActionListener(ActionListener listener) {
         listStudios.addActionListener(listener);
     }
+    
+    public void addEditeursActionListener(ActionListener listener) {
+        listEditeurs.addActionListener(listener);
+    }
+    
 }
