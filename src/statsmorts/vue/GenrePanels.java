@@ -33,10 +33,7 @@ public class GenrePanels extends ObjectDatabasePanels {
     
     //MUTATEURS
     /**
-     * Demande au controleur de remplir les champs de saisie avec le genre qui a
-     * pour identifiant idItem.
-     * @param idItem l'identifiant du genre avec lequel remplir les champs de
-     * saisie
+     * {@inheritDoc}
      */
     @Override
     public void fillItem(long idItem) {
