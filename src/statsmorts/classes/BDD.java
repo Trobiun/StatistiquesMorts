@@ -469,9 +469,9 @@ public class BDD {
             this.ajouterEditeur(editeur);
         }
         
-        String titreJeu, titreRun, dateDebut, dateFin;
+        String titreJeu, titreRun, dateSortie, dateDebut, dateFin;
         long idJeu, idRun, idLive;
-        int anneeSortieJeu, morts, boss;
+        int morts, boss;
         Jeu jeu;
         Run run;
         Live live;
@@ -479,13 +479,13 @@ public class BDD {
         while (resultsVueGlobale.next()) {
             idJeu = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID);
             titreJeu = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_JEUX_TITRE);
-            anneeSortieJeu = resultsVueGlobale.getInt(TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE);
+            dateSortie = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_JEUX_DATE_SORTIE);
             idStudio = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID_STUDIO);
             Studio jeuStudio = studios.get(idStudio);
             idEditeur = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR);
             Editeur jeuEditeur = editeurs.get(idEditeur);
             if (!jeux.containsKey(idJeu) && idJeu > 0) {
-                jeu = new Jeu(idJeu,titreJeu,anneeSortieJeu,jeuStudio,jeuEditeur);
+                jeu = new Jeu(idJeu,titreJeu,dateSortie,jeuStudio,jeuEditeur);
                 this.ajouterJeu(jeu);
                 jeuStudio.ajouterJeu(jeu);
             }
@@ -643,8 +643,8 @@ public class BDD {
                         + TexteConstantesSQL.TABLE_JEUX_TITRE + " "
                             + TexteConstantesSQL.SQL_TEXT + " "
                             + TexteConstantesSQL.NOT_NULL + ","
-                        //champ jeu_AnneeSortie
-                        + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + " "
+                        //champ jeu_DateSortie
+                        + TexteConstantesSQL.TABLE_JEUX_DATE_SORTIE + " "
                             + TexteConstantesSQL.SQL_INTEGER + ","
                         //champ jeu_idStudio
                         + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " "
