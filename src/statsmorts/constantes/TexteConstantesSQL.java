@@ -32,7 +32,7 @@ public final class TexteConstantesSQL {
     public static final String TABLE_JEUX = "Jeux";
     public static final String TABLE_JEUX_ID = "jeu_id";
     public static final String TABLE_JEUX_TITRE = "jeu_Titre";
-    public static final String TABLE_JEUX_ANNEE_SORTIE = "jeu_AnneeSortie";
+    public static final String TABLE_JEUX_DATE_SORTIE = "jeu_DateSortie";
     public static final String TABLE_JEUX_ID_STUDIO = "jeu_idStudio";
     public static final String TABLE_JEUX_ID_EDITEUR = "jeu_idEditeur";
     
