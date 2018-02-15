@@ -108,6 +108,12 @@ public class StatsMortsControler {
         }
     }
     
+    public void fillEditeurPanel(final long idEditeur) {
+        if (idEditeur > 0) {
+            
+        }
+    }
+    
     /**
      * Demande au modèle de remplir les champs de saisie pour les jeux.
      * @param idJeu l'identifiant du jeu auquel il faut chercher les
@@ -271,16 +277,16 @@ public class StatsMortsControler {
     /**
      * Demande au modèle d'ajouter un jeu à la base de données.
      * @param titreJeu le titre du jeu à ajouter
-     * @param anneeSortie l'année de sortie du jeu à ajouter
+     * @param dateSortieString l'année de sortie du jeu à ajouter
      * @param listPlateformes la liste des plateformes à lier au jeu
      * @param listGenres la liste des genres à lier au jeu
      * @param idStudio l'identifiant du studio à lier au jeu
      */
-    public void ajouterJeu(final String titreJeu, final int anneeSortie,
+    public void ajouterJeu(final String titreJeu, final String dateSortieString,
             final List<Long> listPlateformes, final List<Long> listGenres,
             final long idStudio, final long idEditeur) {
-        if (null != titreJeu && !titreJeu.isEmpty() && anneeSortie > 0 && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
-            modele.ajouterJeu(titreJeu, anneeSortie, listPlateformes, listGenres, idStudio, idEditeur);
+        if (null != titreJeu && !titreJeu.isEmpty() && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
+            modele.ajouterJeu(titreJeu, dateSortieString, listPlateformes, listGenres, idStudio, idEditeur);
         }
     }
     
@@ -288,15 +294,16 @@ public class StatsMortsControler {
      * Demande au modèle de modifier un jeu dans la base de données.
      * @param idJeu l'identifiant du jeu à modifier
      * @param nouveauTitre le nouveau titre du jeu
-     * @param anneeSortie la nouvelle année de sortie du jeu
+     * @param dateSortieString la nouvelle année de sortie du jeu
      * @param listPlateformes la liste des nouvelels plateformes à lier au jeu
      * @param listGenres la liste des nouveaux genres à lier au jeu
      * @param idStudio l'identifiant du studio à lier au jeu
+     * @param idEditeur l'identifiant de l'éditeur à lier au jeu
      */
-    public void modifierJeu(final long idJeu, final String nouveauTitre, final int anneeSortie,
+    public void modifierJeu(final long idJeu, final String nouveauTitre, final String dateSortieString,
             final List<Long> listPlateformes, final List<Long> listGenres, final long idStudio, final long idEditeur) {
-        if (idJeu > 0 && null != nouveauTitre && !nouveauTitre.isEmpty() && anneeSortie > 0 && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
-            modele.modifierJeu(idJeu, nouveauTitre, anneeSortie, listPlateformes, listGenres, idStudio, idEditeur);
+        if (idJeu > 0 && null != nouveauTitre && !nouveauTitre.isEmpty() && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
+            modele.modifierJeu(idJeu, nouveauTitre, dateSortieString, listPlateformes, listGenres, idStudio, idEditeur);
         }
     }
     
