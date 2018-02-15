@@ -36,6 +36,8 @@ public final class TexteConstantes {
     public static final String GENRE = "Genre";
     public static final String STUDIOS = "Studios";
     public static final String STUDIO = "Studio";
+    public static final String EDITEURS = "Éditeurs";
+    public static final String EDITEUR = "Éditeur";
     public static final String JEUX = "Jeux";
     public static final String JEU = "Jeu";
     public static final String RUNS = "Runs";
@@ -64,7 +66,7 @@ public final class TexteConstantes {
     public static final String TITRE = "Titre";
     public static final String NOM = "Nom";
     public static final String NOUVEAU_NOM = "Nouveau nom";
-    public static final String ANNEE_SORTIE = "Année de sortie";
+    public static final String DATE_SORTIE = "Date de sortie";
     public static final String DATES = "Dates";
     public static final String DATE_DEBUT = "Date de début";
     public static final String DATE_FIN = "Date de fin";
