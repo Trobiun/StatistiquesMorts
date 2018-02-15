@@ -375,20 +375,20 @@ public class StatsMortsModele implements Observable {
     /**
      * Ajoute un jeu dans la base de données.
      * @param titre le titre du jeu
-     * @param anneeSortie l'année de sortie du jeu
+     * @param dateSortie la date de sortie du jeu
      * @param listPlateformes la liste des plateformes à lier au jeu
      * @param listGenres la liste des genres à lier au jeu
      * @param idStudio le studio à lier au jeu
      * @param idEditeur l'éditeur à lier au jeu
      */
-    public void ajouterJeu(String titre, int anneeSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio, long idEditeur) {
+    public void ajouterJeu(String titre, String dateSortie, List<Long> listPlateformes, List<Long> listGenres, long idStudio, long idEditeur) {
         String requete = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_JEUX
-                + "(" + TexteConstantesSQL.TABLE_JEUX_TITRE + "," + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE
+                + "(" + TexteConstantesSQL.TABLE_JEUX_TITRE + "," + TexteConstantesSQL.TABLE_JEUX_DATE_SORTIE
                 + "," + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO
                 + "," + TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR
                 + ") " + TexteConstantesSQL.VALUES + "(?,?,?,?)";
         int rowsInserted = connexion.executerPreparedUpdate(requete, titre,
-                TexteConstantesConnexion.INT + anneeSortie,
+                /*TexteConstantesConnexion.INT + */dateSortie,
                 TexteConstantesConnexion.LONG + idStudio,
                 TexteConstantesConnexion.LONG + idEditeur);
         try {
@@ -397,7 +397,7 @@ public class StatsMortsModele implements Observable {
                 long idJeu = resultID.getInt(1);
                 Studio studio = bdd.getStudio(idStudio);
                 Editeur editeur = bdd.getEditeur(idEditeur);
-                Jeu jeu = new Jeu(idJeu,titre,anneeSortie,studio,editeur);
+                Jeu jeu = new Jeu(idJeu,titre,dateSortie,studio,editeur);
                 int rows;
                 //ajout des plateformes au jeu et fait le lien dans la base de données
                 String requetePlateformes = TexteConstantesSQL.INSERT_INTO + " "
@@ -449,13 +449,13 @@ public class StatsMortsModele implements Observable {
      * Modifie un jeu dans la base de données.
      * @param idJeu l'identifiant du jeu à modifier
      * @param titre le nouveau titre du jeu à modifier
-     * @param anneeSortie la nouvelle année de sortie du jeu
+     * @param dateSortie la nouvellle date de sortie du jeu
      * @param listPlateformes la nouvelle liste de plateformes à lier au jeu
      * @param listGenres la nouvelle liste des genres à lier au jeu
      * @param idStudio le nouveau studio à lier au jeu
      * @param idEditeur le nouvel éditeur à lier au jeu
      */
-    public void modifierJeu(final long idJeu, final String titre, final int anneeSortie, final List<Long> listPlateformes,
+    public void modifierJeu(final long idJeu, final String titre, final String dateSortie, final List<Long> listPlateformes,
             final List<Long> listGenres, final long idStudio, final long idEditeur) {
         Jeu jeu = bdd.getJeu(idJeu);
         String idStudioRequete = TexteConstantesConnexion.LONG + idStudio;
@@ -465,14 +465,14 @@ public class StatsMortsModele implements Observable {
         String requete = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_JEUX
                 + " " + TexteConstantesSQL.SET + " "
                 + TexteConstantesSQL.TABLE_JEUX_TITRE + " = ? , "
-                + TexteConstantesSQL.TABLE_JEUX_ANNEE_SORTIE + " = ? , "
+                + TexteConstantesSQL.TABLE_JEUX_DATE_SORTIE + " = ? , "
                 + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " = ? "
                 + TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR + " = ? "
                 + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEUX_ID + " = ?";
-        int rows = connexion.executerPreparedUpdate(requete, titre, TexteConstantesConnexion.INT + anneeSortie, idStudioRequete, idEditeurRequete, idJeuRequete);
+        int rows = connexion.executerPreparedUpdate(requete, titre, /*TexteConstantesConnexion.INT + */dateSortie, idStudioRequete, idEditeurRequete, idJeuRequete);
         if (rows > 0) {
             jeu.renommer(titre);
-            jeu.setAnneeSortie(anneeSortie);
+            jeu.setDateSortie(dateSortie);
             jeu.setStudio(bdd.getStudio(idStudio));
             jeu.setEditeur(bdd.getEditeur(idEditeur));
             
@@ -1153,7 +1153,7 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Jeu jeu = bdd.getJeux().get(idJeu);
             if (null != jeu && jeu.getStudio() != null) {
-                observer.fillJeu(jeu.getTitre(),jeu.getAnneeSortie(),jeu.getPlateformesID(),jeu.getGenresID(),jeu.getStudio().getID());
+                observer.fillJeu(jeu.getTitre(),jeu.getDateSortie(),jeu.getPlateformesID(),jeu.getGenresID(),jeu.getStudio().getID());
             }
         }
     }
