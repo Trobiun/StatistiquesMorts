@@ -55,6 +55,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
+import statsmorts.classes.Editeur;
 import statsmorts.classes.FillDataset;
 import statsmorts.classes.Genre;
 import statsmorts.classes.Jeu;
@@ -240,6 +241,7 @@ public class Fenetre extends JFrame implements Observer {
     private PlateformePanels plateformePanels;
     private GenrePanels genrePanels;
     private StudioPanels studioPanels;
+    private EditeurPanels editeurPanels;
     private JeuPanels jeuPanels;
     private RunPanels runPanels;
     private LivePanels livePanels;
@@ -425,6 +427,7 @@ public class Fenetre extends JFrame implements Observer {
         plateformePanels = new PlateformePanels(controler);
         genrePanels = new GenrePanels(controler);
         studioPanels = new StudioPanels(controler);
+        editeurPanels = new EditeurPanels(controler);
         jeuPanels = new JeuPanels(controler);
         jeuPanels.addPlateformesActionListener(new PlateformesActionListener());
         jeuPanels.addGenresActionListener(new GenresActionListener());
@@ -666,9 +669,13 @@ public class Fenetre extends JFrame implements Observer {
         jeuPanels.clearLists();
         jeuPanels.supprimerTousItems();
         runPanels.supprimerTousItems();
-        runPanels.supprimerTousJeux();
-        livePanels.supprimerToutesRuns();
+        runPanels.supprimerTousSuperieurs();
+        runPanels.clearFields(true, true);
         livePanels.supprimerTousItems();
+        livePanels.supprimerToutesRuns();
+        livePanels.supprimerTousLives();
+        livePanels.supprimerTousSuperieurs();
+        livePanels.clearFields(true, true);
         rootTree.setUserObject(type.getNom());
         ((DefaultTreeModel) treeJeux.getModel()).reload(rootTree);
         panelChart.setChart(null);
@@ -712,6 +719,11 @@ public class Fenetre extends JFrame implements Observer {
         }
         studioPanels.ajouterItem(studio.getID());
         jeuPanels.addStudio(studio);
+    }
+    
+    @Override
+    public void addEditeur(Editeur editeur) {
+        
     }
     
     @Override
@@ -979,9 +991,9 @@ public class Fenetre extends JFrame implements Observer {
     }
     
     @Override
-    public void fillJeu(String titreJeu, int anneeSortie, Long[] listPlateformesID, Long[] listGenresID, long idStudio) {
+    public void fillJeu(String titreJeu, String dateSortieString, Long[] listPlateformesID, Long[] listGenresID, long idStudio) {
         jeuPanels.setNom(titreJeu);
-        jeuPanels.setAnneeSortie(anneeSortie);
+        jeuPanels.setDateSortie(dateSortieString);
         jeuPanels.setPlateformesSelection(listPlateformesID);
         jeuPanels.setGenresSelection(listGenresID);
         jeuPanels.setStudioSelection(idStudio);
@@ -1080,14 +1092,12 @@ public class Fenetre extends JFrame implements Observer {
     private void gererJeuxInputs(ModeGestion mode) {
         jeuPanels.setSelectionPanelVisible(!mode.equals(ModeGestion.AJOUTER));
         jeuPanels.setResetButtonVisible(mode.equals(ModeGestion.MODIFIER));
-//        jeuPanels.setSelectionPanelVisible(true);
         if (mode.equals(ModeGestion.AJOUTER)) {
-//            jeuPanels.setSelectionPanelVisible(false);
+            jeuPanels.setNouveauNomPanelVisible(true);
             jeuPanels.clearFields(true,true);
         }
         else {
             boolean editable = mode.equals(ModeGestion.MODIFIER);
-//            jeuPanels.setSelectionPanelVisible(true);
             jeuPanels.setNouveauNomPanelVisible(editable);
             jeuPanels.clearFields(editable,false);
         }
@@ -1097,16 +1107,17 @@ public class Fenetre extends JFrame implements Observer {
         if (res == JOptionPane.YES_OPTION) {
             long idJeu = jeuPanels.getSelectedID();
             String titreJeu = jeuPanels.getNouveauNom();
-            int anneeSortie = jeuPanels.getAnneeSortie();
+            String dateSortie = jeuPanels.getDateSortie();
             List<Long> listPlateformes = jeuPanels.getPlateformes();
             List<Long> listGenres = jeuPanels.getGenres();
             long idStudio = jeuPanels.getStudioID();
+            long idEditeur = 0;
             switch (mode) {
                 case AJOUTER :
-                    controler.ajouterJeu(titreJeu, anneeSortie , listPlateformes, listGenres, idStudio);
+                    controler.ajouterJeu(titreJeu, dateSortie , listPlateformes, listGenres, idStudio, idEditeur);
                     break;
                 case MODIFIER :
-                    controler.modifierJeu(idJeu, titreJeu, anneeSortie, listPlateformes, listGenres, idStudio);
+                    controler.modifierJeu(idJeu, titreJeu, dateSortie, listPlateformes, listGenres, idStudio, idEditeur);
                     break;
                 case SUPPRIMER :
                     controler.supprimerJeu(idJeu);

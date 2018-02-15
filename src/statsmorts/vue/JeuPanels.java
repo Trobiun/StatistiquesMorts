@@ -252,11 +252,7 @@ public class JeuPanels extends ObjectDatabasePanels {
     }
     
     /**
-     * Vide les champs de saisie et la sélection.
-     * @param editable permet de rendre éditable ou non les champs de saisie
-     *                  (pour suppression ou non)
-     * @param empty booléen pour vider ou non les champs de saisie (vrai pour
-     *              les vider, faux sinon)
+     * {@inheritDoc}
      */
     @Override
     public void clearFields(boolean editable, boolean empty) {
@@ -313,9 +309,7 @@ public class JeuPanels extends ObjectDatabasePanels {
     }
     
     /**
-     * Demande au contrôleur de remplir les champs de saisie avec les données
-     * du jeu dont l'identifiant est passé en paramète
-     * @param idItem l'identifiant du jeu auquel chercher les données
+     * {@inheritDoc}
      */
     @Override
     public void fillItem(long idItem) {

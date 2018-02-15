@@ -5,7 +5,6 @@
  */
 package statsmorts.vue;
 
-import java.awt.GridBagConstraints;
 import statsmorts.constantes.TexteConstantes;
 import statsmorts.controler.StatsMortsControler;
 
@@ -17,28 +16,6 @@ import statsmorts.controler.StatsMortsControler;
 public class RunPanels extends ObjectDatabaseComplexPanels {
     
     //ATTRIBUTS
-    //PANELS
-    /**
-     * Le JPanel qui contient les champs de saisie pour le jeu.
-     */
-//    private JPanel jeuPanel;
-    /**
-     * Le JPanel qui contient le champ de saisie pour l'identifiant du jeu.
-     */
-//    private JPanel idJeuPanel;
-    /**
-     * Le JPanel qui contient le champ de saisie pour le titre du jeu.
-     */
-//    private JPanel nomJeuPanel;
-    //ENTRÉES UTILISATEUR
-    /**
-     * La JComboBox pour sélectionner un jeu.
-     */
-//    private JComboBox idJeuComboBox;
-    /**
-     * Le TextField pour le titre du jeu.
-     */
-//    private JTextField nomJeuField;
     
     
     //CONSTRUCTEURS
@@ -166,16 +143,11 @@ public class RunPanels extends ObjectDatabaseComplexPanels {
 //    }
     
     /**
-     * Réinitialise et/ou vide les champs de saisie.
-     * @param editable permet de rendre éditable ou non les champs de saisie
-     *                 (pour suppression ou non)
-     * @param empty booléen pour vider ou non les champs de saisie (vrai pour
-     *              les vider, faux sinon)
+     * {@inheritDoc}
      */
     @Override
     public void clearFields(boolean editable, boolean empty) {
 //        super.clearFields(editable, empty);
-//        keepEmpty = empty;
         if (idComboBox.getItemCount() > 0) {
             idComboBox.setSelectedIndex(0);
         }
@@ -222,14 +194,15 @@ public class RunPanels extends ObjectDatabaseComplexPanels {
     
     public void supprimerToutesRuns() {
         idComboBox.removeAllItems();
+        nomTextField.setText(TexteConstantes.EMPTY);
     }
     
-    /**
-     * Supprime tous les jeux à la sélection possible.
-     */
-    public void supprimerTousJeux() {
-        idSuperieurComboBox.removeAllItems();
-    }
+//    /**
+//     * Supprime tous les jeux à la sélection possible.
+//     */
+//    public void supprimerTousJeux() {
+//        idSuperieurComboBox.removeAllItems();
+//    }
     
     /**
      * Supprime le jeu à la sélection qui a pour identifiant idJeu.
@@ -253,54 +226,23 @@ public class RunPanels extends ObjectDatabaseComplexPanels {
      * @param titre le titre à mettre dans le champ de saisie du titre
      */
     public void setTitreJeu(String titre) {
-        nomSuperieurField.setText(titre);
+        nomSuperieurTextField.setText(titre);
     }
     
     /**
-     * Demande de remplir les champs de saisie par le controleur.
-     * @param idItem l'identifiant de la run à laquelle il faut remplir les champs
-     *               de saisie avec ses attributs
+     * {@inheritDoc}
      */
     @Override
     public void fillItem(long idItem) {
-//        if (!keepEmpty) {
-            controler.fillRunPanel(idItem);
-//        }
+        controler.fillRunPanel(idItem);
     }
     
     /**
-     * Demande de remplir les champs de saisie par le controleur
-     * @param idJeu l'identifiant du jeu auquel il faut remplir les champs de
-     *              saisie avec ses attributs.
-     */
-    public void fillItemJeu(long idJeu) {
-//        controler.fill
-    }
-    
-    /**
-     * 
-     * @param idSuperieurItem 
+     * {@inheritDoc}
      */
     @Override
     public void selectionnerSuperieur(long idSuperieurItem) {
         controler.selectJeuRunPanels(idSuperieurItem);
     }
-    
-    
-    //LISTENER
-    /**
-     * Classe interne pour écouter les changements de sélection de jeu.
-     */
-//    private class JeuChangeListener implements ItemListener {
-//        
-//        @Override
-//        public void itemStateChanged(ItemEvent e) {
-//            if (e.getStateChange() == ItemEvent.SELECTED) {
-//                long idJeu = (long)idSuperieurComboBox.getSelectedItem();
-//                selectionnerSuperieur(idJeu);
-//            }
-//        }
-//        
-//    }
     
 }

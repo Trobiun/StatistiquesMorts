@@ -34,10 +34,7 @@ public class PlateformePanels extends ObjectDatabasePanels {
     
     //MUTATEURS
     /**
-     * Demande au controleur de remplir les champs de saisie avec la plateforme
-     * qui a pour identifiant idItem.
-     * @param idItem l'identifiant de la plateforme avec laquelle remplir les
-     * champs de saisie
+     * {@inheritDoc}
      */
     @Override
     public void fillItem(long idItem) {

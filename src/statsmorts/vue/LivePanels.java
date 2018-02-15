@@ -189,11 +189,7 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
     }
     
     /**
-     * Réinitialise et/ou vide les champs de saisie.
-     * @param editable permet de rendre éditable ou non les champs de saisie
-     *                 (pour suppression ou non)
-     * @param empty booléen pour vider ou non les champs de saisie (vrai pour
-     *              les vider, faux sinon)
+     * {@inheritDoc}
      */
     @Override
     public void clearFields(boolean editable, boolean empty) {
@@ -355,9 +351,7 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
     }
     
     /**
-     * Demande au contrôleur de remplir les champs de saisie du live avec les 
-     * données du modèle.
-     * @param idItem l'identifiant du live auquel chercher les données.
+     * {@inheritDoc}
      */
     @Override
     public void fillItem(long idItem) {
