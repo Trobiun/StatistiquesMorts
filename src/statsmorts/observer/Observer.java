@@ -7,6 +7,7 @@ package statsmorts.observer;
 
 import java.util.Date;
 import org.jfree.data.category.DefaultCategoryDataset;
+import statsmorts.classes.Editeur;
 import statsmorts.classes.Genre;
 import statsmorts.classes.Jeu;
 import statsmorts.classes.Live;
@@ -42,6 +43,11 @@ public interface Observer {
      * @param studio le studio à ajouter à la vue
      */
     void addStudio(Studio studio);
+    /**
+     * Ajoute un éditeur à l'affichage.
+     * @param editeur l'éditeur à ajouter à la vue
+     */
+    void addEditeur(Editeur editeur);
     /**
      * Ajoute un jeu à l'affichage.
      * @param jeu le jeu à ajouter à la vue
@@ -147,12 +153,12 @@ public interface Observer {
     /**
      * Remplit les panels de saisies utilisateur pour les jeux.
      * @param titreJeu le titre du jeu
-     * @param anneeSortie l'année de sortie du jeu
+     * @param dateSortieString l'année de sortie du jeu
      * @param listPlateformes la liste des identifiants des plateformes à présélectionner
      * @param listGenres la liste des identifiants des genres à présélectionner
      * @param idStudio l'identifiant du studio à présélectionner
      */
-    void fillJeu(String titreJeu, int anneeSortie, Long[] listPlateformes, Long[] listGenres, long idStudio);
+    void fillJeu(String titreJeu, String dateSortieString, Long[] listPlateformes, Long[] listGenres, long idStudio);
     /**
      * Remplit les panels de saisies utilisateur pour les runs.
      * Remplit les champs de saisies directement liés à la run.
