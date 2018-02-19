@@ -653,12 +653,12 @@ public class BDD {
                             + TexteConstantesSQL.NOT_NULL + ","
                         //champ jeu_DateSortie
                         + TexteConstantesSQL.TABLE_JEUX_DATE_SORTIE + " "
-                            + TexteConstantesSQL.SQL_INTEGER + ","
+                            + TexteConstantesSQL.SQL_DATE + ","
                         //champ jeu_idStudio
                         + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " "
                             +  TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
                             + TexteConstantesSQL.TABLE_STUDIOS + "(" + TexteConstantesSQL.TABLE_STUDIOS_ID
-                            + ") " + CLES_ENTRAGERES_REACTIONS + ")"
+                            + ") " + CLES_ENTRAGERES_REACTIONS + ","
                         //champ jeu_idEditeur
                         + TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR + " "
                             + TexteConstantesSQL.SQL_INTEGER + " " + TexteConstantesSQL.REFERENCES + " "
@@ -733,7 +733,7 @@ public class BDD {
                             + TexteConstantesSQL.SQL_DATETIME + " "
                             + TexteConstantesSQL.NOT_NULL + ","
                         //champ liv_idRun
-                        + TexteConstantesSQL.TABLE_LIVES_RUN + " "
+                        + TexteConstantesSQL.TABLE_LIVES_ID_RUN + " "
                             + TexteConstantesSQL.SQL_INTEGER + " "
                             + TexteConstantesSQL.REFERENCES + " "
                             + TexteConstantesSQL.TABLE_RUNS + "(" + TexteConstantesSQL.TABLE_RUNS_ID + ") "
