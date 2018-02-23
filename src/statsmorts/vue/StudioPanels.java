@@ -38,7 +38,7 @@ public class StudioPanels extends ObjectDatabasePanels {
       */
     @Override
     public void fillItem(long idItem) {
-        controler.fillStudioPanel(idItem);
+        controler.fillStudioPanels(idItem);
     }
    
     
