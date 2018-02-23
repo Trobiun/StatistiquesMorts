@@ -116,6 +116,14 @@ public class JeuPanels extends ObjectDatabasePanels {
         return res;
     }
     
+    public long getEditeurID() {
+        List<Long> selectionList = listEditeurs.getSelectionID();
+        long res = -1;
+        if (selectionList.size() > 0) {
+            res = selectionList.get(0);
+        }
+        return res;
+    }
     
     //MUTATEURS
     /**
@@ -368,7 +376,7 @@ public class JeuPanels extends ObjectDatabasePanels {
      */
     @Override
     public void fillItem(long idItem) {
-        controler.fillJeuPanel(idItem);
+        controler.fillJeuPanels(idItem);
     }
     
     
