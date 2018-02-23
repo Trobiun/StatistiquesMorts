@@ -266,8 +266,8 @@ public class Preferences {
             Logger.getLogger(Preferences.class.getName()).log(Level.SEVERE, null, ex);
         }
         JFrame framePrefs = new JFrame();
-        framePrefs.setVisible(true);
         framePrefs.setUndecorated(true);
+        framePrefs.setVisible(true);
         framePrefs.setLocationRelativeTo(null);
         PreferencesDialog prefsDialog = new PreferencesDialog(framePrefs, TexteConstantesPreferences.INITIALISATION_TEXTE, true, null, this);
         prefsDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
