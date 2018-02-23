@@ -47,6 +47,13 @@ public class CompteurSpinner extends JPanel {
     }
     
     //ACCESSEURS
+    /**
+     * Retourne la valeur actuelle du compteur.
+     * @return la valeur du compteur
+     */
+    public int getValue() {
+        return (int)(modelSpinner.getValue());
+    }
     
     
     //MUTATEURS
