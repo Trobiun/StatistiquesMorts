@@ -38,7 +38,7 @@ public class PlateformePanels extends ObjectDatabasePanels {
      */
     @Override
     public void fillItem(long idItem) {
-        controler.fillPlateformePanel(idItem);
+        controler.fillPlateformePanels(idItem);
     }
     
 }
