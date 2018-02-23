@@ -61,16 +61,57 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      */
     private CompteurSpinner bossCompteur;
     
+    private boolean keepEmpty;
     
     //CONSTRUCTEURS
     public LivePanels(StatsMortsControler controler) {
         super(controler,TexteConstantes.LIVE, TexteConstantes.JEU);
         this.init();
         this.setComponents();
+        keepEmpty = false;
     }
     
     
     //ACCESSEURS
+    /**
+     * Retourne la date de début sélectionnée pour le live.
+     * @return la date de début sélectionnée
+     */
+    public Date getDateDebut() {
+        return dateDebutSpinner.getDate();
+    }
+    
+    /**
+     * Retourne la date de fin sélectionnée pour le live.
+     * @return la date de fin sélectionnée
+     */
+    public Date getDateFin() {
+        return dateFinSpinner.getDate();
+    }
+    
+    /**
+     * Retourne l'identifiant de la run sélectionnée pour le live.
+     * @return l'identifiant de la run sélectionnée
+     */
+    public long getIDRun() {
+        return (long)(idRunComboBox.getSelectedItem());
+    }
+    
+    /**
+     * Retourne le nombre de morts pour le live.
+     * @return le nombre de morts
+     */
+    public int getMorts() {
+        return mortsCompteur.getValue();
+    }
+    
+    /**
+     * Retourne le nombre de boss vaincus pour le live.
+     * @return le nombre de boss vaincus
+     */
+    public int getBoss() {
+        return bossCompteur.getValue();
+    }
     
     
     //MUTATEURS
@@ -193,6 +234,7 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      */
     @Override
     public void clearFields(boolean editable, boolean empty) {
+        keepEmpty = empty;
         if (idRunComboBox.getItemCount() == 0) {
             nomRunField.setText(TexteConstantes.EMPTY);
             nouveauNomTextField.setText(TexteConstantes.EMPTY);
@@ -211,9 +253,9 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
             if (idComboBox.getItemCount() > 0) {
                 fillItem((long)(idComboBox.getSelectedItem()));
             }
-            if (idRunComboBox.getItemCount() > 0) {
-                fillItemRun((long)(idRunComboBox.getSelectedItem()));
-            }
+//            if (idRunComboBox.getItemCount() > 0) {
+//                fillItemRun((long)(idRunComboBox.getSelectedItem()));
+//            }
         }
     }
     
@@ -355,24 +397,26 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      */
     @Override
     public void fillItem(long idItem) {
-        controler.fillLivePanel(idItem);
+        if (!keepEmpty){
+            controler.fillLivePanels(idItem);
+        }
     }
     
-    /**
-     * Demande au contrôleur de remplir les champs de saisie de la run avec les
-     * données du modèle.
-     * @param idRun l'identifiant de la run à laquele chercher les données
-     */
-    public void fillItemRun(long idRun) {
-        controler.fillRunOnPanelLive(idRun);
-    }
+//    /**
+//     * Demande au contrôleur de remplir les champs de saisie de la run avec les
+//     * données du modèle.
+//     * @param idRun l'identifiant de la run à laquele chercher les données
+//     */
+//    public void fillItemRun(long idRun) {
+//        controler.fillRunOnLivePanels(idRun);
+//    }
     
     /**
      * {@inheritDoc}
      */
     @Override
     public void selectionnerSuperieur(long idSuperieurItem) {
-        controler.selectJeuLivePanels(idSuperieurItem);
+        controler.selectJeuOnLivePanels(idSuperieurItem);
     }
     
     /**
@@ -380,7 +424,7 @@ public class LivePanels extends ObjectDatabaseComplexPanels {
      * @param idRun l'identifiant de la run à sélectionner.
      */
     public void selectionnerRun(long idRun) {
-        controler.selectRunLivePanels(idRun);
+        controler.selectRunOnLivePanels(idRun);
     }
     
     
