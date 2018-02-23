@@ -6,7 +6,6 @@
 package statsmorts.classes;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jfree.data.category.DefaultCategoryDataset;
 import statsmorts.constantes.TexteConstantes;
-import statsmorts.constantes.TexteConstantesFormatDate;
 
 /**
  * Une classe pour représenter un live.
@@ -23,9 +21,7 @@ import statsmorts.constantes.TexteConstantesFormatDate;
 public class Live extends ObjectDatabase implements FillDataset, Comparable<Live> {
     
     //ATTRIBUTS STATIC
-    public static final SimpleDateFormat DATE_FORMAT_SQL = new SimpleDateFormat(TexteConstantesFormatDate.SQL);
-    public static final SimpleDateFormat DATE_FORMAT_SHORT = new SimpleDateFormat(TexteConstantesFormatDate.SHORT);
-    public static final SimpleDateFormat DATE_FORMAT_LONG = new SimpleDateFormat(TexteConstantesFormatDate.LONG);
+   
     
     //ATTRIBUTS
     /**
@@ -60,14 +56,8 @@ public class Live extends ObjectDatabase implements FillDataset, Comparable<Live
      */
     public Live(final long id, final String dateDebutString, final String dateFinString, final int morts, final int boss) {
         super(id);
-        try {
-            this.dateDebut = DATE_FORMAT_SQL.parse(dateDebutString);
-            this.dateFin = DATE_FORMAT_SQL.parse(dateFinString);
-        } catch (ParseException ex) {
-            this.dateDebut = new Date(0);
-            this.dateFin = new Date(0);
-            Logger.getLogger(Live.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.dateDebut = DateFormats.SQLStringToUtilDate(dateFinString);
+        this.dateFin = DateFormats.SQLStringToUtilDate(dateFinString);
         this.morts = morts;
         this.boss = boss;
     }
@@ -186,12 +176,44 @@ public class Live extends ObjectDatabase implements FillDataset, Comparable<Live
     
     
     //MUTATEURS
+    public void setDateDebut(String dateDebut) {
+        try {
+            this.dateDebut = DateFormats.DATE_FORMAT_LONG.parse(dateDebut);
+        } catch (ParseException ex) {
+            Logger.getLogger(Live.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void setDateDebut(Date dateDebut) {
+        this.dateDebut = dateDebut;
+    }
+    
+    public void setDateFin(String dateFin) {
+        try {
+            this.dateFin = DateFormats.DATE_FORMAT_LONG.parse(dateFin);
+        } catch (ParseException ex) {
+            Logger.getLogger(Live.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void setDateFin(Date dateFin) {
+        this.dateFin = dateFin;
+    }
+    
     /**
      * Change la run/partie actuelle par 'run'.
      * @param run la run du live
      */
     public void setRun(Run run) {
         this.run = run;
+    }
+    
+    public void setMorts(int morts) {
+        this.morts = morts;
+    }
+    
+    public void setBoss(int boss) {
+        this.boss = boss;
     }
     
     /**
@@ -208,7 +230,7 @@ public class Live extends ObjectDatabase implements FillDataset, Comparable<Live
      */
     @Override
     public String getTitre() {
-        return DATE_FORMAT_LONG.format(dateDebut) + " - " + DATE_FORMAT_LONG.format(dateFin);
+        return DateFormats.DATE_FORMAT_LONG.format(dateDebut) + " - " + DateFormats.DATE_FORMAT_LONG.format(dateFin);
     }
     
     /**
@@ -216,7 +238,7 @@ public class Live extends ObjectDatabase implements FillDataset, Comparable<Live
      */
     @Override
     public String getTitreDataset() {
-        String date = DATE_FORMAT_SHORT.format(dateDebut);
+        String date = DateFormats.DATE_FORMAT_SHORT.format(dateDebut);
         return this.run.getTitreDataset() + " le " + date;
     }
     
