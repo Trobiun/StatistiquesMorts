@@ -5,11 +5,11 @@
  */
 package statsmorts.modele;
 
+import java.sql.Date;
 import statsmorts.constantes.TexteConstantesSQL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -82,6 +82,7 @@ public class StatsMortsModele implements Observable {
      */
     private Observer observer;
     
+    long jeuSelectionne, runSelectionnee, liveSelectionne;
     
     //CONSTRUCTEUR
     /**
@@ -94,6 +95,9 @@ public class StatsMortsModele implements Observable {
         timeUnit = preferences.getAffichageTemps().getTimeUnit();
         typeGroup = preferences.getAffichageGroup();
         livesForDataset = new TreeSet();
+        jeuSelectionne = 0;
+        runSelectionnee = 0;
+        liveSelectionne = 0;
     }
     
     
@@ -150,7 +154,7 @@ public class StatsMortsModele implements Observable {
     
     
     //MÉTHODES DE GESTION DE LA BASE DE DONNÉES
-    //GESTION BASIC INPUTS (PLATEFORMES, GENRES, STUDIOS)
+    //GESTION BASIC INPUTS (PLATEFORMES, GENRES, STUDIOS, ÉDITEURS)
     /**
      * Ajoute un objet "basique" (plateforme/genre/studio) dans la base de données.
      * @param typeBasicInputs le type d'obejt à ajouter
@@ -338,8 +342,8 @@ public class StatsMortsModele implements Observable {
                                 while (it.hasNext()) {
                                     Entry<Long, Jeu> entry = it.next();
                                     it.remove();
+                                    notifyRemoveJeu(entry.getValue());
                                     bdd.supprimerJeu(entry.getKey());
-                                    notifyRemoveJeu(entry.getKey());
 //                            supprimerJeu(entry.getKey());
                                 }
                                 bdd.supprimerStudio(id);
@@ -376,7 +380,7 @@ public class StatsMortsModele implements Observable {
             Entry<Long, Jeu> entry = it.next();
             it.remove();
             bdd.supprimerJeu(entry.getKey());
-            notifyRemoveJeu(entry.getKey());
+            notifyRemoveJeu(entry.getValue());
         }
         //on supprime le studio en lui-même
         String requeteSupprStudio = TexteConstantesSQL.DELETE_FROM + " "
@@ -389,6 +393,18 @@ public class StatsMortsModele implements Observable {
         System.out.println((end - start) + "ms");
     }
     
+    
+//    public String dateToSQLDate(String date) {
+//        String res = "";
+//        try {
+//            res = DateFormats.DATE_FORMAT_SQL_SHORT.format(DateFormats.DATE_FORMAT_SHORT.parse(date));
+//        } catch (ParseException ex) {
+//            Logger.getLogger(StatsMortsModele.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return res;
+//    }
+    
+    //GESTION JEUX
     /**
      * Ajoute un jeu dans la base de données.
      * @param titre le titre du jeu
@@ -404,8 +420,9 @@ public class StatsMortsModele implements Observable {
                 + "," + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO
                 + "," + TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR
                 + ") " + TexteConstantesSQL.VALUES + "(?,?,?,?)";
+//        String dateSortieSQL = dateSortie//dateToSQLDate(dateSortie);
         int rowsInserted = connexion.executerPreparedUpdate(requete, titre,
-                /*TexteConstantesConnexion.INT + */dateSortie,
+                TexteConstantesConnexion.DATE + dateSortie,
                 TexteConstantesConnexion.LONG + idStudio,
                 TexteConstantesConnexion.LONG + idEditeur);
         try {
@@ -414,7 +431,7 @@ public class StatsMortsModele implements Observable {
                 long idJeu = resultID.getInt(1);
                 Studio studio = bdd.getStudio(idStudio);
                 Editeur editeur = bdd.getEditeur(idEditeur);
-                Jeu jeu = new Jeu(idJeu,titre,dateSortie,studio,editeur);
+                Jeu jeu = new Jeu(idJeu,titre,java.sql.Date.valueOf(dateSortie),studio,editeur);
                 int rows;
                 //ajout des plateformes au jeu et fait le lien dans la base de données
                 String requetePlateformes = TexteConstantesSQL.INSERT_INTO + " "
@@ -478,18 +495,19 @@ public class StatsMortsModele implements Observable {
         String idStudioRequete = TexteConstantesConnexion.LONG + idStudio;
         String idEditeurRequete = TexteConstantesConnexion.LONG + idEditeur;
         String idJeuRequete = TexteConstantesConnexion.LONG + idJeu;
+//        String dateSortieSQL = dateSortie;
         //modifie les champs directs du jeu
         String requete = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_JEUX
                 + " " + TexteConstantesSQL.SET + " "
                 + TexteConstantesSQL.TABLE_JEUX_TITRE + " = ? , "
                 + TexteConstantesSQL.TABLE_JEUX_DATE_SORTIE + " = ? , "
-                + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " = ? "
+                + TexteConstantesSQL.TABLE_JEUX_ID_STUDIO + " = ?, "
                 + TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR + " = ? "
                 + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_JEUX_ID + " = ?";
-        int rows = connexion.executerPreparedUpdate(requete, titre, /*TexteConstantesConnexion.INT + */dateSortie, idStudioRequete, idEditeurRequete, idJeuRequete);
+        int rows = connexion.executerPreparedUpdate(requete, titre, TexteConstantesConnexion.DATE + dateSortie, idStudioRequete, idEditeurRequete, idJeuRequete);
         if (rows > 0) {
             jeu.renommer(titre);
-            jeu.setDateSortie(dateSortie);
+            jeu.setDateSortie(Date.valueOf(dateSortie));
             jeu.setStudio(bdd.getStudio(idStudio));
             jeu.setEditeur(bdd.getEditeur(idEditeur));
             
@@ -528,7 +546,7 @@ public class StatsMortsModele implements Observable {
                 }
             }
             
-            notifyRemoveJeu(idJeu);
+            notifyRemoveJeu(jeu);
             notifyAddJeu(jeu);
         }
     }
@@ -543,11 +561,12 @@ public class StatsMortsModele implements Observable {
                 + " = ?";
         int rows = connexion.executerPreparedUpdate(requete,TexteConstantesConnexion.LONG + idJeu);
         if (rows > 0) {
+            notifyRemoveJeu(bdd.getJeu(idJeu));
             bdd.supprimerJeu(idJeu);
-            notifyRemoveJeu(idJeu);
         }
     }
     
+    //GESTION RUN
     /**
      * Ajoute une run dans la base de données.
      * @param titreRun le titre de la run
@@ -593,22 +612,48 @@ public class StatsMortsModele implements Observable {
         String requete = TexteConstantesSQL.DELETE_FROM + " "+ TexteConstantesSQL.TABLE_RUNS
                 + " " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_RUNS_ID
                 + " = ?";
-        int rows = connexion.executerPreparedUpdate(requete, "(long)" + idRun);
+        int rows = connexion.executerPreparedUpdate(requete, TexteConstantesConnexion.LONG + idRun);
         if(rows > 0) {
+            notifyRemoveRun(bdd.getRun(idRun));
             bdd.supprimerRun(idRun);
-            notifyRemoveRun(idRun);
         }
     }
     
+    //GESTION LIVE
     /**
      * Ajoute un live dans la base de données.
      * @param dateDebut la date de début du live
      * @param dateFin la date de fin du live
-     * @param morts le nombre de morts sur ce live
      * @param idRun l'identifiant de la run du live
+     * @param morts le nombre de morts sur ce live
+     * @param boss le nombtre de boss vaincus sur ce live
      */
-    public void ajouterLive(Date dateDebut, Date dateFin, int morts, long idRun) {
-        
+    public void ajouterLive(String dateDebut, String dateFin, long idRun, int morts, int boss) {
+        String requete = TexteConstantesSQL.INSERT_INTO + " " + TexteConstantesSQL.TABLE_LIVES
+                + "(" + TexteConstantesSQL.TABLE_LIVES_DATE_DEBUT  + ","
+                + TexteConstantesSQL.TABLE_LIVES_DATE_FIN + ","
+                + TexteConstantesSQL.TABLE_LIVES_ID_RUN + ","
+                + TexteConstantesSQL.TABLE_LIVES_MORTS + ","
+                + TexteConstantesSQL.TABLE_LIVES_BOSS + ") " + TexteConstantesSQL.VALUES
+                + "(?,?,?,?,?)";
+        int rows = connexion.executerPreparedUpdate(requete, TexteConstantesConnexion.DATETIME + dateDebut,
+                TexteConstantesConnexion.DATETIME + dateFin, TexteConstantesConnexion.INT + idRun,
+                TexteConstantesConnexion.INT + morts, TexteConstantesConnexion.INT + boss);
+        if (rows > 0) {
+            try {
+                ResultSet resultID = connexion.getPreparedStatement().getGeneratedKeys();
+                if (resultID.next()) {
+                    long idLive = resultID.getLong(1);
+                    Live live = new Live(idLive, dateDebut, dateFin, morts, boss);
+                    live.setRun(bdd.getRun(idRun));
+                    bdd.ajouterLive(live);
+                    notifyAddLive(live);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(StatsMortsModele.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
     }
     
     /**
@@ -616,11 +661,28 @@ public class StatsMortsModele implements Observable {
      * @param idLive l'identifiant du lvie à modifier
      * @param dateDebut la nouvelle date de début du live
      * @param dateFin la nouvelle date de fin du live
-     * @param morts le nouveau nombre de morts sur ce live
      * @param idRun le nouvel identifiant de la run du live
+     * @param morts le nouveau nombre de morts sur ce live
+     * @param boss le nombte de boss vaincus sur ce live
      */
-    public void modifierLive(long idLive, Date dateDebut, Date dateFin, int morts, long idRun) {
-        
+    public void modifierLive(long idLive, String dateDebut, String dateFin, long idRun, int morts, int boss) {
+        String requete = TexteConstantesSQL.UPDATE + " " + TexteConstantesSQL.TABLE_LIVES + " "
+                + TexteConstantesSQL.SET + " "
+                + TexteConstantesSQL.TABLE_LIVES_DATE_DEBUT + " = ?,"
+                + TexteConstantesSQL.TABLE_LIVES_DATE_FIN + " = ?,"
+                + TexteConstantesSQL.TABLE_LIVES_ID_RUN + " = ?,"
+                + TexteConstantesSQL.TABLE_LIVES_MORTS + " = ?,"
+                + TexteConstantesSQL.TABLE_LIVES_BOSS + " = ? "
+                + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_LIVES_ID + " = ?";
+        int rows = connexion.executerPreparedUpdate(requete, dateDebut, dateFin,
+                TexteConstantesConnexion.LONG + idRun, TexteConstantesConnexion.LONG + morts,
+                TexteConstantesConnexion.LONG + boss);
+        if (rows > 0) {
+            Live live = bdd.getLive(idLive);
+            live.setDateDebut(dateDebut);
+            live.setDateFin(dateFin);
+            
+        }
     }
     
     /**
@@ -628,7 +690,14 @@ public class StatsMortsModele implements Observable {
      * @param idLive l'identifiant du live à supprimer
      */
     public void supprimerLive(long idLive) {
-        
+        String requete = TexteConstantesSQL.DELETE_FROM + " " + TexteConstantesSQL.TABLE_LIVES
+                + " " + TexteConstantesSQL.WHERE + " " + TexteConstantesSQL.TABLE_LIVES_ID
+                + " = ?";
+        int rows = connexion.executerPreparedUpdate(requete, TexteConstantesConnexion.LONG + idLive);
+        if (rows > 0) {
+            notifyRemoveLive(bdd.getLive(idLive));
+            bdd.supprimerLive(idLive);
+        }
     }
     
     
@@ -699,39 +768,6 @@ public class StatsMortsModele implements Observable {
                     }
                 }
             });
-//            observer.clear(this.typeGroup);
-//            Set<Entry<Long, Plateforme>> plateformes = bdd.getPlateformes().entrySet();
-//            for (Entry<Long, Plateforme> entryPlateforme : plateformes) {
-//                Plateforme plateforme = entryPlateforme.getValue();
-//                notifyAddPlateforme(plateforme);
-//            }
-//            Set<Entry<Long, Genre>> genres = bdd.getGenres().entrySet();
-//            for (Entry<Long, Genre> entryGenre : genres) {
-//                Genre genre = entryGenre.getValue();
-//                notifyAddGenre(genre);
-//            }
-//            Set<Entry<Long, Studio>> studios = bdd.getStudios().entrySet();
-//            for (Entry<Long, Studio> entryStudio : studios) {
-//                Studio studio = entryStudio.getValue();
-//                notifyAddStudio(studio);
-//            }
-//            Set<Entry<Long, Jeu>> set = bdd.getJeux().entrySet();
-//            for (Entry<Long, Jeu> entryJeu : set) {
-//                Jeu jeu = entryJeu.getValue();
-//                notifyAddJeu(jeu);
-////                Map<Long, Run> runsMap = jeu.getRuns();
-////                Set<Entry<Long, Run>> runsSet = runsMap.entrySet();
-////                for (Entry<Long, Run> runEntry : runsSet) {
-////                    Run run = runEntry.getValue();
-////                    notifyAddRun(run);
-////                    Map<Long, Live> livesMap = run.getLives();
-////                    Set<Entry<Long, Live>> livesSet = livesMap.entrySet();
-////                    for (Entry<Long, Live> liveEntry : livesSet) {
-////                        Live live = liveEntry.getValue();
-////                        notifyAddLive(live);
-////                    }
-////                }
-//            }
         }
     }
     
@@ -784,94 +820,107 @@ public class StatsMortsModele implements Observable {
     }
     
     /**
-     * Remplit le Plate
-     * @param idPlateforme 
+     * Remplit le panel des saisies utilsiateur pour les plateformes.
+     * @param idPlateforme l'identifiant de la plateforme pour les attributs
      */
-    public void fillPlateformePanel(long idPlateforme) {
+    public void fillPlateformePanel(final long idPlateforme) {
         notifyFillPlateforme(idPlateforme);
     }
     
     /**
-     * 
-     * @param idGenre 
+     * Remplit le panel des saisies utilisateur pour les genres.
+     * @param idGenre l'identifiant du genre pour les attributs
      */
-    public void fillGenrePanel(long idGenre) {
+    public void fillGenrePanel(final long idGenre) {
         notifyFillGenre(idGenre);
     }
     
     /**
-     * 
-     * @param idStudio 
+     * Remplit le panel des saisies utilisateur pour les studios.
+     * @param idStudio l'identifiant du studio pour les attributs
      */
-    public void fillStudiPanel(long idStudio) {
+    public void fillStudiPanel(final long idStudio) {
         notifyFillStudio(idStudio);
     }
     
-    public void fillEditeurPanel(long idEditeur) {
+    /**
+     * Remplit le panel des saisies utilisateur pour les éditeurs.
+     * @param idEditeur l'identifiant de l'éditeur pour les attributs
+     */
+    public void fillEditeurPanel(final long idEditeur) {
         notifyFillEditeur(idEditeur);
     }
     
     /**
-     * 
-     * @param idJeu 
+     * Remplit le panel des saisies utilisateur pour les jeux.
+     * @param idJeu l'identifiant du jeu pour les attributs
      */
-    public void fillJeuPanel(long idJeu) {
+    public void fillJeuPanel(final long idJeu) {
         notifyFillJeu(idJeu);
     }
     
     /**
-     * 
-     * @param idRun 
+     * Remplit le panel des saisies utilisateur pour les runs.
+     * @param idRun l'identifiant de la run pour les attributs
      */
-    public void fillRunPanel(long idRun) {
+    public void fillRunPanel(final long idRun) {
         notifyFillRun(idRun);
     }
     
-    public void fillRunOnLivePanels(long idRun) {
-        notifyFillRunOnLivePanels(idRun);
-    }
-    
     /**
-     * 
-     * @param idJeu 
+     * Remplit le panel des saisies utilisateur pour les lives.
+     * @param idLive l'identifiant du live pour les attributs
      */
-    public void selectJeuRunPanels(long idJeu) {
-        notifySelectJeuRunPanels(idJeu);
-    }
-    
-    public void selectJeuLivePanels(long idJeu) {
-        notifySelectJeuLivePanels(idJeu);
-    }
-    
-    public void selectRunLivePanels(long idRun) {
-        notifySelectRunLivePanels(idRun);
-    }
-    
-    /**
-     * 
-     * @param idLive 
-     */
-    public void fillLivePanel(long idLive) {
+    public void fillLivePanel(final long idLive) {
         notifyFillLive(idLive);
     }
     
+//    /**
+//     * Remplit la partie "run" des saisies utilisateur pour les lives.
+//     * @param idRun l'identifiant de la run pour les attributs
+//     */
+//    public void fillRunOnLivePanels(final long idRun) {
+//        notifyFillRunOnLivePanels(idRun);
+//    }
+    
     /**
-     * 
-     * @param idRun 
+     * Sélectionne un jeu pour les saisies utilisateur pour les runs.
+     * @param idJeu l'identifant du jeu à sélectionner
      */
-    public void fillLivePanelRun(long idRun) {
-        notifyFillRunOnLivePanels(idRun);
+    public void selectJeuOnRunPanels(final long idJeu) {
+        jeuSelectionne = idJeu;
+        notifySelectJeuOnRunPanels(idJeu);
     }
     
     /**
-     * 
-     * @param idJeu 
+     * Sélectionne un jeu pour les saisies utilisateur pour les lives.
+     * @param idJeu l'identifiant du jeu à sélectionner
+     */
+    public void selectJeuOnLivePanels(final long idJeu) {
+        jeuSelectionne = idJeu;
+        notifySelectJeuOnLivePanels(idJeu);
+    }
+    
+    /**
+     * Sélectionne une run pour les saisies utilisateur pour les lives.
+     * @param idRun l'identifiant de la run à sélectionner
+     */
+    public void selectRunOnLivePanels(final long idRun) {
+        runSelectionnee = idRun;
+        notifySelectRunOnLivePanels(idRun);
+    }
+    
+    /**
+     * Ajoute les runs possibles en fonction du jeu sélectionné aux saisies utlisateur.
+     * @param idJeu l'identifiant du jeu sélectionné sur lequel il faut chercher les runs
      */
     public void setSelectionPossibleRun(final long idJeu) {
+        jeuSelectionne = idJeu;
         HashMap<Long,Run> runsPossibles = bdd.getJeu(idJeu).getRuns();
         Set<Entry<Long,Run>>setEntries = runsPossibles.entrySet();
         for (Entry<Long,Run> runEntry : setEntries) {
-            notifyAddRunPosssible(runEntry.getValue());
+            notifySelectJeuOnRunPanels(idJeu);
+//            notifyAddRunPossible(runEntry.getValue());
         }
     }
     
@@ -1010,9 +1059,9 @@ public class StatsMortsModele implements Observable {
     @Override
     public void notifyAddJeu(final Jeu jeu) {
         if (hasObserver()) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
+//            SwingUtilities.invokeLater(new Runnable() {
+//                @Override
+//                public void run() {
                     observer.addJeu(jeu);
                     Map<Long, Run> runsMap = jeu.getRuns();
                     Set<Entry<Long, Run>> runsSet = runsMap.entrySet();
@@ -1026,16 +1075,12 @@ public class StatsMortsModele implements Observable {
                             notifyAddLive(live);
                         }
                     }
-                }
-            });
+////                }
+////            });
         }
     }
     
-    public void notifyAddRunPosssible(final Run run) {
-        if (hasObserver()) {
-            observer.addPossibleRunOnRunPanels(run.getID());
-        }
-    }
+    
     
     /**
      * {@inheritDoc} 
@@ -1044,6 +1089,10 @@ public class StatsMortsModele implements Observable {
     public void notifyAddRun(final Run run) {
         if (hasObserver()) {
             observer.addRun(run);
+            if (run.getJeu().getID() == jeuSelectionne) {
+                observer.addPossibleRunOnRunPanels(run.getID());
+                observer.addPossibleRunOnLivePanels(run.getID());
+            }
         }
     }
     
@@ -1055,6 +1104,9 @@ public class StatsMortsModele implements Observable {
         if (hasObserver()) {
             final Run run = live.getRun();
             observer.addLive(live);
+            if (run.getID() == runSelectionnee) {
+                observer.addPossibleLiveOnLivePanels(live.getID());
+            }
         }
     }
     
@@ -1102,15 +1154,19 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyRemoveJeu(final long idJeu) {
+    public void notifyRemoveJeu(final Jeu jeu) {
         if (hasObserver()) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    observer.removeJeu(idJeu);
-                }
-                
-            });
+//            SwingUtilities.invokeLater(new Runnable() {
+//                @Override
+//                public void run() {
+                    Set<Entry<Long,Run>> setRuns = jeu.getRuns().entrySet();
+                    for (Entry<Long,Run> entryRun : setRuns) {
+                        notifyRemoveRun(entryRun.getValue());
+                    }
+                    observer.removeJeu(jeu.getID());
+//                }
+//                
+//            });
             
         }
     }
@@ -1119,12 +1175,16 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyRemoveRun(final long idRun) {
+    public void notifyRemoveRun(final Run run) {
         if (hasObserver()) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                     observer.removeRun(idRun);
+                    Set<Entry<Long,Live>> setLives = run.getLives().entrySet();
+                    for (Entry<Long,Live> entryLive : setLives) {
+                        notifyRemoveLive(entryLive.getValue());
+                    }
+                    observer.removeRun(run.getID());
                 }
             });
            
@@ -1135,12 +1195,12 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifyRemoveLive(final long idLive) {
+    public void notifyRemoveLive(final Live live) {
         if (hasObserver()) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                     observer.removeLive(idLive);
+                     observer.removeLive(live.getID());
                 }
             });
             
@@ -1208,6 +1268,7 @@ public class StatsMortsModele implements Observable {
             }
         }
     }
+    
     /**
      * {@inheritDoc} 
      */
@@ -1239,7 +1300,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifySelectJeuRunPanels(final long idJeu) {
+    public void notifySelectJeuOnRunPanels(final long idJeu) {
         if (hasObserver()) {
             final Jeu jeu = bdd.getJeu(idJeu);
             if (null != jeu) {
@@ -1257,7 +1318,7 @@ public class StatsMortsModele implements Observable {
      * {@inheritDoc} 
      */
     @Override
-    public void notifySelectJeuLivePanels(long idJeu) {
+    public void notifySelectJeuOnLivePanels(long idJeu) {
         if (hasObserver()) {
             Jeu jeu = bdd.getJeu(idJeu);
             if (null != jeu) {
@@ -1272,8 +1333,11 @@ public class StatsMortsModele implements Observable {
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void notifySelectRunLivePanels(long idRun) {
+    public void notifySelectRunOnLivePanels(long idRun) {
         if (hasObserver()) {
             Run run = bdd.getRun(idRun);
             if (null != run) {
@@ -1300,14 +1364,20 @@ public class StatsMortsModele implements Observable {
         }
     }
     
-    @Override
-    public void notifyFillRunOnLivePanels(long idRun) {
-        if (hasObserver()) {
-            Run run = bdd.getRun(idRun);
-            if (null != run) {
-                observer.fillRunOnLivePanels(run.getTitre());
-            }
-        }
-    }
+//    @Override
+//    public void notifyFillRunOnLivePanels(long idRun) {
+//        if (hasObserver()) {
+//            Run run = bdd.getRun(idRun);
+//            if (null != run) {
+//                observer.fillRunOnLivePanels(run.getTitre());
+//            }
+//        }
+//    }
     
+//    @Override
+//    public void notifyAddRunPossible(final Run run) {
+//        if (hasObserver()) {
+//            observer.addPossibleRunOnRunPanels(run.getID());
+//        }
+//    }
 }
