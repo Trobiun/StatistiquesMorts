@@ -11,11 +11,10 @@ package statsmorts.constantes;
  */
 public final class TexteConstantesFormatDate {
     
-    public static final String SQL = "yyyy-MM-dd HH:mm:SS";
+    public static final String SQL = "yyyy-MM-dd HH:mm:ss";
     public static final String SQL_SHORT = "yyyy-MM-dd";
     public static final String LONG = "dd/MM/yyyy HH:mm";
     public static final String SHORT = "dd/MM/yyyy";
-    public static final String YEAR_ONLY = "yyyy";
     
     
     //CONSTRUCTEUR
