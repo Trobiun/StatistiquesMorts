@@ -38,7 +38,7 @@ public class EditeurPanels extends ObjectDatabasePanels {
      */
     @Override
     public void fillItem(long idItem) {
-        controler.fillEditeurPanel(idItem);
+        controler.fillEditeurPanels(idItem);
     }
     
 }
