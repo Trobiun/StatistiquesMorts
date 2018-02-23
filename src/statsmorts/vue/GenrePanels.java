@@ -37,7 +37,7 @@ public class GenrePanels extends ObjectDatabasePanels {
      */
     @Override
     public void fillItem(long idItem) {
-        controler.fillGenrePanel(idItem);
+        controler.fillGenrePanels(idItem);
     }
     
 }
