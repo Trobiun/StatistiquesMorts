@@ -5,11 +5,10 @@
  */
 package statsmorts.classes;
 
+import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -20,17 +19,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jfree.data.category.DefaultCategoryDataset;
 import statsmorts.constantes.TexteConstantes;
-import statsmorts.constantes.TexteConstantesFormatDate;
 
 /**
  * Une classe pour représenter un jeu dans la base de données.
  * @author Robin
  */
 public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Comparable {
-    
-    //ATTRIBUTS STATIC
-    public static final SimpleDateFormat DATE_FORMAT_SQL = new SimpleDateFormat(TexteConstantesFormatDate.SQL_SHORT);
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(TexteConstantesFormatDate.SHORT);
     
     //ATTRIBUTS
     /**
@@ -64,17 +58,13 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
      * Crée un jeu sans les attributs studio, plateformes, genres et runs.
      * @param id l'identifiant du jeu dans la base de données
      * @param titre le titre du jeu
-     * @param dateSortieString la date de sortie du jeu
+     * @param dateSortie la date de sortie du jeu
      * @param studio le studio de développement du jeu
      * @param editeur l'éditeur du jeu
      */
-    public Jeu(final long id, final String titre, final String dateSortieString, final Studio studio, final Editeur editeur) {
+    public Jeu(final long id, final String titre, final Date dateSortie, final Studio studio, final Editeur editeur) {
         super(id,titre);
-        try {
-            this.dateSortie = DATE_FORMAT_SQL.parse(dateSortieString);
-        } catch (ParseException ex) {
-            Logger.getLogger(Jeu.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.dateSortie = dateSortie;
         this.studio = studio;
         this.editeur = editeur;
         plateformes = new HashMap();
@@ -89,7 +79,7 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
      * @return l'année de sortie du jeu
      */
     public String getDateSortie() {
-        return DATE_FORMAT.format(dateSortie);
+        return DateFormats.DATE_FORMAT_SHORT.format(dateSortie);
     }
     
     /**
@@ -299,7 +289,7 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
         float minutesParBoss = (boss == 0) ? 0 : dureeTotaleMinutes / (float)boss;
         String res = TexteConstantes.TITRE + " : " + super.getTitre() + TexteConstantes.NEW_LINE
                 + "" + studio.toString() + TexteConstantes.NEW_LINE
-                + "Date de sortie : " + DATE_FORMAT.format(dateSortie) + TexteConstantes.NEW_LINE
+                + "Date de sortie : " + DateFormats.DATE_FORMAT_SHORT.format(dateSortie) + TexteConstantes.NEW_LINE
                 + plateformesToString()
                 + genresToString() + TexteConstantes.NEW_LINE
                 + "Total de runs : " + runs.size() + TexteConstantes.NEW_LINE
@@ -323,14 +313,10 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
     //MUTATEURS
     /**
      * Change l'année de sortie du jeu.
-     * @param dateSortieString la nouvelle année de sortie du jeu
+     * @param dateSortie la nouvelle date de sortie du jeu
      */
-    public void setDateSortie(final String dateSortieString) {
-        try {
-            this.dateSortie = DATE_FORMAT.parse(dateSortieString);
-        } catch (ParseException ex) {
-            Logger.getLogger(Jeu.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void setDateSortie(final Date dateSortie) {
+        this.dateSortie = dateSortie;
     }
     
     /**
@@ -489,7 +475,7 @@ public class Jeu extends ObjectDatabaseWithTitle implements FillDataset, Compara
             moyenne = sommeDureeVie / count;
             sommeMoyennes += moyenne;
             live.fillDataset(dataset, unit, false);
-            dataset.addValue(moyenne,"Moyenne des durées de vie",Live.DATE_FORMAT_SHORT.format(live.getDateDebut()));
+            dataset.addValue(moyenne,"Moyenne des durées de vie",live.getDateDebut());
         }
         if (total) {
             float dureeVieMoyenneTotale = (float)sommeTime / (float)(sommeMorts + 1);
