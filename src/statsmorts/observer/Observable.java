@@ -33,7 +33,9 @@ public interface Observable {
      */
     void setGroup(TypeGroup type);
     
-    //notifications de la base de données
+    
+    //NOTIFICATIONS DE LA BASE DE DONNÉES
+    //NOTIFICATIONS D'AJOUT
     /**
      * Notifie l'observer d'ajouter la plateforme "plateforme" à l'affichage.
      * @param plateforme la plateforme à ajouter.
@@ -69,6 +71,8 @@ public interface Observable {
      * @param live le live à ajouter
      */
     void notifyAddLive(Live live);
+    
+    //NOTIFICATIONS DE SUPPRESSION
     /**
      * Notifie l'observer de supprimer la plateforme "plateforme" à l'affichage.
      * @param idPlateforme l'identifiant de la plateforme à supprimer
@@ -93,25 +97,19 @@ public interface Observable {
      * Notifie l'observer de supprimer le jeu "jeu" à l'affichage.
      * @param idJeu l'identifiant du jeu à supprimer
      */
-    void notifyRemoveJeu(long idJeu);
+    void notifyRemoveJeu(Jeu jeu);
     /**
      * Notifie l'observer de supprimer la run "run" à l'affichage.
      * @param idRun l'identifiant de la run à supprimer
      */
-    void notifyRemoveRun(long idRun);
+    void notifyRemoveRun(Run run);
     /**
      * Notifie l'observer de supprimer le lvie "live" à l'affichage.
      * @param idLive l'identifiant du live à supprimer
      */
-    void notifyRemoveLive(long idLive);
-    /**
-     * Notifie l'observer que le dataset a changé et doit le mettre à jour.
-     * @param titre le titre du graphique (chart) à afficher
-     * @param dataset les données du graphqiue à afficher
-     */
-    void notifyDataset(String titre, DefaultCategoryDataset dataset);
+    void notifyRemoveLive(Live live);
     
-    //notifications pour remplir les panels d'entrées utilisateur
+    //NOTIFCATION POUR REMPLIR LES PANELS D'ENTRÉES UTILISATEUR
     /**
      * Notifie l'observer de remplir les panels de saisie de plateformes.
      * @param idPlateforme l'identifiant de la plateforme à remplir
@@ -143,30 +141,44 @@ public interface Observable {
      */
     void notifyFillRun(long idRun);
     /**
-     * Notifie l'observer de la sélection d'un jeu.
-     * @param idJeu l'identifiant du jeu sélectionné
-     */
-    void notifySelectJeuRunPanels(long idJeu);
-    /**
-     * Notifie l'observer de la sélection d'un jeu sur les entrées pour les lives.
-     * @param idJeu l'identifiant du jeu sélectionné
-     */
-    void notifySelectJeuLivePanels(long idJeu);
-    /**
-     * Notifie l'observer de la sélection d'une run sur les entrées pour les lives.
-     * @param idRun l'identifiant de la run séletionnée
-     */
-    void notifySelectRunLivePanels(long idRun);
-    /**
      * Notifie l'observer de remplir les panels de saisie de lives.
      * @param idLive l'identifiant du live à remplir.
      */
     void notifyFillLive(long idLive);
-    /**
-     * Notifie l'observer de rempmir la run dans les entrées pour les lives.
-     * @param idRUn l'identifiant de la run avec lequelle remplir les champs de
-     * saisie
-     */
-    void notifyFillRunOnLivePanels(long idRUn);
     
+    //NOTIFICATIONS DE SELECTION
+    /**
+     * Notifie l'observer de la sélection d'un jeu.
+     * @param idJeu l'identifiant du jeu sélectionné
+     */
+    void notifySelectJeuOnRunPanels(long idJeu);
+    /**
+     * Notifie l'observer de la sélection d'un jeu sur les entrées pour les lives.
+     * @param idJeu l'identifiant du jeu sélectionné
+     */
+    void notifySelectJeuOnLivePanels(long idJeu);
+    /**
+     * Notifie l'observer de la sélection d'une run sur les entrées pour les lives.
+     * @param idRun l'identifiant de la run séletionnée
+     */
+    void notifySelectRunOnLivePanels(long idRun);
+//    /**
+//     * Notifie l'observer de rempmir la run dans les entrées pour les lives.
+//     * @param idRUn l'identifiant de la run avec lequelle remplir les champs de
+//     * saisie
+//     */
+//    void notifyFillRunOnLivePanels(long idRUn);
+//    /**
+//     * 
+//     * @param run 
+//     */
+//    void notifyAddRunPossible(Run run);
+    
+    //NOTIFICATION DU DATASET
+    /**
+     * Notifie l'observer que le dataset a changé et doit le mettre à jour.
+     * @param titre le titre du graphique (chart) à afficher
+     * @param dataset les données du graphqiue à afficher
+     */
+    void notifyDataset(String titre, DefaultCategoryDataset dataset);
 }

@@ -22,12 +22,13 @@ import statsmorts.classes.TypeGroup;
  */
 public interface Observer {
     
-    //méthodes pour mettre à jour la vue en fonction du modèle
+    //MÉTHODES POUR METTRE A JOUR LA VUE EN FONCTION DU MODELE
     /**
      * Vide tous les arbres et les panels de saisies d'utilisateur.
      * @param type le type par lequel grouper (pour reset le nœud root).
      */
     void clear(TypeGroup type);
+    //METHODES POUR AJOUTER UN OBJET DANS LA VUE
     /**
      * Ajoute une plateforme à l'affichage.
      * @param plateforme la plateforme à ajouter à la vue
@@ -63,21 +64,24 @@ public interface Observer {
      * @param live le live à ajouter à la vue
      */
     void addLive(Live live);
-    /**
-     * 
-     * @param idRun
-     */
-    void addPossibleRunOnRunPanels(long idRun);
-    /**
-     * 
-     * @param idRun
-     */
-    void addPossibleRunOnLivePanels(long idRun);
-    /**
-     * 
-     * @param idLive 
-     */
-    void addPossibleLiveOnLivePanels(long idLive);
+    
+    //METHODES POUR SUPPRIMER UN OBJET OU DES OBJETS DANS LA VUE
+    
+    void removeAllPlateformes();
+    
+    void removeAllGenres();
+    
+    void removeAllStudios();
+    
+    void removeAllJeux();
+    
+    void removeAllRunsOnRunPanels();
+    
+    void removeAllRunsOnLivePanels();
+    
+    void removeAllLivesOnLivePanels();
+    
+    void removeAllLives();
     /**
      * Supprime une plateforme de l'affichage.
      * @param idPlateforme l'identifiant de la plateforme à supprimer de la vue
@@ -114,22 +118,24 @@ public interface Observer {
      */
     void removeLive(long idLive);
     
+    //MÉTHODES POUR AJOUTER DES ITEMS SÉLECTIONNABLES DANS LES ENTRÉES UTILISATEUR
+    /**
+     * 
+     * @param idRun
+     */
+    void addPossibleRunOnRunPanels(long idRun);
+    /**
+     * 
+     * @param idRun
+     */
+    void addPossibleRunOnLivePanels(long idRun);
+    /**
+     * 
+     * @param idLive 
+     */
+    void addPossibleLiveOnLivePanels(long idLive);
     
-    void removeAllPlateformes();
     
-    void removeAllGenres();
-    
-    void removeAllStudios();
-    
-    void removeAllJeux();
-    
-    void removeAllRunsOnRunPanels();
-    
-    void removeAllRunsOnLivePanels();
-    
-    void removeAllLivesOnLivePanels();
-    
-    void removeAllLives();
     
     /**
      * Met à jour le dataset pour le graphique à afficher.
