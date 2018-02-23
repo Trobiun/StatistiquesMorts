@@ -8,6 +8,7 @@ package statsmorts.classes;
 import statsmorts.constantes.TexteConstantesSQL;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -477,7 +478,8 @@ public class BDD {
             this.ajouterEditeur(editeur);
         }
         
-        String titreJeu, titreRun, dateSortie, dateDebut, dateFin;
+        String titreJeu, titreRun, dateDebut, dateFin;
+        Date dateSortie;
         long idJeu, idRun, idLive;
         int morts, boss;
         Jeu jeu;
@@ -487,7 +489,12 @@ public class BDD {
         while (resultsVueGlobale.next()) {
             idJeu = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID);
             titreJeu = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_JEUX_TITRE);
-            dateSortie = resultsVueGlobale.getString(TexteConstantesSQL.TABLE_JEUX_DATE_SORTIE);
+            if (connexion.getType().equals(TypeDatabase.SQLite)) {
+                dateSortie = java.sql.Date.valueOf(resultsVueGlobale.getString(TexteConstantesSQL.TABLE_JEUX_DATE_SORTIE));
+            }
+            else  {
+                dateSortie = resultsVueGlobale.getDate(TexteConstantesSQL.TABLE_JEUX_DATE_SORTIE);
+            }
             idStudio = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID_STUDIO);
             Studio jeuStudio = studios.get(idStudio);
             idEditeur = resultsVueGlobale.getLong(TexteConstantesSQL.TABLE_JEUX_ID_EDITEUR);
@@ -597,7 +604,7 @@ public class BDD {
                 AUTOINCREMENT_ADAPTE = AUTOINCREMENT;
             }
             
-            //table Plateformes
+            //Table Plateformes
             String requete1 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_PLATEFORMES + " ("
                         //champ pla_id clé primaire
@@ -608,7 +615,7 @@ public class BDD {
                             + TexteConstantesSQL.SQL_TEXT + " "
                             + TexteConstantesSQL.NOT_NULL + ")";
             
-            //table Genres
+            //Table Genres
             String requete2 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_GENRES + " " + "("
                         //champ gen_id clé primaire
@@ -619,7 +626,7 @@ public class BDD {
                             + TexteConstantesSQL.SQL_TEXT + " "
                             + TexteConstantesSQL.NOT_NULL + ")";
             
-            //table Studios
+            //Table Studios
             String requete3 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_STUDIOS + " ("
                         //champ stu_id clé primaire
@@ -630,7 +637,7 @@ public class BDD {
                             + TexteConstantesSQL.SQL_TEXT + " "
                             + TexteConstantesSQL.NOT_NULL + ")";
             
-            //table Editeurs
+            //Table Editeurs
             String requete4 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_EDITEURS + " ("
                         //champ edi_id clé primaire
@@ -641,7 +648,7 @@ public class BDD {
                             + TexteConstantesSQL.SQL_TEXT + " "
                             + TexteConstantesSQL.NOT_NULL + ")";
             
-            //table Jeux
+            //Table Jeux
             String requete5 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_JEUX + " ("
                         //champ jeu_id clé primaire
@@ -665,7 +672,7 @@ public class BDD {
                             + TexteConstantesSQL.TABLE_EDITEURS + "(" + TexteConstantesSQL.TABLE_EDITEURS_ID
                             + ") " + CLES_ENTRAGERES_REACTIONS + ")";
             
-            //table Jeulateforme
+            //Table Jeulateforme
             String requete6 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_JEU_PLATEFORME + " " + "("
                         //champ idJeu
@@ -683,7 +690,7 @@ public class BDD {
                             + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_JEU + ","
                             + TexteConstantesSQL.TABLE_JEU_PLATEFORME_ID_PLATEFORME + "))";
             
-            //table JeuGenre
+            //Table JeuGenre
             String requete7 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_JEU_GENRE + "("
                         //champ idJeu
@@ -701,7 +708,7 @@ public class BDD {
                             + TexteConstantesSQL.TABLE_JEU_GENRE_ID_JEU + ","
                             + TexteConstantesSQL.TABLE_JEU_GENRE_ID_GENRE + "))";
             
-            //table Runs
+            //Table Runs
             String requete8 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_RUNS + "("
                         //champ run_id clé primaire
@@ -718,7 +725,7 @@ public class BDD {
                         + TexteConstantesSQL.SQL_TEXT + " "
                         + TexteConstantesSQL.NOT_NULL + ")";
             
-            //table Lives
+            //Table Lives
             String requete9 = TexteConstantesSQL.CREATE_TABLE + " "
                     + TexteConstantesSQL.TABLE_LIVES + "("
                         //champ liv_id clé primaire
@@ -745,8 +752,46 @@ public class BDD {
                         + TexteConstantesSQL.TABLE_LIVES_BOSS + " "
                             + TexteConstantesSQL.SQL_INTEGER + ")";
             
+            //Table Boss
+            String requete10 = TexteConstantesSQL.CREATE_TABLE + " "
+                    + TexteConstantesSQL.TABLE_BOSS + "("
+                        //champ bos_id
+                        + TexteConstantesSQL.TABLE_BOSS_ID + " "
+                            + AUTOINCREMENT_ADAPTE + ","
+                        //champ bos_idJeu
+                        + TexteConstantesSQL.TABLE_BOSS_ID_JEU + " "
+                            + TexteConstantesSQL.SQL_INTEGER + " "
+                            + TexteConstantesSQL.REFERENCES + " "
+                            + TexteConstantesSQL.TABLE_JEUX + "(" + TexteConstantesSQL.TABLE_JEUX_ID + ")"
+                            + CLES_ENTRAGERES_REACTIONS + ","
+                        //champ bos_Nom
+                        + TexteConstantesSQL.TABLE_BOSS_NOM + " "
+                            + TexteConstantesSQL.SQL_TEXT + ")";
+            
+            //Table MortsEtVictoires
+            String requete11 = TexteConstantesSQL.CREATE_TABLE + " "
+                    + TexteConstantesSQL.TABLE_MORTS_ET_VICTOIRES + "("
+                        //champ mev_idLive
+                        + TexteConstantesSQL.TABLE_MORTS_ET_VICTOIRES_ID_LIVE + " "
+                            + TexteConstantesSQL.SQL_INTEGER + " "
+                            + TexteConstantesSQL.REFERENCES + " "
+                            + TexteConstantesSQL.TABLE_LIVES + "(" + TexteConstantesSQL.TABLE_LIVES_ID + ")"
+                            + CLES_ENTRAGERES_REACTIONS + ","
+                        //champ mev_idBoss
+                        + TexteConstantesSQL.TABLE_MORTS_ET_VICTOIRES_ID_BOSS + " "
+                            + TexteConstantesSQL.SQL_INTEGER + " "
+                            + TexteConstantesSQL.REFERENCES + " "
+                            + TexteConstantesSQL.TABLE_BOSS + "(" + TexteConstantesSQL.TABLE_BOSS_ID + ")"
+                            + CLES_ENTRAGERES_REACTIONS + ","
+                        //champ mev_Morts
+                        + TexteConstantesSQL.TABLE_MORTS_ET_VICTOIRES_MORTS + " "
+                            + TexteConstantesSQL.SQL_INTEGER + ","
+                        //champ mev_Victoires
+                        + TexteConstantesSQL.TABLE_MORTS_ET_VICTOIRES_VICTOIRES + " "
+                            + TexteConstantesSQL.SQL_INTEGER + ")";
+            
             //vue VueGlobale seulement avec SQLite
-            String requete10 = TexteConstantesSQL.CREATE_VIEW + " "
+            String requete12 = TexteConstantesSQL.CREATE_VIEW + " "
                     + TexteConstantesSQL.VUE_GLOBALE + " AS "
                         + TexteConstantesSQL.SELECT_VUE_GLOBALE_SQL;
             
@@ -759,9 +804,11 @@ public class BDD {
             connexion.executerUpdate(requete7);
             connexion.executerUpdate(requete8);
             connexion.executerUpdate(requete9);
+            connexion.executerUpdate(requete10);
+            connexion.executerUpdate(requete11);
             //les basees de données Access n'acceptent pas les vues
             if (!type.equals(TypeDatabase.Access)) {
-                connexion.executerUpdate(requete10);
+                connexion.executerUpdate(requete12);
             }
             
             res = new BDD(connexion,database);
