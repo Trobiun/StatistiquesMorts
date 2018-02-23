@@ -53,9 +53,20 @@ public final class TexteConstantesSQL {
     public static final String TABLE_LIVES_ID = "liv_id";
     public static final String TABLE_LIVES_DATE_DEBUT = "liv_DateDebut";
     public static final String TABLE_LIVES_DATE_FIN = "liv_DateFin";
-    public static final String TABLE_LIVES_RUN = "liv_idRun";
+    public static final String TABLE_LIVES_ID_RUN = "liv_idRun";
     public static final String TABLE_LIVES_MORTS = "liv_Morts";
     public static final String TABLE_LIVES_BOSS = "liv_Boss";
+    
+    public static final String TABLE_BOSS = "Boss";
+    public static final String TABLE_BOSS_ID = "bos_id";
+    public static final String TABLE_BOSS_NOM = "bos_Nom";
+    public static final String TABLE_BOSS_ID_JEU = "bos_idJeu";
+    
+    public static final String TABLE_MORTS_ET_VICTOIRES = "MortsEtVictoires";
+    public static final String TABLE_MORTS_ET_VICTOIRES_ID_LIVE = "mev_idLive";
+    public static final String TABLE_MORTS_ET_VICTOIRES_ID_BOSS = "mev_idBoss";
+    public static final String TABLE_MORTS_ET_VICTOIRES_MORTS = "mev_Morts";
+    public static final String TABLE_MORTS_ET_VICTOIRES_VICTOIRES = "mev_Victoires";
     
     public static final String VUE_GLOBALE = "VueGlobale";
     
@@ -63,6 +74,8 @@ public final class TexteConstantesSQL {
     public static final String SQL_TEXT = "TEXT";
     public static final String SQL_INTEGER = "INTEGER";
     public static final String SQL_DATETIME = "DATETIME";
+    public static final String SQL_DATE = " DATE";
+    public static final String SQL_TIMESTAMP = "TIMESTAMP";
     
     //CREATE ET CONTRAINTES
     public static final String CREATE_TABLE = "CREATE TABLE";
@@ -84,7 +97,7 @@ public final class TexteConstantesSQL {
     public static final String SELECT_VUE_GLOBALE_SQL = "SELECT * FROM "
                                                          + TABLE_JEUX + " LEFT OUTER JOIN "
                                                          + "(" + TABLE_RUNS +" LEFT OUTER JOIN " + TABLE_LIVES + " ON "
-                                                         + TABLE_RUNS_ID + " = " + TABLE_LIVES_RUN + ") ON "
+                                                         + TABLE_RUNS_ID + " = " + TABLE_LIVES_ID_RUN + ") ON "
                                                             + TABLE_RUNS_ID_JEU + " = " + TABLE_JEUX_ID;
     
     //GESTION DE BASE DE DONNÉES (INSERT_INTO, UPDATE, DELETE_FROM)
