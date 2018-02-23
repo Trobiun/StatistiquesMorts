@@ -186,19 +186,47 @@ public class Connexion {
     private void preparedSetParameters(PreparedStatement prepared, String ... args) throws SQLException {
         //mise en place des paramètres pour le PreparedStatement
         for (int i = 0; i < args.length; i++) {
+            //si l'argument représente un booléen
             if (args[i].startsWith(TexteConstantesConnexion.BOOL)) {
                 prepared.setBoolean(i+1, Boolean.parseBoolean(args[i].replace(TexteConstantesConnexion.BOOL,"")));
             }
             else {
+                //si l'argument représenté un entier
                 if (args[i].startsWith(TexteConstantesConnexion.INT)) {
                     prepared.setInt(i+1, Integer.parseInt(args[i].replace(TexteConstantesConnexion.INT, "")));
                 }
                 else {
+                    //si l'argument représente un entier long
                     if (args[i].startsWith(TexteConstantesConnexion.LONG)) {
                          prepared.setLong(i+1, Long.parseLong(args[i].replace(TexteConstantesConnexion.LONG,"")));
                     }
                     else {
-                        prepared.setString(i+1, args[i]);
+                        //si l'argument représente une datetime
+                        if (args[i].startsWith(TexteConstantesConnexion.DATETIME)) {
+                            //si connecté à une base de données PostgreSQL
+                            if (this.type.equals(TypeDatabase.PostgreSQL)) {
+                                prepared.setTimestamp(i+1,Timestamp.valueOf(args[i].replace(TexteConstantesConnexion.DATETIME,"")));
+                            }
+                            else {
+                                prepared.setString(i+1,args[i].replace(TexteConstantesConnexion.DATETIME,""));
+                            }
+                        }
+                        else {
+                            //si l'argument représente une date simple
+                            if(args[i].startsWith(TexteConstantesConnexion.DATE)) {
+                                //si connecté à une base de données SQLite
+                                if (this.type.equals(TypeDatabase.SQLite)) {
+                                    prepared.setString(i+1,args[i].replace(TexteConstantesConnexion.DATE,""));
+                                }
+                                else {
+                                    prepared.setDate(i+1, Date.valueOf(args[i].replace(TexteConstantesConnexion.DATE,"")));
+                                }
+                            }
+                            //si l'argument représente une chaîne de caracères
+                            else {
+                                prepared.setString(i+1, args[i]);
+                            }
+                        }
                     }
                 }
             }
@@ -225,7 +253,7 @@ public class Connexion {
         int res = -1;
         if (upperCase.startsWith("UPDATE") || upperCase.startsWith("INSERT") || upperCase.startsWith("DELETE")) {
             try {
-                preparedStatement = connexion.prepareStatement(requete, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                preparedStatement = connexion.prepareStatement(requete, Statement.RETURN_GENERATED_KEYS /*+ ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY*/);
                 //mise en place des paramètres pour le PreparedStatement
                 preparedSetParameters(preparedStatement, args);
                 

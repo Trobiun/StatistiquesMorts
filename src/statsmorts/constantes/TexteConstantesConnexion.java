@@ -16,6 +16,9 @@ public final class TexteConstantesConnexion {
     public static final String BOOL = "(bool)";
     public static final String INT = "(int)";
     public static final String LONG = "(long)";
+    public static final String DATE = "(date)";
+    public static final String DATETIME = "(datetime)";
+    public static final String TIMESTAMP = "(timestamp)";
     
     
     //CONSTRUCTEUR
