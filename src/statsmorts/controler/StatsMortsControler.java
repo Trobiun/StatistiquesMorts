@@ -5,10 +5,14 @@
  */
 package statsmorts.controler;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import statsmorts.classes.DateFormats;
 import statsmorts.classes.FillDataset;
 import statsmorts.classes.TypeDatabase;
 import statsmorts.classes.TypeGroup;
@@ -80,7 +84,7 @@ public class StatsMortsControler {
      * @param idPlateforme l'identifiant de la plateforme à laquelle il faut
      * chercher les informations
      */
-    public void fillPlateformePanel(final long idPlateforme) {
+    public void fillPlateformePanels(final long idPlateforme) {
         if (idPlateforme > 0) {
             modele.fillPlateformePanel(idPlateforme);
         }
@@ -91,7 +95,7 @@ public class StatsMortsControler {
      * @param idGenre l'identifiant du genre auquel il faut chercher les
      * informations
      */
-    public void fillGenrePanel(final long idGenre) {
+    public void fillGenrePanels(final long idGenre) {
         if (idGenre > 0) {
             modele.fillGenrePanel(idGenre);
         }
@@ -102,13 +106,18 @@ public class StatsMortsControler {
      * @param idStudio l'identifiant du studio auquel il faut chercher les
      * informations
      */
-    public void fillStudioPanel(final long idStudio) {
+    public void fillStudioPanels(final long idStudio) {
         if (idStudio > 0) {
             modele.fillStudiPanel(idStudio);
         }
     }
     
-    public void fillEditeurPanel(final long idEditeur) {
+    /**
+     * Demande au modèle de remplir les champs de saisie pour les éditeurs.
+     * @param idEditeur l'identifiant de l'éditeur auquel il faut chercher les
+     * informations 
+     */
+    public void fillEditeurPanels(final long idEditeur) {
         if (idEditeur > 0) {
             modele.fillEditeurPanel(idEditeur);
         }
@@ -119,7 +128,7 @@ public class StatsMortsControler {
      * @param idJeu l'identifiant du jeu auquel il faut chercher les
      * informations
      */
-    public void fillJeuPanel(final long idJeu) {
+    public void fillJeuPanels(final long idJeu) {
         if (idJeu > 0) {
             modele.fillJeuPanel(idJeu);
         }
@@ -130,32 +139,9 @@ public class StatsMortsControler {
      * @param idRun l'identifiant du jeu auquel il faut chercher les
      * informations
      */
-    public void fillRunPanel(final long idRun) {
+    public void fillRunPanels(final long idRun) {
         if (idRun > 0) {
             modele.fillRunPanel(idRun);
-        }
-    }
-    /**
-     * Demande au modèle de remplir les champs de saisie pour la partie "jeux"
-     * des champs de saisie pour les runs.
-     * @param idJeu l'identifiant du jeu auquel il faut chercher les
-     * informations
-     */
-    public void selectJeuRunPanels(final long idJeu) {
-        if (idJeu > 0) {
-            modele.selectJeuRunPanels(idJeu);
-        }
-    }
-    
-    public void selectJeuLivePanels(final long idJeu) {
-        if (idJeu > 0){
-            modele.selectJeuLivePanels(idJeu);
-        }
-    }
-    
-    public void selectRunLivePanels(final long idRun) {
-        if (idRun > 0) {
-            modele.selectRunLivePanels(idRun);
         }
     }
     
@@ -164,29 +150,51 @@ public class StatsMortsControler {
      * @param idLive l'identifiant du live auquel il faut chercher les
      * informations
      */
-    public void fillLivePanel(final long idLive) {
+    public void fillLivePanels(final long idLive) {
         if (idLive > 0) {
             modele.fillLivePanel(idLive);
         }
     }
     
     /**
-     * Demande au modèle de remplir les champs de saisie pour la partie "run"
-     * dans les champs de saisie pour les lives.
-     * @param idRun l'identifiant de la run à laquelle il faut chercher les
-     * informations
+     * Sélectionne un jeu pour les entrées utilisateur pour les runs.
+     * @param idJeu l'identifiant du jeu sélectionné
      */
-    public void fillLivePanelRun(final long idRun) {
-        if (idRun > 0) {
-            modele.fillLivePanelRun(idRun);
+    public void selectJeuOnRunPanels(final long idJeu) {
+        if (idJeu > 0) {
+            modele.selectJeuOnRunPanels(idJeu);
         }
     }
     
-    public void fillRunOnPanelLive(final long idRun) {
-        if (idRun > 0) {
-            modele.fillRunOnLivePanels(idRun);
+    /**
+     * Sélectionne un jeu dans les entrées utilisateur pour les lives.
+     * @param idJeu l'identifiant du jeu sélectionné
+     */
+    public void selectJeuOnLivePanels(final long idJeu) {
+        if (idJeu > 0){
+            modele.selectJeuOnLivePanels(idJeu);
         }
     }
+    
+    /**
+     * Sélectionne une run dans les entrées utilisateur pour les lives.
+     * @param idRun l'identifiant de la run sélectionnée
+     */
+    public void selectRunOnLivePanels(final long idRun) {
+        if (idRun > 0) {
+            modele.selectRunOnLivePanels(idRun);
+        }
+    }
+    
+//    /**
+//     * Demande au modèle de remplir les champs de saisie pour la patie "run"
+//     * @param idRun l'identifiant de la run
+//     */
+//    public void fillRunOnLivePanels(final long idRun) {
+//        if (idRun > 0) {
+//            modele.fillRunOnLivePanels(idRun);
+//        }
+//    }
     
     //MÉTHODES AYANT UN IMPACT SUR LE MODÈLE
     /**
@@ -281,12 +289,14 @@ public class StatsMortsControler {
      * @param listPlateformes la liste des plateformes à lier au jeu
      * @param listGenres la liste des genres à lier au jeu
      * @param idStudio l'identifiant du studio à lier au jeu
+     * @param idEditeur l'identifiant de l'éditeur à lier au jeu
      */
     public void ajouterJeu(final String titreJeu, final String dateSortieString,
             final List<Long> listPlateformes, final List<Long> listGenres,
             final long idStudio, final long idEditeur) {
-        if (null != titreJeu && !titreJeu.isEmpty() && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
-            modele.ajouterJeu(titreJeu, dateSortieString, listPlateformes, listGenres, idStudio, idEditeur);
+        if (null != titreJeu && !titreJeu.isEmpty() && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0 && idEditeur > 0) {
+            String dateSortieSQL = DateFormats.utilDateShortStringToSQLShortString(dateSortieString);
+            modele.ajouterJeu(titreJeu, dateSortieSQL, listPlateformes, listGenres, idStudio, idEditeur);
         }
     }
     
@@ -303,7 +313,13 @@ public class StatsMortsControler {
     public void modifierJeu(final long idJeu, final String nouveauTitre, final String dateSortieString,
             final List<Long> listPlateformes, final List<Long> listGenres, final long idStudio, final long idEditeur) {
         if (idJeu > 0 && null != nouveauTitre && !nouveauTitre.isEmpty() && listPlateformes.size() > 0 && listGenres.size() > 0 && idStudio > 0) {
-            modele.modifierJeu(idJeu, nouveauTitre, dateSortieString, listPlateformes, listGenres, idStudio, idEditeur);
+//            try {
+//                Date dateSortie = DateFormats.DATE_FORMAT_SQL_SHORT.parse(dateSortieString);
+                String dateSortie = DateFormats.utilDateShortStringToSQLShortString(dateSortieString);
+                modele.modifierJeu(idJeu, nouveauTitre, dateSortie, listPlateformes, listGenres, idStudio, idEditeur);
+//            } catch (ParseException ex) {
+//                Logger.getLogger(StatsMortsControler.class.getName()).log(Level.SEVERE, null, ex);
+//            }
         }
     }
     
@@ -354,12 +370,15 @@ public class StatsMortsControler {
      * Demande au modèle d'ajouter un live dans la base de données.
      * @param dateDebut la date de début du live à ajouter
      * @param dateFin la date de fin du live à ajouter
-     * @param morts le nombre de morts du live à ajouter
      * @param idRun l'identifiant de la run à lier au live
+     * @param morts le nombre de morts du live à ajouter
+     * @param boss le nombre de boss vaincus du live
      */
-    public void ajouterLive(final Date dateDebut, final Date dateFin, final int morts, final long idRun) {
+    public void ajouterLive(final Date dateDebut, final Date dateFin, final long idRun, final int morts, final int boss) {
         if (null != dateDebut && null != dateFin && idRun > 0) {
-            
+            String dateDebutString = DateFormats.DATE_FORMAT_SQL.format(dateDebut);
+            String dateFinString = DateFormats.DATE_FORMAT_SQL.format(dateFin);
+            modele.ajouterLive(dateDebutString, dateFinString, idRun, morts, boss);
         }
     }
     
@@ -368,13 +387,16 @@ public class StatsMortsControler {
      * @param idLive l'identifian du live à modifier
      * @param dateDebut la nouvelle date de début du live à modifier
      * @param dateFin la nouvelle date de fin du live à modifier
-     * @param morts le nouveau nombre de morts du live à modifier
      * @param idRun le nouvel identifiant de la run du live à modifier
+     * @param morts le nouveau nombre de morts du live à modifier
+     * @param boss le nombre de boss vaincus du live à modifier
      */
     public void modifierLive(final long idLive, final Date dateDebut, final Date dateFin,
-            final int morts, final long idRun) {
+            final long idRun, final int morts, final int boss) {
         if (idLive > 0 && null != dateDebut && null != dateFin && idRun > 0) {
-            
+            String dateDebutString = DateFormats.DATE_FORMAT_LONG.format(dateDebut);
+            String dateFinString = DateFormats.DATE_FORMAT_LONG.format(dateFin);
+            modele.modifierLive(idLive, dateDebutString, dateFinString, idRun, morts, boss);
         }
     }
     
@@ -384,7 +406,7 @@ public class StatsMortsControler {
      */
     public void supprimerLive(final long idLive) {
         if (idLive > 0) {
-            
+            modele.supprimerLive(idLive);
         }
     }
     
