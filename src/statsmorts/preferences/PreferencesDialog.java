@@ -210,7 +210,7 @@ public class PreferencesDialog extends JDialog {
         private void showServeurConnectionDialog() {
             ServeurOptions options = panelBDD.getServeurOptions();
             options.setPasswordFieldVisible(true);
-            Object[] boutons = {TexteConstantes.CONNEECTER, TexteConstantes.QUITTER};
+            Object[] boutons = {TexteConstantes.CONNECTER, TexteConstantes.QUITTER};
             int res;
             res = JOptionPane.showOptionDialog(null, options, TexteConstantesPreferences.TITRE_SERVEUR_OPTIONS, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, boutons, null);
             //connexion à un serveur
