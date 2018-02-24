@@ -56,7 +56,7 @@ public class Live extends ObjectDatabase implements FillDataset, Comparable<Live
      */
     public Live(final long id, final String dateDebutString, final String dateFinString, final int morts, final int boss) {
         super(id);
-        this.dateDebut = DateFormats.SQLStringToUtilDate(dateFinString);
+        this.dateDebut = DateFormats.SQLStringToUtilDate(dateDebutString);
         this.dateFin = DateFormats.SQLStringToUtilDate(dateFinString);
         this.morts = morts;
         this.boss = boss;
