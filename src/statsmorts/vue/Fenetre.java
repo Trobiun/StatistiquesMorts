@@ -63,11 +63,14 @@ import statsmorts.classes.Live;
 import statsmorts.classes.Plateforme;
 import statsmorts.classes.Run;
 import statsmorts.classes.Studio;
+import statsmorts.classes.TypeDatabase;
 import statsmorts.classes.TypeGroup;
+import statsmorts.constantes.TexteConstantesPreferences;
 import statsmorts.controler.StatsMortsControler;
 import statsmorts.observer.Observer;
 import statsmorts.preferences.Preferences;
 import statsmorts.preferences.PreferencesDialog;
+import statsmorts.preferences.ServeurOptions;
 import statsmorts.preferences.Temps;
 
 /**
@@ -163,6 +166,10 @@ public class Fenetre extends JFrame implements Observer {
      * Le menuItem pour l'ouverture d'une base de données.
      */
     private JMenuItem ouvrirMenuItem;
+    /**
+     * Le menuItem pour se connecter à un serveur.
+     */
+    private JMenuItem connecterServeurMenuItem;
     //SOUS MENU GESTION BASE DE DONNEES
     /**
      * Le sous menu pour gérer la base de données.
@@ -326,6 +333,7 @@ public class Fenetre extends JFrame implements Observer {
         //AJOUT DES MENU ITEMD DU MENU FICHIER
         fichierMenu.add(nouveauMenuItem);
         fichierMenu.add(ouvrirMenuItem);
+        fichierMenu.add(connecterServeurMenuItem);
         fichierMenu.addSeparator();
         fichierMenu.add(gestionBaseDonnees);
         fichierMenu.addSeparator();
@@ -484,6 +492,9 @@ public class Fenetre extends JFrame implements Observer {
         ouvrirMenuItem = new JMenuItem(TexteConstantes.OUVRIR);
         ouvrirMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK));
         ouvrirMenuItem.addActionListener(listener);
+        
+        connecterServeurMenuItem = new JMenuItem(TexteConstantes.CONNECTER_SERVEUR);
+        connecterServeurMenuItem.addActionListener(listener);
         
         quitterMenuItem = new JMenuItem(TexteConstantes.QUITTER);
         quitterMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
@@ -851,6 +862,7 @@ public class Fenetre extends JFrame implements Observer {
             nodeJeu.sort();
             ((DefaultTreeModel)treeJeux.getModel()).reload(nodeJeu);
         }
+        livePanels.clearFields(true, false);
 //        runPanels.ajouterItem(run.getID());
 //        livePanels.ajouterPossibleRun(run.getID());
 //        ArrayList<SortableTreeNode> arrayRun = mapRuns.getOrDefault(run.getID(), new ArrayList());
@@ -1021,6 +1033,8 @@ public class Fenetre extends JFrame implements Observer {
         }
         mapRuns.remove(idRun);
         ((DefaultTreeModel)treeJeux.getModel()).reload();
+        runPanels.supprimerItem(idRun);
+        livePanels.supprimerRun(idRun);
     }
     
     @Override
@@ -1182,7 +1196,7 @@ public class Fenetre extends JFrame implements Observer {
             List<Long> listPlateformes = jeuPanels.getPlateformes();
             List<Long> listGenres = jeuPanels.getGenres();
             long idStudio = jeuPanels.getStudioID();
-            long idEditeur = 0;
+            long idEditeur = jeuPanels.getEditeurID();
             switch (mode) {
                 case AJOUTER :
                     controler.ajouterJeu(titreJeu, dateSortie , listPlateformes, listGenres, idStudio, idEditeur);
@@ -1211,7 +1225,9 @@ public class Fenetre extends JFrame implements Observer {
             runPanels.setSelectionCurrentPanelVisible(true);
             runPanels.setSaisiesPanelVisible(editable);
             runPanels.setNouveauNomPanelVisible(editable);
+            System.out.println(mode.toString());
             runPanels.clearFields(editable,false);
+            System.out.println(runPanels.keepEmpty);
         }
         runPanels.setResetButtonVisible(mode.equals(ModeGestion.MODIFIER));
         String[] options = { mode.getAction(), TexteConstantes.ANNULER };
@@ -1251,9 +1267,14 @@ public class Fenetre extends JFrame implements Observer {
         int res = JOptionPane.showOptionDialog(this, livePanels, mode.getAction()
                 + " " + TexteConstantes.LIVE.toLowerCase(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         if (res == JOptionPane.YES_OPTION) {
+            Date dateDebut = livePanels.getDateDebut();
+            Date dateFin = livePanels.getDateFin();
+            long idRun = livePanels.getIDRun();
+            int morts = livePanels.getMorts();
+            int boss = livePanels.getBoss();
             switch (mode) {
                 case AJOUTER :
-                    
+                    controler.ajouterLive(dateDebut, dateFin, idRun, morts, boss);
                     break;
                 case MODIFIER :
                     
@@ -1504,6 +1525,24 @@ public class Fenetre extends JFrame implements Observer {
                     else {
                         controler.ouvrirBDD(fileBDD.getPath());
                     }
+                }
+            }
+            if (src.equals(connecterServeurMenuItem)) {
+                ServeurOptions options = new ServeurOptions(preferences, false);
+                Object[] boutons = {TexteConstantes.CONNECTER, TexteConstantes.ANNULER};
+                int res;
+                JFrame frame = new JFrame("Connexion au serveur");
+                frame.setLocationRelativeTo(null);
+                frame.setUndecorated(true);
+                frame.setVisible(true);
+                res = JOptionPane.showOptionDialog(frame, options, TexteConstantesPreferences.TITRE_SERVEUR_OPTIONS, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, boutons, null);
+                frame.dispose();
+                //connexion à un serveur
+                if (res == JOptionPane.YES_OPTION && !options.getType().equals(TexteConstantesPreferences.FICHIER)) {
+                    String database = options.getAdresse() + ":" + options.getPort() + "/" + options.getBaseDonnees();
+                    controler.connecterServeur(TypeDatabase.valueOf(options.getType()),
+                            options.getAdresse(), options.getPort(), options.getBaseDonnees(),
+                            options.getUtilisateur(), options.getMotDePasse());
                 }
             }
             if (src.equals(preferencesMenuItem)) {
