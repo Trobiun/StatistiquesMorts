@@ -62,7 +62,7 @@ public class Main {
         }
         else {
             ServeurOptions options = new ServeurOptions(preferences,true);
-            Object[] boutons = {TexteConstantes.CONNEECTER,TexteConstantes.QUITTER};
+            Object[] boutons = {TexteConstantes.CONNECTER,TexteConstantes.QUITTER};
             int res;
             JFrame frame = new JFrame("Connexion au serveur");
             frame.setLocationRelativeTo(null);

@@ -21,6 +21,7 @@ public final class TexteConstantes {
     public static final String NOUVEAU = "Nouveau";
     public static final String CREER = "Créer";
     public static final String OUVRIR = "Ouvrir";
+    public static final String CONNECTER_SERVEUR = "Se connecter à un serveur";
     public static final String GESTION = "Gestion";
     public static final String QUITTER = "Quitter";
     public static final String OUTILS = "Outils";
@@ -58,7 +59,7 @@ public final class TexteConstantes {
     public static final String ANNULER = "Annuler";
     
     //BOUTONS SERVEUR OPTIONS
-    public static final String CONNEECTER = "Se connecter";
+    public static final String CONNECTER = "Se connecter";
     
     //OBJECT_DATABASE_PANELS
     public static final String SELECTION = "Sélection";
